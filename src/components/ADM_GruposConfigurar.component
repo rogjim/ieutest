@@ -1,0 +1,394 @@
+<apex:component >
+	<div class="modal fade" tabindex="-1" role="dialog" id="admGroupConfig" data-backdrop="static" data-keyboard="false" ng-controller="admGroupConfig">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title text-center">
+					    <span class="fa fa-users fa-fw"></span>
+					    <span ng-bind="base.message"/>
+					</h4>
+				</div>
+				<form class="form-horizontal" name="formConfigGroup" novalidate="" ng-submit="saveConfig()">
+				  	<div class="modal-body">
+				  		<div class="row">
+				  			<div class="col-sm-6">
+					  			<div class="panel panel-default">
+							        <div class="panel-heading">
+							        	<div class="row">
+							        		<div class="col-sm-5">
+							        			<h3 class="panel-title">Oportunidades y Leads asignados a grupo <span ng-if="base.group && base.group.editing && base.group.editing.Id" ng-bind="base.group.editing.Name"/></h3>
+							        		</div>
+							        		<div class="col-sm-7 text-right">
+							        			<label class="label label-success" ng-if="base.group.editing.Oportunidades__r && base.group.editing.Oportunidades__r.length > 0" ng-bind="base.group.editing.Oportunidades__r.length + ' Oportunidad(es)'"></label>
+							        			<label class="label label-success" ng-if="base.group.editing.GrupoAsingado__r && base.group.editing.GrupoAsingado__r.length > 0" ng-bind="base.group.editing.GrupoAsingado__r.length + ' Lead(s)'"></label>
+							        			<button ng-disabled="!base.group.Grupo__c__o.Id" class="btn btn-primary" ng-click="moveToOtherGroup(base.group.editing, base.group.Grupo__c__o, base.group.Grupo__c__o.Id)" ng-if="hasToMove()"><span class="fa fa-chevron-circle-right fa-fw"></span>Mover</button>
+							        			<i class="text-danger" ng-if="hasToMove() && !base.group.Grupo__c__o.Id">Seleccione un periodo destino</i>
+							        		</div>
+							        	</div>
+									</div>
+							  		<div class="table-responsive">
+							  			<table class="table table-bordered table-hover">
+							  				<thead>
+							  					<tr>
+							  						<th>Nombre</th>
+							  						<th>Correo electrónico</th>
+							  						<th>Tipo</th>
+							  						<th>Mover</th>
+							  					</tr>
+							  				</thead>
+							  				<tbody>
+							  					<tr ng-repeat="inst in base.group.editing.Oportunidades__r">
+							  						<td ng-bind="inst.Account.Name"></td>
+							  						<td ng-bind="inst.Account.PersonEmail"></td>
+							  						<td>Oportunidad</td>
+							  						<td>
+							  							<div class="checkbox">
+														    <label>
+														      <input type="checkbox" ng-model="inst.selected"/> Seleccionar
+														    </label>
+													  	</div>
+							  						</td>
+							  					</tr>
+							  					<tr ng-repeat="inst in base.group.editing.GrupoAsingado__r">
+							  						<td ng-bind="inst.Name"></td>
+							  						<td ng-bind="inst.Email"></td>
+							  						<td>Lead</td>
+							  						<td>
+							  							<div class="checkbox">
+														    <label>
+														      <input type="checkbox" ng-model="inst.selected"/> Seleccionar
+														    </label>
+													  	</div>
+							  						</td>
+							  					</tr>
+							  				</tbody>
+							  			</table>
+					  				</div>
+						  		</div>
+				  			</div>
+				  			<div class="col-sm-6">
+				  				<div class="panel panel-default">
+							        <div class="panel-heading">
+							        	<div class="row">
+							        		<div class="col-sm-3"><h3 class="panel-title">Mover a grupo</h3></div>
+							        		<div class="col-sm-3" ng-if="base.obj.Grupo__c && base.obj.Grupo__c.k && base.obj.Grupo__c.k.Name">
+							        			<ctc-input ctc-form="formConfigGroup" ctc-field="base.obj.Grupo__c.k.Name" ctc-opts="base.groups.filtered" ctc-label="'Name'" ctc-instance="base.group">
+												</ctc-input>
+							        		</div>
+							        		<div class="col-sm-6 text-right">
+							        			<span></span>
+							        			<label class="label label-success" ng-if="base.group.Grupo__c__o.Oportunidades__r && base.group.Grupo__c__o.Oportunidades__r.length > 0" ng-bind="base.group.Grupo__c__o.Oportunidades__r.length + ' Oportunidad(es)'"></label>
+							        			<label class="label label-success" ng-if="base.group.Grupo__c__o.GrupoAsingado__r && base.group.Grupo__c__o.GrupoAsingado__r.length > 0" ng-bind="base.group.Grupo__c__o.GrupoAsingado__r.length + ' Lead(s)'"></label>
+
+							        			<button class="btn btn-primary" ng-click="moveToOtherGroup(base.group.Grupo__c__o, base.group.editing, base.group.editing.Id)" ng-if="hasToOrigin()"><span class="fa fa-chevron-circle-left fa-fw"></span>Mover</button>
+							        		</div>
+							        	</div>
+									</div>
+							  		<div class="table-responsive">
+							  			<table class="table table-bordered table-hover">
+							  				<thead>
+							  					<tr>
+							  						<th>Nombre</th>
+							  						<th>Correo electrónico</th>
+							  						<th>Tipo</th>
+							  						<th>Mover</th>
+							  					</tr>
+							  				</thead>
+							  				<tbody>
+							  					<tr ng-repeat="inst in base.group.Grupo__c__o.Oportunidades__r">
+							  						<td ng-bind="inst.Account.Name"></td>
+							  						<td ng-bind="inst.Account.PersonEmail"></td>
+							  						<td>Oportunidad</td>
+							  						<td>
+							  							<div class="checkbox" ng-if="inst.copy">
+														    <label>
+														      <input type="checkbox" ng-model="inst.selected"/> Seleccionar
+														    </label>
+													  	</div>
+							  						</td>
+							  					</tr>
+							  					<tr ng-repeat="inst in base.group.Grupo__c__o.GrupoAsingado__r">
+							  						<td ng-bind="inst.Name"></td>
+							  						<td ng-bind="inst.Email"></td>
+							  						<td>Lead</td>
+							  						<td>
+							  							<div class="checkbox" ng-if="inst.copy">
+														    <label>
+														      <input type="checkbox" ng-model="inst.selected"/> Seleccionar
+														    </label>
+													  	</div>
+							  						</td>
+							  					</tr>
+							  				</tbody>
+							  			</table>
+					  				</div>
+						  		</div>
+				  			</div>
+				  		</div>
+			  		</div>
+			  		<div class="modal-footer">
+			  			<button ng-disabled="formConfigGroup.$invalid || base.group.saving || (base.group.total === (base.group.editing.Oportunidades__r.length + base.group.editing.GrupoAsingado__r.length))" type="submit" class="btn btn-success">
+					        <span class="fa fa-spinner fa-pulse" ng-if="base.group.saving"></span>
+					        <span class="fa fa-save fa-fw"></span>Guardar
+					    </button>
+					    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+			  		</div>
+		  		</form>
+  			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		angular.module('appIEU')
+		.controller('admGroupConfig', ['$scope', '$interval', 'sfUtils', function($scope, $interval, sfUtils) {
+			$scope.sfUtils = sfUtils;
+			$scope.base = {
+				describe: [],
+				obj: {
+					Grupo__c: {
+						k: {
+							Name: {
+								type: 'picklist',
+								label: 'Grupo',
+								name: 'Grupo__c'
+							}
+						}
+					}
+				},
+				group: {
+					editing: {},
+					saving: false,
+					Grupo__c__o: {},
+					master: {}
+				},
+				message: 'Configurar grupo',
+				delay: 300,
+				errors: [],
+				success:[],
+				delayClose: 8000,
+				close: true,
+				Timer: null,
+				groups: {
+					instances: [],
+					filtered: []
+				}
+			};
+			$scope.filterOtherGroups = function(groups, group) {
+				if(groups && groups.length > 0 && group && group.Id) {
+					angular.forEach(groups, function(g, key) {
+						if(g.Id !== group.Id) {
+							$scope.base.groups.filtered.push(g);
+						}
+					});
+				}
+			};
+			$scope.hasToMove =function() {
+				var hastomove = false;
+				if($scope.base.group && $scope.base.group.editing && $scope.base.group.editing.Id && $scope.base.group.editing.Oportunidades__r) {
+					angular.forEach($scope.base.group.editing.Oportunidades__r, function(v, key) {
+						if(v.selected && !hastomove ) {
+							hastomove = true;
+						}
+					});
+					angular.forEach($scope.base.group.editing.GrupoAsingado__r, function(v, key) {
+						if(v.selected && !hastomove ) {
+							hastomove = true;
+						}
+					});
+				}
+				return hastomove;
+			};
+			//moveToOtherGroup(base.group.Grupo__c__o.Oportunidades__r, base.group.editing.Oportunidades__r, base.group.editing.Id)
+			//$scope.moveToOtherGroup = function(src, dest, id) {
+			$scope.moveToOtherGroup = function(src, dest, id) {
+				var keys = ['Oportunidades__r', 'GrupoAsingado__r'];
+				angular.forEach(keys, function(obj, key) {
+					var tomove = [];
+					if(src[obj] && dest[obj]) {
+						angular.forEach(src[obj], function(v, key) {
+							if(v.selected) {
+								if(obj === 'Oportunidades__r') {
+									v.Grupo__c = id;
+								} else {
+									v.GrupoAsignado__c = id;
+								}
+								v.copy = true;
+								v.selected = false;
+								dest[obj].push(angular.copy(v));
+								tomove.push(v);
+							}
+						});
+					}
+					angular.forEach(tomove, function(v, key){
+						var index = src[obj].indexOf(v);
+						if(index !== -1) {
+							src[obj].splice(index, 1);
+						}
+					});					
+				});
+
+				/*
+				var tomove = [];
+				if(src && dest) {
+					angular.forEach(src.Oportunidades__r, function(v, key) {
+					//angular.forEach(src, function(v, key) {
+						if(v.selected) {
+							v.Grupo__c = id;
+							v.copy = true;
+							dest.Oportunidades__r.push(angular.copy(v));
+							tomove.push(v);
+						}
+					});
+				}
+				angular.forEach(tomove, function(v, key){
+					var index = src.Oportunidades__r.indexOf(v);
+					if(index !== -1) {
+						src.Oportunidades__r.splice(index, 1);
+					}
+				});*/
+			};
+
+			$scope.hasToOrigin = function() {
+				var hastomove = false;
+				if($scope.base.group && $scope.base.group.Grupo__c__o && $scope.base.group.Grupo__c__o.Oportunidades__r) {
+					angular.forEach($scope.base.group.Grupo__c__o.Oportunidades__r, function(v, key) {
+						if(v.selected && !hastomove) {
+							hastomove = true;
+						}
+					});
+					angular.forEach($scope.base.group.Grupo__c__o.GrupoAsingado__r, function(v, key) {
+						if(v && v.selected && !hastomove) {
+							hastomove = true;
+						}
+					});
+				}
+				return hastomove;
+			};
+			$scope.saveConfig = function() {
+				var tosave = {o: [], l: []};
+				$scope.base.errors = [];
+				var tomove = {o: {}, l: {}};
+				angular.forEach($scope.base.groups.filtered, function(v, key) {
+					//Opportunity
+					angular.forEach(v.Oportunidades__r, function(o, key) {
+						if(o.copy) {
+							var obj = new sforce.SObject('Lead');
+							obj.Id = o.Id;
+							obj.Grupo__c = o.Grupo__c;
+							tomove.o[o.Id] = o;
+							tosave.o.push(obj);
+						}
+					});
+					//Lead
+					angular.forEach(v.GrupoAsingado__r, function(l, key) {
+						if(l.copy) {
+							var obj = new sforce.SObject('Lead');
+							obj.Id = l.Id;
+							obj.GrupoAsignado__c = l.GrupoAsignado__c;
+							tomove.l[l.Id] = l;
+							tosave.l.push(obj);
+							delete l.copy;
+						}
+					});
+				});
+
+				console.log(tosave.l);
+				console.log(tomove);
+				var a = (tosave.l.length + tosave.o.length);
+            	var b = 0;
+/*
+				sfUtils.upsert(tosave.o, function(res) {
+					console.log('\n\n response tosave.o : ');
+					console.log(res);
+					if(res.faultcode) {
+        				$scope.base.errors.push("Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : ''));
+        			} else {
+        				var baseGroup = sfUtils.findElement('Id', tomove.o[i.id].Grupo__c, $scope.sfUtils.groups);
+						if(baseGroup && baseGroup.Id) {
+							if(!baseGroup.Oportunidades__r) {
+								baseGroup.Oportunidades__r = [];
+							}
+							baseGroup.Oportunidades__r.push(tomove.o[baseGroup.Id]);
+						}
+        			}
+				});*/
+
+				sfUtils.upsert(tosave.l, function(res) {
+					console.log('\n\n response tosave.l : ');
+					console.log(res);
+					b++;
+					if(res.faultcode) {
+        				$scope.base.errors.push("Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : ''));
+        			} else {
+        				
+        				angular.forEach(res, function(i, key) {
+	        				var baseGroup = sfUtils.findElement('Id', tomove.l[i.id].GrupoAsignado__c, $scope.sfUtils.groups);
+								console.log('encuentra baseGroup');
+								console.log(baseGroup);
+							if(baseGroup && baseGroup.Id) {
+								if(!baseGroup.GrupoAsingado__r) {
+									baseGroup.GrupoAsingado__r = [];
+								}
+								baseGroup.GrupoAsingado__r.push(tomove.l[i.id]);
+							}
+							console.log(baseGroup);
+        				});
+        			}
+				});
+
+				$scope.base.Timer = $interval(function () {
+                    if(b === 1) {
+                    	$interval.cancel($scope.base.Timer);
+                    	var baseGroup = sfUtils.findElement('Id', $scope.base.group.editing.Id, $scope.sfUtils.groups);
+						if(baseGroup && baseGroup.Id) {
+							baseGroup.Oportunidades__r = $scope.base.group.editing.Oportunidades__r;
+							baseGroup.GrupoAsingado__r = $scope.base.group.editing.GrupoAsingado__r;
+						}
+        			}
+                }, $scope.base.delay);
+
+
+
+				//console.log('\n\n tosave: ');
+				//console.log(tosave);
+				/*var baseGroup = sfUtils.findElement('Id', $scope.base.group.editing.Id, $scope.sfUtils.groups);
+				if(baseGroup && baseGroup.Id) {
+					baseGroup.Oportunidades__r = $scope.base.group.editing.Oportunidades__r;
+					baseGroup.GrupoAsingado__r = $scope.base.group.editing.GrupoAsingado__r;
+				}*/
+				//console.log(baseGroup);
+				//console.log(tomove);
+			};
+
+
+			$scope.$watch('sfUtils.group', function () {
+				if($scope.sfUtils && $scope.sfUtils.group && $scope.sfUtils.group.Id) {
+					console.log('\n\n in watch sfUtils.group admGroupConfig...');
+					console.log($scope.sfUtils.group);
+					$scope.base.group.editing = angular.copy($scope.sfUtils.group);
+					$scope.base.group.total = 0;
+					if($scope.base.group.editing.Oportunidades__r) {
+						$scope.base.group.total += $scope.base.group.editing.Oportunidades__r.length;
+					}
+					if($scope.base.group.editing.GrupoAsingado__r) {
+						$scope.base.group.total += $scope.base.group.editing.GrupoAsingado__r.length;
+					}
+
+					$scope.base.group.Grupo__c__o = [];
+					$scope.base.groups.instances = angular.copy($scope.sfUtils.groups);
+					$scope.base.groups.filtered = [];
+					//$scope.base.obj.Grupo__c = $scope.sfUtils.obj.Grupo__c;
+					
+					//$scope.listInstancesByGroup($scope.base.group.editing);
+					/*if($scope.base.group && $scope.base.group.editing && $scope.base.group.editing.Id && $scope.base.group.editing.Oportunidades__r) {
+						angular.forEach($scope.base.group.editing.Oportunidades__r, function(v, key) {
+							v.removed = false;
+						});
+					};*/
+					$scope.filterOtherGroups($scope.base.groups.instances, $scope.base.group.editing);
+				}
+			}, true);
+
+		}]);
+	</script>
+</apex:component>

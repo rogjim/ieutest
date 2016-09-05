@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <description>Configuraciones  globales</description>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>CorreoBatchERP__c</fullName>
+        <description>Lista de correos para notificar la finalización de la ejecución batch</description>
+        <externalId>false</externalId>
+        <label>CorreoBatchERP</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Folio__c</fullName>
+        <description>Número de folio consecutivo para candidatos y prospéctos</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Número de folio consecutivo para candidatos y prospéctos</inlineHelpText>
+        <label>Folio</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MaximoGrupoOnline__c</fullName>
+        <defaultValue>20</defaultValue>
+        <description>Número de veces que permite el cupo de un grupo Online</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Número de veces que permite el cupo de un grupo Online</inlineHelpText>
+        <label>Máximo grupo online</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MaximoGrupo__c</fullName>
+        <defaultValue>10</defaultValue>
+        <description>Número de veces que permite el cupo de un grupo Presencial o Ejecutiva</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Número de veces que permite el cupo de un grupo Presencial o Ejecutiva</inlineHelpText>
+        <label>Máximo grupo</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MaximoRepeticionCandidatos__c</fullName>
+        <description>Número de veces que se permite un candidato ser repetido, en base a la llave de unicidad</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Número de veces que se permite un candidato ser repetido</inlineHelpText>
+        <label>Máximo repetición candidatos</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ModalidadOnline__c</fullName>
+        <description>Id del catálogo correspondiente a la modalidad online</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Id del catálogo correspondiente a la modalidad online</inlineHelpText>
+        <label>Modalidad Online</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>OmiteAsignacionAutomaticaLead__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Si  está seleccionado, omite el proceso de asignación automáica de prospectos</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Omite el proceso de asignación automáica de prospectos</inlineHelpText>
+        <label>Omite asignación automatica de lead</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>PasswordERPWS__c</fullName>
+        <description>Contraseña para conectarse al ERP MAster WS</description>
+        <externalId>false</externalId>
+        <label>PasswordERPWS</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>PermitirEditarModalidad__c</fullName>
+        <defaultValue>true</defaultValue>
+        <externalId>false</externalId>
+        <label>Permitir editar modalidad</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>PlantelVirtual__c</fullName>
+        <description>Id del registro del objeto Plantel correspondiente a Universidad Virtual</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Id del registro del objeto Plantel correspondiente a Universidad Virtual</inlineHelpText>
+        <label>Plantel virtual</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>UserAdmin__c</fullName>
+        <externalId>false</externalId>
+        <label>UserAdmin</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>UsuarioERPWS__c</fullName>
+        <description>Usuario para conectarse al SW del ERP Master</description>
+        <externalId>false</externalId>
+        <label>UsuarioERPWS</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Negocio</label>
+    <visibility>Protected</visibility>
+</CustomObject>

@@ -1,0 +1,243 @@
+<apex:page controller="CalculadoraInfoCtrl" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false">
+    <head>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.CalculadoraEstilos)}"/>
+    </head>
+    <body>
+        <div id="root">
+            <div id="calculator-header" style="height:200px !important"> 
+                <div class="content-block"> 
+                    <div class="container"> 
+                        <div class="under-header" style="padding-top: 10px;"> 
+                            <h1 class="page-title page-title-type2 page-title-with-subtitle">Calculadora de colegiaturas</h1> 
+                            <h2 class="page-subtitle">Calcula la mensualidad del programa que deseas estudiar.</h2> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div>
+		
+            <div class="content-block" id="calculator-program-result-container">
+                <div class="container">
+                    <div class="block-type1">
+                        
+                        <div class="clearfix">
+                            <!--div class="xcol xcol-1 text-center" id="calculator-logo">
+                                <i class="sprite sprite-calculadora-logo">IEU Calculadora</i>
+                            </div-->
+                            
+                            <div class="xcol xcol-6 text-left m-left">
+                                <div class="title-features text-left size-mail">La solicitud fue enviada a tu correo electronico {!dataLead.Email}</div>
+                                <div class="title-features text-left">Tu programa es:</div>
+                            </div>
+                        </div>
+                        
+                        <div class="xcol xcol-5 calculator-result-column1">
+                            <div class="col-xs">
+                                <div>
+                                    <span class="text-bold">Modalidad: </span><span id="modalidad">{!dataLead.Modalidad__r.Name}</span>
+                                </div>
+                                <div>
+                                    <span class="text-bold">Nivel: </span><span id="nivel">{!dataLead.Nivel__r.Name}</span>
+                                </div>
+                            </div>
+                            <div class="col-xs">
+                                <div>
+                                    <span class="text-bold">Campus: </span><span id="plantel">{!dataLead.Plantel__r.Name}</span>
+                                </div>
+                                <div>
+                                    <span class="text-bold">Grado de estudio: </span><span id="programa">{!dataLead.Programa__r.Name}</span>
+                                </div>
+                            </div>
+                            <div class="col-xs">
+                                <div>
+                                    <span class="text-bold">Promedio: </span><span id="promedio">{!dataLead.Promedio__c}</span><span id="promedioL" class="hidden"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <div class="container">
+                    <div class="block-type3" id="calculator-content-result">
+                        
+                        <div id="calculator-wrapper">
+                            <div class="row row-without-spaces">
+                                
+                                <div class="xcol xcol-5 calculator-result-column1">
+                                    <div class="title-features text-left">Costo estimado de tu programa:</div>
+                                    
+                                    <div class="clearfix" id="calculator-columns-wrapper">
+                                        
+                                        <div class="col col-odd" id="calculator-left-column">
+                                            
+                                            <div class="col col-odd">
+                                                <div class="calculator-label" style="color:#21b696">Inscripción:</div>
+                                                <div class="calculator-result">
+                                                    <apex:outputText value="${0, number, ###,###,###,###.00} pesos"> <apex:param id="inscripcion2" value="{!dataLead.Inscripcion__c}"/></apex:outputText>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col col-even">
+                                                <div class="calculator-label" style="color:#21b696">Inscripción con descuento:</div>
+                                                <div id="inscDesc" class="calculator-result">
+                                                    <apex:outputText value="${0, number, ###,###,###,###.00} pesos"> <apex:param value="{!dataLead.InscripcionDescuento__c}"/></apex:outputText>
+                                                    <br/>
+                                                    <apex:outputText styleClass="calculator-label" style="font-size:14px" value="Vigencia hasta el: {0,date,MM'/'dd'/'yyyy}"><apex:param value="{!dataLead.VigenciaDescuento__c}" /> </apex:outputText>
+                                                </div>
+                                                <div id="inscDescDiv" class="hidden calculator-result">
+                                                	<span id="inscDescSpan" class="calculator-label"></span>
+                                                    <br/>
+                                                    <apex:outputText styleClass="calculator-label" style="font-size:14px" value="Vigencia hasta el: {0,date,dd'/'MM'/'yyyy}"><apex:param value="{!vigencia}" /> </apex:outputText>
+                                                	<!--span id="fechaVigencia" class="calculator-label" style="font-size:14px"></span-->
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col col-odd">
+                                                <div class="calculator-label" style="color:#21b696">Colegiatura mensual:</div>
+                                                <div class="calculator-result">
+                                                    <apex:outputText value="${0, number, ###,###,###,###.00} pesos"> <apex:param value="{!dataLead.Colegiatura__c}"/></apex:outputText>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col col-even">
+                                                <div class="calculator-label" style="color:#21b696">Mensualidades:</div>
+                                                <div class="calculator-result">{!dataLead.Numero_Mensualidades__c}</div>
+                                            </div>
+                                            
+                                            <div class="col col-odd">
+                                                <div class="calculator-label" style="color:#21b696">Beca vigente:</div>
+                                                <div id="porBeca" class="calculator-result">{!dataLead.PorcentajeBeca__c}%
+                                                    <span style="color:#21b696">Durante toda tu carrera</span>
+                                                </div>
+                                                <div id="porBecaDiv" class="calculator-result"><span id="porBecaSpan"></span>
+                                                    <span>Durante toda tu carrera</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col col-even">
+                                                <div class="calculator-label" style="color:#21b696;">Colegiatura mensual con beca:</div>
+                                                <div id="mensDesc" class="calculator-result">
+                                                    <apex:outputText value="${0, number, ###,###,###,###.00} pesos"> <apex:param value="{!dataLead.ColegiaturaDescuento__c}"/></apex:outputText>
+                                                </div>
+                                                <div id="mensDescDiv" class="hidden calculator-result">
+                                                	<span id="mensDescSpan" class="calculator-label"></span>
+                                                </div>
+                                            </div>
+                                            <div class="xcol xcol-6" id="calculator-result-info">
+                                                * Esta información es de carácter informativo. <br/>
+                                                Consulta con un asesor IEU los requisitos para hacerte acreedor a la beca
+                                                vigente.
+                                            </div>
+                                        </div>
+                                        <div class="col col-even text-center" id="calculator-right-column">
+                                            <div id="calculator-code-info" class="text-left">
+                                                Menciona a tu asesor IEU este folio <span>{!dataLead.FolioCalculadora__c}</span> para hacerte
+                                                acreedor a la beca vigente.
+                                            </div>
+                                            <a href="https://sandbox-ieu.cs2.force.com/Calculadora" class="btn btn-type-3"
+                                               id="calculator-return-btn">
+                                                HACER OTRO CÁLCULO
+                                            </a>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <!-- end of #calculator-result-wrapper -->
+                            </div>
+                        </div>
+                        <!-- end of #calculator-wrap -->
+                    </div>
+                </div>
+                <!-- end of .container -->
+            </div>
+        </div>    
+    </body>
+    <style type="text/css">
+    	.calculator-result-column1 {
+        	margin-left: 5.5%!important;
+        }
+        .calculator-result span {
+        	color: #fff;
+        	font-size: 1em;
+        }
+        .xcol-5 {
+        	width: 93%;
+        }
+        .calculator-result {
+            margin-bottom: 0 !important;
+            padding-left: 1.1em !important;
+        }
+        .hidden{
+          	display: none!important;
+        }
+        .m-left {
+            margin-left: 5.5%!important;
+        }
+        .size-mail{
+        	font-size:24px;
+        }
+		@media (max-width: 1300px) {
+            .calculator-result {
+                margin-bottom: 0.72222em !important;
+                padding-left: 1.1em !important;
+            }
+        }        
+        @media (max-width: 768px) {
+            .calculator-result {
+                margin-bottom: 1.72222em !important;
+                padding-left: 1.1em !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+    var urlRecordType = "{!$CurrentPage.parameters.prom}";
+    j$ = jQuery.noConflict();
+    
+    j$(document).ready(function(){
+        var descInsc=0.0;
+        var descMen=0.0;
+        var promedio;
+        var vigencia;
+        if(urlRecordType != null && urlRecordType != ''){
+            var descuentos = urlRecordType.split('-');
+            console.log(descuentos);
+            promedio = descuentos[0];
+            descInsc = parseInt('{!dataLead.Inscripcion__c}') * (1-(parseInt(descuentos[1])/100));
+            descInsc = descInsc.formatCurrency(2, '.', ',');
+            descMen = parseInt('{!dataLead.Colegiatura__c}') * (1-(parseInt(descuentos[2])/100));
+            descMen = descMen.formatCurrency(2, '.', ',');
+            vigencia = descuentos[3];
+            j$('#promedio').addClass('hidden');
+            j$('#promedioL').text(promedio);
+            j$('#promedioL').removeClass("hidden");
+            j$('#inscDesc').addClass('hidden');
+            j$('#inscDescSpan').text('$ ' + descInsc + ' pesos');
+            j$('#inscDescDiv').removeClass("hidden");
+            j$('#mensDesc').addClass('hidden');
+            j$('#mensDescSpan').text('$ ' + descMen + ' pesos');
+            j$('#mensDescDiv').removeClass("hidden");
+            j$('#porBeca').addClass('hidden');
+            j$('#porBecaSpan').text(descuentos[2] + '%');
+            j$('#porBecaDiv').removeClass("hidden");
+        }        
+    });
+    Number.prototype.formatCurrency = function(c, d, t){
+        var n = this, 
+            c = isNaN(c = Math.abs(c)) ? 2 : c, 
+            d = d == undefined ? "." : d, 
+            t = t == undefined ? "," : t, 
+            s = n < 0 ? "-" : "", 
+            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    };
+    </script>
+</apex:page>

@@ -1,0 +1,923 @@
+<apex:page standardController="Descuento__c" docType="html-5.0" id="page" sidebar="false">
+    <head>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    </head>
+    
+    
+    <script src="/soap/ajax/13.0/connection.js"></script>
+    <script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';} var id='{!Descuento__c.Id}';  </script>
+    <apex:form id="form" >
+        <apex:pageBlock title="Modificar Descuento" id="block" >
+            <apex:pageBlockSection title="Información" id="block-section" >
+                <apex:repeat value="{!$ObjectType.Descuento__c.FieldSets.Conjunto_Descuentos}" var="f" id="repeat" > 
+                    <apex:inputField value="{!Descuento__c[f]}" required="{!f.required}" onkeyup="" id="input" />
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Solicitado para" id="block-oportunidad">
+                <apex:outputField id="fieldLead" label="Lead" value="{!Descuento__c.Lead__c}"/>
+                <apex:outputField id="fieldOportunity" label="Oportunidad" value="{!Descuento__c.Oportunidad__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection id="blockTableAplica" title="Aplica para:" columns="1">
+                
+                <table class="table table-striped ">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div id="divform" class="row requiredI">
+                                    <span class="col-md-offset-2x col-md-1 font-size"><strong>Periodo</strong></span>
+                                    <span class="col-md-3" id="spanPeriodo">
+                                        <select id="periodo" name="periodo" style="width:280px;" >
+                                        </select>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row requiredI">
+                                    <span class="col-md-offset-2x col-md-1 font-size"><strong>Modalidad</strong></span>
+                                    <span class="requerido"></span>
+                                    <span class="col-md-3" id="spanModalidad">
+                                        <select id="modalidad" name="modalidad" style="width:280px;" >
+                                        </select>
+                                    </span> 
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="row requiredI">
+                                    <span class="col-md-offset-2x col-md-1 font-size"><strong>Nivel</strong></span>
+                                    <span class="requerido"></span>
+                                    <span class="col-md-3" id="spanNivel">
+                                        <select id="nivel" name="nivel" style="width:280px;" >
+                                        </select>
+                                    </span> 
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row requiredI hidden" id="divPlantel">
+                                    <span class="col-md-offset-2x col-md-1 font-size"><strong>Plantel</strong></span>
+                                    <span class="requerido"></span>
+                                    <span class="col-md-3" id="spanPlantel">
+                                        <select id="plantel" name="plantel" style="width:280px;" >
+                                        </select>
+                                    </span> 
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td>
+                                <div class="row requiredI hidden" id="divPrograma">
+                                    <span class="col-md-offset-2x col-md-1 font-size"><strong>Programa</strong></span>
+                                    <span class="requerido"></span>
+                                    <span class="col-md-3" id="spanPrograma">
+                                        <select id="programa" name="programa" style="width:280px;" >
+                                        </select>
+                                    </span> 
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="divboton" class="col-md-offset-7 col-md-2" style="padding-left: 32px;">
+                                    <input id="boton-agregar" class="btn btn-default" type="button" value="Agregar"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="table-responsive col-md-offset-2 col-md-7">
+                    <table id="table-descuento" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Periodo</th>
+                                <th>Modalidad</th>
+                                <th>Nivel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons id="botones">
+                <input id="boton-guardar" class="btn btn-default boton-guardar" type="button" onclick="save()" value="Guardar" />
+                <!--input id="boton-cancelar" class="btn btn-default" type="button" onclick="cancelar()" value="Cancelar"/-->
+                <apex:commandButton action="{!cancel}" value="Cancelar" id="btn-cancelar"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <style>
+        .col-md-offset-2x {
+            margin-left: 25.666667%;
+        }
+        
+        .col-md-1 {
+            width: 11.67%;
+        }
+        .danger{
+            color: #f0ad4e;
+        }
+        .requiredI {
+            position: relative;
+            height: 100%;
+        }
+        .requerido {
+        background-color: #f0ad4e;
+        position: absolute;
+        width: 4px;
+        top: 1px;
+        bottom: 1px;
+        }
+        
+        .font-size{
+            font-size: 91%;
+        }
+        .outputTextBackground{
+            background-color: #f8f8f8;
+    		border: none;
+        }
+        .danger-alert{
+        	color: #c00;
+        }
+        .col-md-offset-danger{
+        	margin-left: 18.33%;
+        } 
+        
+    </style>
+    <script type="text/javascript">
+    j$ = jQuery.noConflict();
+    var count = 0;
+    var data = [];
+    var dataP = [];
+    var dataMsP = []; //Modalidad sin periodo
+    var idtr=' ';
+    var elementosTabla = {};
+    var pmnDescuento = {} //Periodo, Modalidad y Nivel de un descuento existente
+    var todosPeriodos = {};
+    var todosModalidades = {};
+    var todosNiveles = {};
+    	/*BCA*/
+    var recuperadosBCA = {};
+    var periodosBCA = [];
+    var modalidadesBCA = [];
+    var nivelesBCA = [];
+    	/****/
+    var urlRecordType = '{!$CurrentPage.parameters.RecordType}';
+    var tipoDescuentoUrl ='{!$CurrentPage.parameters.td}';
+    function completaTablaIdExistente() {
+    	pmnDescuento['periodos'] = '{!Descuento__c.Periodos__c}'
+        pmnDescuento['modalidades'] = '{!Descuento__c.Modalidades__c}'
+        pmnDescuento['niveles'] = '{!Descuento__c.Niveles__c}' 
+        var periodosArray = pmnDescuento.periodos.split(',');
+        var modalidadesArray = pmnDescuento.modalidades.split(',');
+        var nivelesArray = pmnDescuento.niveles.split(',');
+        var keyElemento;
+        var i = 0;
+        if(Object.keys(recuperadosBCA).length>0){
+            for(key in recuperadosBCA){
+                keyElemento = periodosBCA[i]+'|'+modalidadesBCA[i]+'|'+nivelesBCA[i];
+                idtrInicial = recuperadosBCA[key];
+                elementosTabla[keyElemento] = true;
+                var nombreP = periodosBCA[i]=="Todos" ? "Todos" : todosPeriodos[periodosBCA[i]];
+                var nombreM = modalidadesBCA[i]=="Todos" ? "Todos" : todosModalidades[modalidadesBCA[i]];
+                var nombreN = nivelesBCA[i]=="Todos" ? "Todos" : todosNiveles[nivelesBCA[i]];
+                
+                nombreP = nombreP!=undefined && nombreP!='Seleccione una opción' ? nombreP : "";
+                nombreM = nombreM!=undefined && nombreP!='Seleccione una opción' ? nombreM : "";
+                nombreN = nombreN!=undefined && nombreP!='Seleccione una opción' ? nombreN : "";
+                j$('#table-descuento tbody').append(j$('<tr id="tr'+idtrInicial+'"><td>'+
+                                                       nombreP+'</td><td>'+
+                                                       nombreM+'</td><td>'+
+                                                       nombreN+'</td><td>'+
+                                                       '<button onclick="eliminarFila(\''+keyElemento+'\')" title="Eliminar" type="button" class="btn-danger close" aria-label="Close">'+
+                                                       '<span aria-hidden="true">&times;</span></button></td></tr>')); 
+                i++;
+            }
+        }
+    }
+
+    j$(document).ready(function() { 
+        getRecordsType();
+        var inputName = j$('#page\\:form\\:block\\:block-section\\:repeat\\:0\\:input');
+        var inputPorc = j$('#page\\:form\\:block\\:block-section\\:repeat\\:2\\:input');
+        var inputFIV = j$('#page\\:form\\:block\\:block-section\\:repeat\\:4\\:input');
+        var inputFFV = j$('#page\\:form\\:block\\:block-section\\:repeat\\:6\\:input');
+        inputPorc.on('keydown', removeAlert);
+        inputFIV.on('change', removeAlert);
+        inputFFV.on('change', removeAlert);
+        inputName.removeAttr('required');
+        inputPorc.removeAttr('required');
+        inputFIV.removeAttr('required');
+        inputFFV.removeAttr('required');
+        j$('#boton-agregar').on('click', function(){
+            if(j$('#divDanger')){
+                j$('#divDanger').remove();
+            }
+            removeAlert();
+            var content = j$('<div id="divDanger"><ul id="content-list"></ul></div>');           
+            j$('#table-descuento').before(content);
+            
+            var periodo = j$('#periodo option:selected').val();
+            var modalidad = j$('#modalidad option:selected').val();
+            var nivel = j$('#nivel option:selected').val();
+            var periodoText = j$('#periodo option:selected').text();
+            var modalidadText = j$('#modalidad option:selected').text();
+            var nivelText = j$('#nivel option:selected').text();
+            idtr = periodo+modalidad+nivel;
+            var idJTabla = ''+periodo+'|'+modalidad+'|'+nivel+'';
+            
+            //Verifica si existe en BCA y ha sido borrado de la tabla, se elimina del objeto eliminarBCA para no ser borrado en BCA
+            for(key in recuperadosBCA){
+                if((recuperadosBCA[key])==idtr){
+                    delete eliminarBCA[key];
+                }
+            }
+            
+            if(((!(modalidad=="" || modalidad==undefined ) || (nivel!="" && nivel!=undefined)) || (!(nivel=="" || nivel==undefined) && (modalidad!="" || modalidad!=undefined)))){
+                periodoText = periodo=="" ? "" : periodoText;
+                modalidadText = modalidad=="" ? "" : modalidadText;
+                nivelText = nivel=="" ? "" : nivelText;
+                if(elementosTabla[idJTabla] != true){
+                    elementosTabla[idJTabla] = true;
+                    j$('#table-descuento tbody').append(j$('<tr id="tr'+idtr+'"><td>'+
+                                                           periodoText+'</td><td>'+
+                                                           modalidadText+'</td><td>'+
+                                                           nivelText+'</td><td>'+
+                                                           '<button onclick="eliminarFila(\''+idJTabla+'\')" title="Eliminar" type="button" class="btn-danger close" aria-label="Close">'+
+                                                           '<span aria-hidden="true">&times;</span></button></td></tr>')); 
+                }
+                else{
+                    j$('#divDanger').addClass('message-box message-box-danger danger');
+                    j$('#content-list').append(j$('<li>El elemento seleccionado ya existe</li>')); 
+                }
+            }
+            else{
+                j$('#divDanger').addClass('message-box message-box-danger danger');
+                if(periodo!="")
+                    j$('#content-list').append(j$('<li>Selecciona una modalidad</li>')); 
+                else if(periodo =="" && (modalidad=="" || nivel==""))
+                    j$('#content-list').append(j$('<li>Selecciona una modalidad o un nivel</li>')); 
+            }
+            
+        });
+        
+        j$('#periodo').on('change',function(){
+            if(j$('#periodo option:selected').val()=='Todos'){
+                var obj = {};
+                var arrays = [];
+                var objN = {};
+                var arraysN = [];
+                dataMsP.forEach(function(a,i){
+                    if(!obj[a.Id]){
+                        if(a.TipoCatalogo__c == 'Modalidad'){
+                            arrays.push({Id:a.Id,Name:a.Name});
+                            obj[a.Id] = true;
+                        }
+                        else if(a.TipoCatalogo__c == 'Nivel'){
+                            arraysN.push({Id:a.Id,Name:a.Name});
+                            objN[a.Id] = true;
+                        }
+                    }
+                });
+                if(arrays.length > 0){
+                    arrays.unshift({Id:'Todos',Name:'Todos'});
+                }
+                if(arraysN.length > 0){
+                    arraysN.unshift({Id:'Todos',Name:'Todos'});
+                }
+                j$('#nivel').empty();
+                j$('#modalidad').empty();
+                arrays.forEach(function(a, i){
+                    j$('#modalidad').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                });
+                arraysN.forEach(function(a, i){
+                    j$('#nivel').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                });
+                j$('#nivel').trigger('change');
+            }
+            else{
+                var query = 'SELECT  Modalidad__c, Modalidad__r.Name, Nivel__c, Nivel__r.Name FROM OfertaEducativa__c WHERE Periodo__c = \''+ j$('#periodo option:selected').val() +'\'';
+                sforce.connection.query(query, {
+                    onSuccess : function(res) {
+                        if(res.size === '1') {
+                            j$('#modalidad').append(j$('<option value="'+res.records.Id+'">'+res.records.Name+'</option>')); 
+                        } else if(res.records && res.records.length > 0) {
+                            data = res.records;
+                            var obj = {};
+                            var arrays = [];
+                            data.forEach(function(a, i){
+                                if(!obj[a.Modalidad__c]){
+                                    arrays.push({Id:a.Modalidad__c,Name:a.Modalidad__r.Name});
+                                    obj[a.Modalidad__c] = true;
+                                }
+                            });
+                            if(arrays.length > 0){
+                                arrays.unshift({Id:'Todos',Name:'Todos'});
+                            }
+                            j$('#nivel').empty();
+                            j$('#modalidad').empty();
+                            arrays.forEach(function(a, i){
+                                j$('#modalidad').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                            });
+                        }
+                    }, 
+                    onFailure : function(res) {
+                        console.log(res);
+                    }
+                });
+            }
+        });
+        
+        j$('#modalidad').on('change',function(){
+            if(!(j$('#periodo option:selected').val() == "Todos")){
+                var IdM = j$('#modalidad option:selected').val();
+                var obj = {};
+                var arrays = [];
+                data.forEach(function(a,i){
+                    if(!obj[a.Nivel__c] && a.Modalidad__c == IdM){
+                        arrays.push({Id:a.Nivel__c,Name:a.Nivel__r.Name,Modalidad__c:a.Modalidad__c});
+                        obj[a.Nivel__c] = true;
+                    }
+                    else if(!obj[a.Nivel__c] && IdM == 'Todos'){
+                    	arrays.push({Id:a.Nivel__c,Name:a.Nivel__r.Name});
+                        obj[a.Nivel__c] = true; 
+                    } 
+                });
+                if(arrays.length > 0){
+                    arrays.unshift({Id:'Todos',Name:'Todos'});
+                }
+                j$('#nivel').empty();
+                arrays.forEach(function(a, i){
+                    j$('#nivel').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                });
+            }
+        });
+        
+        /*********Periodo inicial y modelidad si seleecionar nivel*/
+        var query = 'SELECT Id, Name FROM Periodo__c WHERE Autorizado__c = true';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {
+                    dataP = res.records;
+                    j$('#periodo').append(j$('<option value="Todos">Todos</option>')); 
+                    j$('#periodo').append(j$('<option value="'+res.records.Id+'">'+res.records.Name+'</option>')); 
+                    todosPeriodos[res.records.Id] = res.records.Name;
+                } else if(res.records && res.records.length > 0) {
+                    dataP = res.records;
+                    res.records.unshift({Id:'Todos',Name:'Todos'});
+                    res.records.forEach(function(a, i){
+                        todosPeriodos[a.Id] = a.Name;
+                        j$('#periodo').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>')); 
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }        
+        });
+        
+        var query = 'SELECT id, Name, TipoCatalogo__c FROM Catalogo__c WHERE TipoCatalogo__c = \'Modalidad\' OR TipoCatalogo__c = \'Nivel\'';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {
+                    dataPeriodo = res.records;
+                    j$('#nivel').empty();
+                    j$('#nivel').append(j$('<option value="Todos">Todos</option>'));
+                    j$('#modalidad').empty();
+                    j$('#modalidad').append(j$('<option value="Todos">Todos</option>')); 
+                    j$('#modalidad').append(j$('<option value="'+res.records.Id+'">'+res.records.Name+'</option>')); 
+                } else if(res.records && res.records.length > 0) {
+                    dataMsP = res.records;
+                    var obj = {};
+                    var arrays = [];
+                    var objN = {};
+                    var arraysN = [];
+                    dataMsP.forEach(function(a, i){
+                        if(!obj[a.Id]){
+                            if(a.TipoCatalogo__c == 'Modalidad'){
+                                arrays.push({Id:a.Id,Name:a.Name});
+                                obj[a.Id] = true;
+                                todosModalidades[a.Id] = a.Name;
+                            }
+                            else if(a.TipoCatalogo__c == 'Nivel'){
+                                arraysN.push({Id:a.Id,Name:a.Name});
+                                objN[a.Id] = true;
+                                todosNiveles[a.Id] = a.Name;
+                            }
+                        }
+                    });
+                    if(arrays.length > 0){
+                        arrays.unshift({Id:'Todos',Name:'Todos'});
+                    }
+                    if(arraysN.length > 0){
+                        arraysN.unshift({Id:'Todos',Name:'Todos'});
+                    }
+                    j$('#nivel').empty();
+                    j$('#modalidad').empty();
+                    arrays.forEach(function(a, i){
+                        j$('#modalidad').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                    });
+                    arraysN.forEach(function(a, i){
+                        j$('#nivel').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }        
+        });  
+        /*********************
+        //Plantel y Programa 02/09/2016
+        var query = 'SELECT  Plantel__c, Plantel__r.Name, Programa__c, Programa__r.Name FROM OfertaEducativa__c WHERE Periodo__r.Autorizado__c = true';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {
+                    dataPeriodo = res.records;
+                    j$('#plantel').empty();
+                    j$('#plantel').append(j$('<option value="Todos">Todos</option>'));
+                    j$('#plantel').append(j$('<option value="'+res.records.Id+'">'+res.records.Name+'</option>')); 
+                    j$('#programa').empty();
+                    j$('#programa').append(j$('<option value="Todos">Todos</option>')); 
+                    j$('#programa').append(j$('<option value="'+res.records.Id+'">'+res.records.Name+'</option>')); 
+                } else if(res.records && res.records.length > 0) {
+                    dataPlsP = res.records;
+                    var obj = {};
+                    var arrays = [];
+                    var objN = {};
+                    var arraysN = [];
+                    dataPrsP.forEach(function(a, i){
+                        if(!obj[a.Id]){
+                            if(a.TipoCatalogo__c == 'Modalidad'){
+                                arrays.push({Id:a.Id,Name:a.Name});
+                                obj[a.Id] = true;
+                                todosPlanteles[a.Id] = a.Name;
+                            }
+                            else if(a.TipoCatalogo__c == 'Nivel'){
+                                arraysN.push({Id:a.Id,Name:a.Name});
+                                objN[a.Id] = true;
+                                todosProgramas[a.Id] = a.Name;
+                            }
+                        }
+                    });
+                    if(arrays.length > 0){
+                        arrays.unshift({Id:'Todos',Name:'Todos'});
+                    }
+                    if(arraysN.length > 0){
+                        arraysN.unshift({Id:'Todos',Name:'Todos'});
+                    }
+                    j$('#nivel').empty();
+                    j$('#modalidad').empty();
+                    arrays.forEach(function(a, i){
+                        j$('#modalidad').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                    });
+                    arraysN.forEach(function(a, i){
+                        j$('#nivel').append(j$('<option value="'+a.Id+'">'+a.Name+'</option>'));
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }        
+        });  
+        
+        *********************/ 
+        /*Get Records BCA*/
+        if(!(id=='')){
+            query = 'SELECT Id, Periodo__c, Periodo__r.Name, Modalidad__c, Modalidad__r.Name, Nivel__c, Nivel__r.Name FROM BecaConvenioAsignacion__c WHERE Descuento__c =\''+ id + '\'';            
+            sforce.connection.query(query, {
+                onSuccess : function(res) {
+                    if(res.size === '1') {
+                        periodosBCA[0] = res.records.Periodo__c == null ? 'Todos' : res.records.Periodo__c;
+                        modalidadesBCA[0] = res.records.Modalidad__c == null ? 'Todos' : res.records.Modalidad__c;
+                        nivelesBCA[0] = res.records.Nivel__c == null ? 'Todos' : res.records.Nivel__c;
+                        recuperadosBCA[res.records.Id] = periodosBCA[0]+''+modalidadesBCA[0]+''+nivelesBCA[0];
+                    } else if(res.records && res.records.length > 0) {
+                        res.records.forEach(function(a, i){
+                            periodosBCA[i] = a.Periodo__c == null ? 'Todos' : a.Periodo__c;
+                            modalidadesBCA[i] = a.Modalidad__c == null ? 'Todos' : a.Modalidad__c;
+                            nivelesBCA[i] = a.Nivel__c == null ? 'Todos' : a.Nivel__c;
+                            recuperadosBCA[a.Id] = periodosBCA[i]+''+modalidadesBCA[i]+''+nivelesBCA[i];
+                            i++;
+                        });
+                    }
+                    count++;
+                }, 
+                onFailure : function(res) {
+                    console.log(res);
+                }
+            });
+        }
+    });
+    
+    var eliminarBCA = {};
+    function eliminarFila(elem){
+        el = elem;
+        var id = '';
+        var idel;
+        delete elementosTabla[el];
+        idel = el.split("|");
+        idel.forEach(function(b1){
+            id += b1; 
+        });
+        j$('#tr'+id+'').remove();
+        for(key in recuperadosBCA){
+            if((recuperadosBCA[key])==(idel[0]+idel[1]+idel[2])){
+                eliminarBCA[key]=true;
+            }
+        }
+         
+    }
+    /*****************************/
+    var myVar;
+    function myFunction() {
+        myVar = setInterval(loadContry, 500);
+    }
+    myFunction();
+    function loadContry() {
+        if(count>=3){
+            porTipoDescuento(); 
+            completaTablaIdExistente();
+            clearInterval(myVar);
+        }
+    }
+    /*****************************/
+    function validar(){
+        var correct = true;
+        var err = '';
+        j$('.danger-alert').remove();
+        j$('.boton-guardar').prop('disabled', true);
+        var porcentajeD = j$('#page\\:form\\:block\\:block-section\\:repeat\\:2\\:input'); 
+        var fechaIV = j$('#page\\:form\\:block\\:block-section\\:repeat\\:4\\:input');
+        var fechaFV = j$('#page\\:form\\:block\\:block-section\\:repeat\\:6\\:input');
+        if(porcentajeD.val()==''){
+            err = 'El porcentaje descuento es obligatorio';  
+            console.log(err);
+            correct = false;
+        }
+        else if(fechaIV.val()==''){
+        	err = 'La fecha de inicio de vigencia es obligatoria';
+            correct = false;
+        }
+        else if(fechaFV.val()==''){
+        	err = 'La fecha de fin de vigencia es obligatoria';
+            correct = false;
+        }
+        else if(Object.keys(elementosTabla).length==0 && '{!Descuento__c.TipoDescuento__c}' != 'Promoción Solicitada'){
+            err = 'Debe existir al menos un elemento que aplique al descuento';
+        	correct = false;
+        }
+        
+        if(correct==false){
+        	j$('#page\\:form\\:block\\:block-section').append('<div id=\'divAlert\' class=\'col-md-offset-danger danger-alert\'><p><strong>Error: </strong>'+err+'</p></div>');
+        }
+    	return correct;
+    }
+    /*****************************/
+    function getRecordsType(){
+        query = 'SELECT Id, Name FROM RecordType WHERE SObjectType =\'Descuento__c\'';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {
+                    tipoRegistro[res.records.Name] = res.records.Id;
+                } else if(res.records && res.records.length > 0) {
+                    res.records.forEach(function(a, i){
+                        registroNombre[a.Name]
+                        tipoRegistro[registroNombre[a.Name]] = a.Id;
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }
+        });
+    }
+    /*****************************/
+    var oportunidades={};
+    var tipoRegistro={};
+    var registroNombre={'Promoción Cero':'Promoción 0',
+                       'Promoción Solicitada':'Promoción Solicitada',
+                       'Descuento Individual Vigente':'Descuento individual vigente'};
+    function porTipoDescuento(){
+        var inputName = j$('#page\\:form\\:block\\:block-section\\:repeat\\:0\\:input');
+        var inputTipoDescuento = j$('#page\\:form\\:block\\:block-section\\:repeat\\:3\\:input');
+        var inputPorcentajeD = j$('#page\\:form\\:block\\:block-section\\:repeat\\:2\\:input');
+        tipoDescuentoUrl = tipoDescuentoUrl=='descuentoindividual'?'Descuento individual vigente':tipoDescuentoUrl;
+        tipoDescuentoUrl = tipoDescuentoUrl=='promocion0'?'Promoción 0':tipoDescuentoUrl;
+        tipoDescuentoUrl = tipoDescuentoUrl=='promocionsolicitada'?'Promoción Solicitada':tipoDescuentoUrl;
+        
+        var tipoDescuento = '{!Descuento__c.TipoDescuento__c}';
+        tipoDescuento = tipoDescuento=="" ? tipoDescuentoUrl : tipoDescuento;
+		
+        if(urlRecordType!=''){
+            var tr;
+            var tipoR;
+            for (tr in tipoRegistro) {
+                tipoR = tipoRegistro[tr].substring(0,urlRecordType.length);
+                if(urlRecordType==tipoR){
+                    tipoDescuento = tr;
+                    inputTipoDescuento.append(j$('<option value="'+tr+'">'+tr+'</option>'));
+                    inputTipoDescuento.val(tr);
+                    inputTipoDescuento.prop('disabled', true);
+                }
+            }
+        }
+
+    	if(tipoDescuento == 'Promoción 0'){
+        	j$('#page\\:form\\:block\\:block-oportunidad').hide();
+            inputName.val('P0');
+            inputName.prop('disabled', true);
+            inputName.addClass('outputTextBackground');
+            inputPorcentajeD.val('100');
+            inputPorcentajeD.prop('disabled', true);
+            inputPorcentajeD.addClass('outputTextBackground');
+            inputTipoDescuento.append(j$('<option value="Promoción 0">Promoción 0</option>'));
+            inputTipoDescuento.val('Promoción 0');
+            inputTipoDescuento.prop('disabled', true);
+            // j$('#divPlantel').removeClass('hidden');
+            //  j$('#divPrograma').removeClass('hidden');
+        }
+        else{
+            if(tipoDescuento == 'Promoción Solicitada'){
+                j$('#page\\:form\\:block\\:blockTableAplica').hide();
+                inputTipoDescuento.append(j$('<option value="Promoción Solicitada">Promoción Solicitada</option>'));
+                inputTipoDescuento.val('Promoción Solicitada');
+                inputTipoDescuento.prop('disabled', true);
+            }
+            else if(tipoDescuento == 'Descuento individual vigente'){
+                j$('#page\\:form\\:block\\:block-oportunidad').hide();
+                inputName.val('DI');
+                inputName.prop('disabled', true);
+                inputName.addClass('outputTextBackground');
+                inputTipoDescuento.append(j$('<option value="Descuento individual vigente">Descuento individual vigente</option>'));
+                inputTipoDescuento.val('Descuento individual vigente');
+                inputTipoDescuento.prop('disabled', true);
+            }
+            var query = 'SELECT Id, Name FROM Opportunity';
+            sforce.connection.query(query, {
+                onSuccess : function(res) {
+                    if(res.size === '1') {
+                        oportunidades[res.records.Name] = res.records.Id;
+                    } else if(res.records && res.records.length > 0) {
+                        res.records.forEach(function(a, i){
+                            oportunidades[a.Name] = a.Id;
+                        });
+                    }
+                }, 
+                onFailure : function(res) {
+                    console.log(res);
+                }        
+            });
+        }
+    }
+    /*****************************/
+    function cancelar(){
+    	window.location = 'https://cs2.salesforce.com/a08/o';
+    }
+    /*****************************/
+    function removeAlert(){
+    	j$('.danger-alert').remove();
+    }
+    /*****************************/
+    var idTypeRecordDescuento;
+    query = 'SELECT Id, Name FROM RecordType WHERE Name =\'Descuento\'';
+    sforce.connection.query(query, {
+        onSuccess : function(res) {
+            if(res.size === '1') {
+                idTypeRecordDescuento = res.records.Id;
+            } else if(res.records && res.records.length > 0) {
+                res.records.forEach(function(a, i){
+                    idTypeRecordDescuento = a.Id;
+                });
+            }
+            count++;
+        }, 
+        onFailure : function(res) {
+            console.log(res);
+        }
+    });
+    /*****************************/
+    /*Verifica si el elemento existe en BCA*/
+    function exiteBCA(elemento){
+        for(keys in recuperadosBCA){
+            if(recuperadosBCA[keys]==elemento){
+            	return true;
+            }
+        }
+        return false;
+    }
+    /**************************/
+    function save(){
+        var variable = validar();
+        console.log('Error: *******'+variable);
+        if(variable){
+            guardar();
+        }else{
+            j$('.boton-guardar').prop('disabled', false);
+        }
+    }
+    /*****************************/
+    function guardar(){
+        
+        var idsPeriodo = '';
+        var idsModalidad = '';
+        var idsNivel = '';
+        var idsPeriodoBCA = [];
+        var idsModalidadBCA = [];
+        var idsNivelBCA = [];
+        var temp, ids;
+        var i=0;
+        var urlSuccess = "https://cs2.salesforce.com/a08/o";
+        var sizeElementosTabla = Object.keys(elementosTabla).length;
+        if(sizeElementosTabla > 0){
+            for(key in elementosTabla){
+                i++;
+                temp = key.split("|");
+                if(!(exiteBCA(temp[0]+temp[1]+temp[2]))){
+                    idsPeriodoBCA.push(temp[0]);
+                    idsModalidadBCA.push(temp[1]);
+                    idsNivelBCA.push(temp[2]);
+                }
+            }           
+        }
+        
+        var tipoDescuento = j$('#page\\:form\\:block\\:block-section\\:repeat\\:3\\:input').val();
+        var nombreP0Fecha = '';
+        //Fecha Inicio
+        var date = j$('#page\\:form\\:block\\:block-section\\:repeat\\:4\\:input').val();
+        var dateS = date.split('/');
+        var dateStart = new Date(Date.parse(dateS[1] +' '+ dateS[0]+', '+dateS[2])); 
+        nombreP0Fecha += ' '+dateS[0]+'/'+ dateS[1]+'-';
+        //Fecha Fin
+        date = j$('#page\\:form\\:block\\:block-section\\:repeat\\:6\\:input').val();
+        dateS = date.split('/');
+        var dateEnd = new Date(Date.parse(dateS[1] +' '+ dateS[0]+', '+dateS[2]))
+        nombreP0Fecha += dateS[0]+'/'+ dateS[1];  
+        
+        if(dateEnd.getTime() < dateStart.getTime()){   
+            j$('.danger-alert').remove();
+            j$('#page\\:form\\:block\\:block-section').append('<div id=\'divAlert\' class=\'col-md-offset-danger danger-alert\'><p>Error: La fecha fin debe ser superior a la fecha inicial</p></div>');            
+        }else{
+            var descuento = new sforce.SObject("Descuento__c");
+            var name = j$('#page\\:form\\:block\\:block-section\\:repeat\\:0\\:input').val()
+            if(tipoDescuento == 'Promoción 0' || tipoDescuento == 'Descuento individual vigente'){
+                name += nombreP0Fecha;
+            }
+            descuento.Name = name;
+            descuento.TipoDescuento__c = j$('#page\\:form\\:block\\:block-section\\:repeat\\:3\\:input option:selected').val();
+            descuento.PorcentajeDescuento__c = j$('#page\\:form\\:block\\:block-section\\:repeat\\:2\\:input').val();
+            if(descuento.PorcentajeDescuento__c==""){
+                descuento.PorcentajeDescuento__c = null;
+            }
+            
+            descuento.RecordTypeId = tipoRegistro[tipoDescuento];
+            if(tipoDescuento != 'Promoción 0'){
+                console.log('Guardando descuento');
+            }
+            descuento.Estatus__c = j$('#page\\:form\\:block\\:block-section\\:repeat\\:1\\:input option:selected').val();
+            descuento.Comentarios__c = j$('#page\\:form\\:block\\:block-section\\:repeat\\:5\\:input').val();
+            descuento.FechaInicioVigencia__c = dateStart;
+            descuento.FechaFinVigencia__c = dateEnd;
+            console.log(descuento);
+            var errores = [];
+            
+            if(id!=""){
+                descuento.Id = id;
+                result = sforce.connection.update([descuento]);
+                if (result[0].getBoolean("success")) {
+                    console.log("descuento actualizado con id: " + result[0].id);
+                    var periodoG = null;
+                    var modalidadG = null;
+                    var nivelG = null;
+                    for(i=0; i<idsPeriodoBCA.length; i++){
+                        var descuentoBCA = new sforce.SObject("BecaConvenioAsignacion__c");
+                        descuentoBCA.Descuento__c = result[0].id;
+                        descuentoBCA. RecordTypeId = idTypeRecordDescuento;
+                        periodoG = idsPeriodoBCA[i] == 'Todos' ? null : idsPeriodoBCA[i];
+                        modalidadG = idsModalidadBCA[i] == 'Todos' ? null : idsModalidadBCA[i];
+                        nivelG = idsNivelBCA[i] == 'Todos' ? null : idsNivelBCA[i];
+                        if(periodoG==null){
+                        	descuentoBCA.PeriodosTodos__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Periodo__c = periodoG;
+                        }
+                        if(modalidadG==null){
+                        	descuentoBCA.ModalidadTodas__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Modalidad__c = modalidadG;
+                        }
+                        if(nivelG==null){
+                        	descuentoBCA.NivelTodos__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Nivel__c = nivelG;
+                        }
+                        console.log(descuentoBCA);
+                        resultBCA = sforce.connection.create([descuentoBCA]);
+                        if (resultBCA[0].getBoolean("success")) {
+                            console.log("BCA creado con id: " + resultBCA[0].id);
+                        } else {
+                            console.log("fallo al crear BCA " + resultBCA[0]);
+                            j$('#page\\:form\\:block\\:block-section').append('<div class=\'col-md-offset-danger danger-alert\'><p><strong>Error: </strong>'+resultBCA[0]+'</p></div>');
+                            j$('.boton-guardar').prop('disabled', false);
+                            errores.push('fallo al crear BCA ' + resultBCA[0]);
+                        }
+                    }
+                    if(Object.keys(eliminarBCA).length>0){
+                    	var descuentoBCA = new sforce.SObject("BecaConvenioAsignacion__c");
+                        var idsToDel = Object.keys(eliminarBCA);
+                        var delResult = sforce.connection.deleteIds(idsToDel);
+                        if (delResult[0].getBoolean("success")) {
+                            console.log("BCA borrado con id " + delResult[0].id + " deleted");
+                        } else {
+                            console.log("Fallo al borrar BCA " + delResult[0]);
+                            errores.push('fallo al borrar BCA ' + delResult[0]);
+                        }
+                    }
+                } else {
+                    console.log("fallo al actualizar descuento " + result[0]);
+                    errores.push('fallo al actualizar descuento' + result[0]);
+                    var errorTrigger;
+                    if(result && result.length>0 && result[0] && result[0].errors && result[0].errors.message){
+                    	errorTrigger = result[0].errors.message;
+                    }
+                    j$('#page\\:form\\:block\\:block-section').append('<div class=\'col-md-offset-danger danger-alert\'><p><strong>Error: </strong>'+errorTrigger+'</p></div>');
+                    j$('.boton-guardar').prop('disabled', false);
+                }
+                
+                
+            }else{
+                result = sforce.connection.create([descuento]);
+                if (result[0].getBoolean("success")) {
+                    console.log("Nuevo descuento creado con id " + result[0].id);
+                    var periodoG = null;
+                    var modalidadG = null;
+                    var nivelG = null;
+                    for(i=0; i<idsPeriodoBCA.length; i++){
+                        var descuentoBCA = new sforce.SObject("BecaConvenioAsignacion__c");
+                        descuentoBCA.Descuento__c = result[0].id;
+                        descuentoBCA. RecordTypeId = idTypeRecordDescuento;
+                        periodoG = idsPeriodoBCA[i] == 'Todos' ? null : idsPeriodoBCA[i];
+                        modalidadG = idsModalidadBCA[i] == 'Todos' ? null : idsModalidadBCA[i];
+                        nivelG = idsNivelBCA[i] == 'Todos' ? null : idsNivelBCA[i];
+                        if(periodoG==null){
+                        	descuentoBCA.PeriodosTodos__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Periodo__c = periodoG;
+                        }
+                        if(modalidadG==null){
+                        	descuentoBCA.ModalidadTodas__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Modalidad__c = modalidadG;
+                        }
+                        if(nivelG==null){
+                        	descuentoBCA.NivelTodos__c = true;
+                        }
+                        else{
+                        	descuentoBCA.Nivel__c = nivelG;
+                        }
+                        console.log(descuentoBCA);
+                        resultBCA = sforce.connection.create([descuentoBCA]);
+                        if (resultBCA[0].getBoolean("success")) {
+                            console.log("BCA creado con id: " + resultBCA[0].id);
+                        } else {
+                            console.log("fallo al crear BCA " + resultBCA[0]);
+                            errores.push('fallo al crear BCA ' + resultBCA[0]);
+                            j$('#page\\:form\\:block\\:block-section').append('<div class=\'col-md-offset-danger danger-alert\'><p><strong>Error: </strong>'+resultBCA[0]+'</p></div>');
+                            j$('.boton-guardar').prop('disabled', false);
+                        }
+                    }
+                } else {
+                    console.log("fallo al crear descuento " + result[0]);
+                    errores.push('fallo al crear descuento ' + result[0]);
+                    var errorTrigger;
+                    if(result && result.length>0 && result[0] && result[0].errors && result[0].errors.message){
+                    	errorTrigger = result[0].errors.message;
+                    }
+                    j$('#page\\:form\\:block\\:block-section').append('<div class=\'col-md-offset-danger danger-alert\'><p><strong>Error: </strong>'+errorTrigger+'</p></div>');
+                    j$('.boton-guardar').prop('disabled', false);
+                }
+            }
+            if(errores.length==0){
+            	window.location = urlSuccess;
+            }
+        }
+        
+    }
+    
+    
+    </script>
+</apex:page>

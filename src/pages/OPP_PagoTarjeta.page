@@ -1,0 +1,334 @@
+<apex:page standardController="Opportunity" extensions="OPP_PagoTarjetaController" applyBodyTag="false" sidebar="false" standardStylesheets="false" docType="html-5.0">
+    <head>    
+        
+        <!-- jQuery -->
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        
+        <apex:stylesheet value="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JQuery,'bootstrap-duallistbox.min.css')}" />
+        <style type="text/css">
+            .form-inline-width{
+            width: 25%;
+            }
+            .divformGroup{
+            width:23.6%;
+            }
+            .divformGroupF{
+            width:49%;
+            }
+            #overlay {
+            background-color: rgba(222,222,222, 0.8);
+            z-index: 998;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: middle;
+            }
+        </style>
+        <script type="text/javascript">
+        var formulario;
+        j$ = jQuery.noConflict();
+        j$(document).ready(function() {
+            if({!pagoRealizado}){
+            	j$('.spanRegresar').text('');
+                j$(".spanRegresar").append('<span class="fa fa-reply spanRegresar"></span> Regresar')
+            }
+            j$("[id*='formaPago']").closest("[id*='pnumero']").on('keypress',function(){
+                if(j$("[id*='formaPago']").closest("[id*='pnumero']").val().length==3){
+                    j$("[id*='formaPago']").closest("[id*='snumero']").focus();
+                    j$("[id*='formaPago']").closest("[id*='snumero']").select();
+                }
+            });
+            j$("[id*='formaPago']").closest("[id*='snumero']").on('keypress',function(){
+                if(j$("[id*='formaPago']").closest("[id*='snumero']").val().length==3){
+                    j$("[id*='formaPago']").closest("[id*='tnumero']").focus();
+                    j$("[id*='formaPago']").closest("[id*='tnumero']").select();
+                }
+            });
+            j$("[id*='formaPago']").closest("[id*='tnumero']").on('keypress',function(){
+                if(j$("[id*='formaPago']").closest("[id*='tnumero']").val().length==3){
+                    j$("[id*='formaPago']").closest("[id*='cnumero']").focus();
+                    j$("[id*='formaPago']").closest("[id*='cnumero']").select();
+                }
+            });
+            
+            redirigir = function (){
+                if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+                    if('{!opp.Id}'===''){
+                        sforce.one.navigateToSObject("006/o");
+                    }else{
+                        sforce.one.navigateToSObject("{!opp.Id}");
+                    }
+                }else{
+                    if('{!opp.Id}'===''){
+                        var dir="/"+"006/o";
+                    }else{
+                        var dir="/"+"{!opp.Id}";
+                    }
+                    
+                    window.location.href=dir;
+                } 
+            }
+        });
+
+        function validar(){
+            formulario = j$("[id*='formaPago']");
+            j$('#overlay').removeClass('hidden'); 
+            j$('#botonEnviar').prop('disabled', true);
+            if(j$('#divAlert')){
+                j$('#divAlert').remove();
+            }
+            var numeroT = formulario.closest("[id*='pnumero']").val() + formulario.closest("[id*='snumero']").val() + formulario.closest("[id*='tnumero']").val() + formulario.closest("[id*='cnumero']").val();
+            console.log(numeroT);
+            if (formulario.closest("[id*='concepto']") == null || formulario.closest("[id*='concepto']").text() == '') {
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Concepto no valido</div>')); 
+                //alert("Concepto no valido");
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (formulario.closest("[id*='cantidad']") == null || formulario.closest("[id*='cantidad']").text() == '0' || formulario.closest("[id*='cantidad']").text() == '$' || formulario.closest("[id*='cantidad']").text() == '' || formulario.closest("[id*='cantidad']").text() == '$0' || formulario.closest("[id*='cantidad']").text() == '$0.0') {
+                //alert("Cantidad no valida");
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Cantidad no valida</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (formulario.closest("[id*='pnumero']").val() == '') {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='pnumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Número inválido, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (formulario.closest("[id*='snumero']").val() == '') {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='snumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Número inválido, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (formulario.closest("[id*='tnumero']").val() == '') {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='tnumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Número inválido, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (formulario.closest("[id*='cnumero']").val() == '') {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='cnumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Número inválido, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (numeroTarjetaValido(numeroT) == 1) {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='cnumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Número inválido, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }
+            else if (validatarjeta(numeroT, formulario.closest("[id*='tipoTarjeta']").val())) {
+                //alert("Número Inválido, Verifique por favor ");
+                formulario.closest("[id*='pnumero']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Tipo de tarjeta no coincide con número de tarjeta, verifique por favor</div>')); 
+                return false;
+            }
+            else if (formulario.closest("[id*='codigoT']").val().length != 3) {
+                //alert("Se requiere código, Verifique por favor ");
+                formulario.closest("[id*='codigoT']").focus();
+                j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>Se requiere código, verifique por favor</div>')); 
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+                return false;
+            }else {
+                var f = new Date();
+                var mes = f.getMonth() + 1;
+                if (mes <= 9) {
+                    mes = "0" + mes;
+                }  
+                var year = "" + f.getFullYear() + mes + ";"
+                var ano2 = (parseInt(formulario.closest("[id*='anyo']").val())) + "" + formulario.closest("[id*='mes']").val();
+                if (parseInt(year) <= parseInt(ano2)) {
+                    formulario.closest("[id*='btnGuardar1']").disabled = "disabled";
+                    formulario.closest("[id*='btnGuardar2']").disabled = "disabled";
+                }
+                else {
+                    //alert("La fecha de expiración de la tarjeta ha vencido");
+                    formulario.closest("[id*='mes']").focus();
+                    j$("[id*='mensajes']").append(j$('<div id="divAlert" class="alert alert-danger"><button class="close" data-dismiss="alert" type="button">×</button>La fecha de expiración de la tarjeta ha vencido</div>')); 
+                    j$('#overlay').addClass('hidden');
+                	j$('#botonEnviar').prop('disabled', false);
+                    return false;
+                } 
+            }
+            return true;
+        }
+               
+        function validatarjeta(numero, num) {
+            var cadenaNumero = String(numero);
+            var arregloPosiciones = Array(16);
+            for (i = 0; i < 16; i++) {
+                arregloPosiciones[i] = parseInt(cadenaNumero.substring(i, i + 1));
+            }
+            if (arregloPosiciones[0] == num)
+                return false;
+            else
+                return true;
+        }
+        function numeroTarjetaValido(numero) {
+            var cadenaNumero = String(numero);
+            var bandera = 0;
+            var contador = 0;
+            var arregloPosiciones = Array(16);
+            
+            if (cadenaNumero.length != 16) {
+                bandera = 1;
+            }
+            else { //inicializar arreglo con el nÃºmero de la tarjeta
+                for (i = 0; i < 16; i++){
+                    arregloPosiciones[i] = parseInt(cadenaNumero.substring(i, i + 1));
+                }
+                for (i = 0; i < 16; i += 2){
+                    arregloPosiciones[i] = arregloPosiciones[i] * 2;
+                    if (arregloPosiciones[i] > 9) {
+                        arregloPosiciones[i] -= 9;
+                    }
+                }
+                for (i = 0; i < 16; i++) {
+                    contador += arregloPosiciones[i];
+                }
+                if (((contador % 10) == 0) && (contador <= 150)) {
+                    bandera = 0;
+                }
+                else {
+                    bandera = 1;
+                }
+            }
+            return bandera;
+        }    
+        
+        </script>
+    </head>    
+
+    <body>
+        <div class="container" id="contenedorPrincipal"> 
+            <div id="overlay" class="hidden">
+                <div id="cargando-datos" style="left:48%; top:45%; z-index: 999; position: absolute;">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <br/><br/><span>Realizando pago...</span>
+                </div>
+            </div>
+            <apex:form id="formaPago" onsubmit="return validar()">
+                <div class="row">
+                    <div class="col-md-12" id="formaDiv">
+                        <section class="section">
+                            <c:PageMessages id="mensajes" closableErrors="true"/>
+                            <div class="text-center row">
+                                <apex:commandButton id="btnGuardar1" rendered="{!!pagoRealizado}" value="Pagar" status="statusGuardar" styleClass="btn btn-success fa-input" style="margin:1em;font-family: FontAwesome, Arial,Helvetica,sans-serif;"> </apex:commandButton>
+                                <!--apex:actionStatus onstart="onstart('contenedorPrincipal');"  onstop="onstop('contenedorPrincipal');" id="statusGuardar" /--> 
+                                <!--apex:commandButton id="btnCancelar1"  value="Cancelar" styleClass="btn btn-default fa-input" style="margin-left:auto;margin-right:2%;margin:1em;" action="{!cancelPayment}" immediate="true" > </apex:commandButton-->
+                                <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" onclick="redirigir();" class="btn btn-default spanRegresar">
+	                                <span class="fa fa-reply spanRegresar"></span>
+	                                Cancelar
+	                            </button>
+                            </div>
+                            <c:Panel title="Información del Plantel" idCollapse="panelOpp"  id="infoOpp" idParent="panelOpps" expanded="true">
+                                <div class="row">
+                                    <c:PanelCell label="Nombre">
+                                        <apex:outputField id="nombre" styleClass="form-control" value="{!opp.Name}" />
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="Folio" >
+                                        <apex:outputField id="folio" styleClass="form-control" value="{!opp.Folio__c}" />
+                                    </c:PanelCell>
+                                    <c:PanelCell label="Concepto">
+                                        <apex:outputText id="concepto" value="{!concepto}"></apex:outputText>
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="Descuento" >
+                                        <apex:outputField id="descuento" styleClass="form-control" value="{!opp.DescuentoParaFicha__c} "></apex:outputField>
+                                    </c:PanelCell>
+                                    <c:PanelCell label="Importe">
+                                        <apex:outputField id="importeSinD" styleClass="form-control" value="{!opp.ImportePagarSinDescuento__c}"></apex:outputField>
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="Total a Pagar" offset="6">
+                                        <apex:inputField id="cantidad" styleClass="form-control" value="{!opp.ImportePagarConDescuento__c}" />
+                                        <!--apex:inputField id="cantidad" styleClass="form-control" value="{!opp.ImportePagarConDescuento__c}"/> </apex:outputField-->
+                                    </c:PanelCell>
+                                </div>
+                            </c:Panel>
+                            <c:Panel title="Detalles del Pago" idCollapse="panelPago"  id="infoPago" idParent="panelPagos" expanded="true">
+                                <div class="row">
+                                    <c:PanelCellPT label="Tipo de Tarjeta" classDiv="has-error">
+                                        <apex:selectList styleClass="form-control" style="height: 34px" id="tipoTarjeta" value="{!tipoTarjeta}" size="1" tabindex="1">
+                                            <apex:selectOptions value="{!tipoTarjetaSelectList}"/>
+                                        </apex:selectList>
+                                    </c:PanelCellPT>
+                                    <c:PanelCellPT label="Número de Tarjeta" columnsL="3" columnsD="3" alineacion="center" classDiv="has-error">
+                                        <div class="form-inline">
+                                            <div class="form-group divformGroup" ><apex:inputText value="{!numTarjeta[0]}" id="pnumero" styleClass="form-control" tabindex="2" style="width:100%" maxlength="4"/></div>
+                                            <div class="form-group divformGroup" ><apex:inputText value="{!numTarjeta[1]}" id="snumero" styleClass="form-control" tabindex="3" style="width:100%" maxlength="4"/></div>
+                                            <div class="form-group divformGroup" ><apex:inputText value="{!numTarjeta[2]}" id="tnumero" styleClass="form-control" tabindex="4" style="width:100%" maxlength="4"/></div>
+                                            <div class="form-group divformGroup" ><apex:inputText value="{!numTarjeta[3]}" id="cnumero" styleClass="form-control" tabindex="5" style="width:100%" maxlength="4"/></div>
+                                        </div>
+                                    </c:PanelCellPT>
+                                </div> <br/>
+                                <div class="row ">
+                                    <c:PanelCell label="Fecha de expiración (Mes / Año)" alineacion="center">
+                                        <div class="form-inline">
+                                            <div class="form-group divformGroupF has-error" >
+                                                <!--apex:inputText styleClass="form-control" tabindex="6" style="width:100%"/-->
+                                                <apex:selectList styleClass="form-control" tabindex="6" style="width:100%; height: 34px" id="mes" value="{!mes}" size="1">
+                                                    <apex:selectOptions value="{!months}"/>
+                                                </apex:selectList>
+                                            </div>
+                                            <div class="form-group divformGroupF has-error" >
+                                                <!--apex:inputText styleClass="form-control" tabindex="7" style="width:100%"/-->
+                                                <apex:selectList styleClass="form-control" tabindex="7" style="width:100%; height: 34px" id="anyo" value="{!anyo}" size="1">
+                                                    <apex:selectOptions value="{!years}"/>
+                                                </apex:selectList>
+                                            </div>
+                                        </div>
+                                    </c:PanelCell>
+                                    <c:PanelCellPT label="Código de Seguridad" classDiv="has-error">
+                                        <apex:inputSecret id="codigoT" value="{!codigo}" styleClass="form-control" style="width:25%" tabindex="8" maxlength="3"/>
+                                    </c:PanelCellPT>
+                                </div>
+                            </c:Panel>
+                            <div class="text-center row">
+                                <apex:commandButton id="btnGuardar2" rendered="{!!pagoRealizado}" value="Pagar" status="statusGuardar" styleClass="btn btn-success fa-input" action="{!sentPayment}" style="margin:1em;font-family: FontAwesome, Arial,Helvetica,sans-serif;"> </apex:commandButton>
+                                <apex:actionStatus onstart="onstart('contenedorPrincipal');"  onstop="onstop('contenedorPrincipal');" id="statusGuardar2" /> 
+                                <!--apex:commandButton id="btnCancelar2" value="Cancelar" styleClass="btn btn-default fa-input" style="margin-left:auto;margin-right:2%;margin:1em;" action="{!cancelPayment}" immediate="true"> </apex:commandButton-->
+                                <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" onclick="redirigir();" class="btn btn-default spanRegresar">
+                                    <span class="fa fa-reply"></span>
+                                    	Cancelar
+                                </button>
+                            </div>                        
+                        </section>
+                    </div>
+                </div>
+            </apex:form>
+        </div>
+    </body>    
+</apex:page>

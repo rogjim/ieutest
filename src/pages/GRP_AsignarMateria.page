@@ -1,0 +1,243 @@
+<apex:page applyBodyTag="false" docType="html-5.0" showHeader="true" sidebar="false" standardStylesheets="false" controller="OFE_OfertaEducativaCtrl">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+
+    <script src="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    <link href="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+	<script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.min.js"></script>
+	<script src="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+	<script src="/soap/ajax/13.0/connection.js"></script>
+	<script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';}</script>
+
+	<body ng-app="appIEU" ng-cloak="ngCloak">
+		<div class="container">
+			<h2>Asignar catedrático y primer materia</h2>
+		</div>
+	    <br/><br/>
+		<script type="text/javascript">
+	    	(function(angular) {
+	  			angular.module('appIEU', ['ui.bootstrap'])
+	  			.factory('sfUtils', function($filter, $interval) {
+	  				var delay = 300;
+					var describeObject = function(objName, callback) {
+						sforce.connection.describeSObject(objName, {
+							onSuccess: function(res) {
+								var fields = [];
+								angular.forEach(res.fields, function(field, index) {
+		                            var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+		                            var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired};
+		                            if(field.type === 'picklist' || field.type === 'multipicklist' || field.type === 'reference') {
+		                            	if(field.picklistValues && field.picklistValues.length > 0) {
+		                                    var values = [];
+		                                    angular.forEach(field.picklistValues, function(it) {
+		                                        values.push({label: it.label, value: it.value});
+		                                    });
+		                                    mdField.values = values;
+		                            	}
+		                                mdField.referenceTo = field.referenceTo
+		                            } else if(field.type === 'double' || field.type === 'percent') {
+		                            	mdField.precision = field.precision;
+		                            	mdField.scale = field.scale;
+		                            }
+		                            if(field.hasOwnProperty('inlineHelpText')) {
+		                            	mdField.helpText = field.inlineHelpText;
+		                            }
+		                            fields.push(mdField);
+		                        });
+		                        callback(fields);
+							}, 
+							onFailure: function(res){
+								callback(res);
+							}
+						});
+					};
+					var retrieveObject = function(query, callback) {
+						sforce.connection.query(query, {
+							onSuccess : function(res) {
+								//console.log('\n\n response retrieveObject...');
+		        				//console.log(res);
+		        				var ql = res.queryLocator;
+		        				var size = parseInt(res.size);
+								if(size === 1) {
+									var temp = angular.copy(res.records);
+									res = [];
+		            				res.push(temp);
+		            			} else if(res.records && res.records.length > 0) {
+		            				res = res.records;
+		            			}
+
+		            			if(ql && ql != null && ql.length > 0) {
+		            				ql = ql.substr(0, ql.indexOf('-'));
+		            				var count = parseInt(size / 2000);
+		            				var completed = 0;
+		            				if(count > 5) {count = 5; }
+		            				for(var i = 1; i < (count + 1); i++) {
+			            				queryMore(ql +'-' +(i * 2000), function(resql) {
+			            					completed++;
+			            					res = res.concat(resql);
+			            				});
+		            				}
+		            				var Timer = $interval(function () {
+					                    if(completed === count) {
+					                        $interval.cancel(Timer);
+					                        callback(res);
+					                    }
+					                }, delay);
+
+		            			} else {
+		            				callback(res);
+		            			}
+							}, 
+							onFailure : function(res) {
+								callback(res);
+							}
+						});
+					};
+					var queryMore = function(queryLocator, callback) {
+						if(queryLocator && callback) {
+							sforce.connection.queryMore(queryLocator, {
+								onSuccess : function(res) {
+									queryLocator = res.queryLocator;
+									if(res.size === '1') {
+										var temp = angular.copy(res.records);
+										res = [];
+			            				res.push(temp);
+			            			} else if(res.records && res.records.length > 0) {
+			            				res = res.records;
+			            			}
+			            			callback(res);
+								}, 
+								onFailure : function(res) {
+									callback(res);
+								}
+							});
+						}
+					};
+					var upsertObjects = function(upserts, callback) {
+						sforce.connection.upsert('Id', upserts, {
+							onSuccess: function(res) {
+								callback(res);
+							},
+							onFailure: function(res) {
+								callback(res);
+							}
+						});
+					};
+					var deleteObjects = function(ids, callback) {
+						sforce.connection.deleteIds(ids, {
+							onSuccess: function(res) {
+								callback(res);
+							},
+							onFailure: function(res) {
+								callback(res);
+							}
+						});
+					};
+					var parseDate =  function(date) {
+		                return $filter('date')(date, 'dd/MM/yyyy');
+		            };
+		            var findElementInArray = function(field, value, datasource) {
+		                var ret = {};
+		                if(field && value && datasource) {
+		                    var res = $filter('filter')(datasource, {[field]: value}, true);
+		                    if(res && res.length > 0) {
+		                        ret = res[0];
+		                    }
+		                }
+		                return ret;
+		            };
+		            var fieldIsValid = function(fieldName, form) {
+		                if(!fieldName || !form) {
+		                    return '';
+		                } else {
+		                    return form[fieldName].$valid ? 'has-success' : 'has-error';
+		                }
+		            };
+		            var createDate = function(strDate) {
+		                var date = null;
+		                strDate = strDate || '';
+		                strDate = strDate.split('/');
+		                if(strDate.length > 2) {
+		                    date = new Date();
+		                    date.setDate(strDate[0]);
+		                    date.setMonth(strDate[1]  - 1);
+		                    date.setFullYear(strDate[2]);
+		                }
+		                return date;
+		            };
+					return {
+						describe: describeObject,
+						retrieve: retrieveObject,
+						upsert: upsertObjects,
+						delete: deleteObjects,
+						parseDate: parseDate,
+						findElement: findElementInArray,
+						fieldIsValid: fieldIsValid,
+						createDate: createDate
+					}
+				})
+				.directive('datepicker', function() {
+		            return {
+		                restrict: 'A',
+		                require : 'ngModel',
+		                link : function (scope, element, attrs, ngModelCtrl) {
+		                    $(function(){
+		                        element.datepicker({
+		                            dateFormat:'dd/mm/yy',
+		                            onSelect:function (date) {
+		                                scope.$apply(function () {
+		                                    ngModelCtrl.$setViewValue(date);
+		                                });
+		                            }
+		                        });
+		                    });
+		                }
+		            }
+		        })
+
+	  			$(document).ready(function() {
+	            $.datepicker.regional['es'] = {
+	                closeText: 'Cerrar',
+	                prevText: '<Ant',
+	                nextText: 'Sig>',
+	                currentText: 'Hoy',
+	                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	                monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+	                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	                dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+	                dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+	                weekHeader: 'Sm',
+	                dateFormat: 'dd/mm/yy',
+	                firstDay: 1,
+	                isRTL: false,
+	                showMonthAfterYear: false,
+	                yearSuffix: ''
+	            };
+	            $.datepicker.setDefaults($.datepicker.regional['es']);
+	            $('[data-toggle="tooltip"]').tooltip();
+	        });
+
+
+	  		})(angular);
+	    </script>
+		<style type="text/css">
+	   		@media (min-width: 1300px) {.container {width: 1250px; } } @media (min-width: 1600px) {.container {width: 1500px; } } @media (min-width: 1900px) {.container {width: 1800px; } }
+	        @media (min-width: 1300px) {.modal-lg {width: 1250px; } } @media (min-width: 1600px) {.modal-lg {width: 1500px; } } @media (min-width: 1900px) {.modal-lg {width: 1800px; } }
+           .ieu-panel>.panel-heading{background-color: #2a94d6;border-color: #2585c1; color: white;}
+           .sf-autocomplete-holder {position: relative;}
+	       .sf-autocomplete-row {padding: 5px; color: #000000; margin-bottom: 4px;}
+	       .sf-autocomplete-dropdown {border-color: #ececec; border-width: 1px; border-style: solid; border-radius: 2px; width: 250px; padding: 6px; cursor: pointer; z-index: 9999; position: absolute; margin-top: -6px; background-color: #ffffff; max-height: 250px; overflow-y: scroll;}
+	       .sf-autocomplete-selected-row, .sf-autocomplete-row:hover {background-color: #2a94d6; border-color: #2585c1; color: white;}
+       	   .sf-autocomplete-search {position: absolute; right: 8px; top: 10px; color: rgba(0, 0, 0, 0.19);}
+       	   .sf-autocomplete-holder>.form-control {padding-right: 25px;}
+       	   .table-responsive {overflow-x: initial;}
+       	   .ctc-btn {cursor: pointer;}
+	   	</style>
+	   	<c:GRP_AsignarMateria ></c:GRP_AsignarMateria>
+	</body>
+</apex:page>

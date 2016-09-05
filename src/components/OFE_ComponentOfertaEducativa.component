@@ -1,0 +1,1347 @@
+<apex:component >
+	<div ng-controller="ofertaEducativaCtrl" id="ofertaEducativaCtrl">
+		<div class="">
+		<h2 class="page-header">Oferta educativa</h2>
+		<div class="row">
+			<div class="col-sm-4 col-sm-offset-4 text-center">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-4">Periodo</label>
+						<div class="col-sm-8">
+							<select ng-change="setSelectedPeriod(periodSelected)" class="form-control" ng-options="o.Name for o in periods" ng-model="periodSelected"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" ng-if="!isEditingC">
+			<div class="col-sm-12 text-left">
+				<a class="btn btn-default" ng-click="editPeriod({})"><span class="fa fa-plus fa-fw"></span>Nuevo periodo</a>
+
+				<a class="btn btn-success" ng-click="editPeriod(periodSelected)"><span class="fa fa-edit fa-fw"></span>Modificar periodo</a>
+
+				<a class="btn btn-primary" ng-click="editPeriod(periodSelected, true)"><span class="fa fa-clone fa-fw"></span>Duplicar periodo</a>
+			</div>
+		</div>
+		<br/>
+		<div class="panel panel-default ieu-panel"><!-- periodo -->
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					{{title}}
+				</h3>
+			</div>
+			<form class="form-horizontal" name="formOFE">
+				<div class="panel-body">
+					<div class="row" ng-if="isEditingC">
+						<!--div class="col-sm-6">
+							<sf-input sf-field="fieldsK.period.Name" obj-dinamyc="currentPeriod" form-name="formOFE"></sf-input>
+						</div-->
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="{'has-success': formOFE.Name.$valid, 'has-error': formOFE.Name.$invalid}">
+								<label class="control-label col-sm-6"><span ng-bind="fieldsK.period.Name.label"/> Nombre del periodo *</label>
+								<div class="col-sm-6">
+									<input required="true" minlength="3" name="Name" class="form-control" ng-model="currentPeriod.Name" id="NamePeriodo"></input>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="verifyField('FechaInicio__c')">
+								<label class="control-label col-sm-6">Fecha de inicio programada *</label>
+								<div class="col-sm-6">
+									<input datepicker="currentPeriod.FechaInicio__c" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="true" placeholder="dd/MM/aaaa" name="FechaInicio__c" class="form-control" ng-model="currentPeriod.FechaInicio__c" ng-disabled="!isEditingC"></input>
+									<span class="help-tex label label-danger" ng-if="formOFE.FechaInicio__c.$error.pattern">Formato requerido dd/MM/aaaa</span>
+								</div>
+							</div>	
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="verifyField('FechaFin__c')">
+								<label class="control-label col-sm-6">Fecha fin programada *</label>
+								<div class="col-sm-6">
+									<input datepicker="currentPeriod.FechaFin__c" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="true" placeholder="dd/MM/aaaa" name="FechaFin__c" class="form-control" ng-model="currentPeriod.FechaFin__c" ng-disabled="!isEditingC"></input>
+									<span class="help-tex label label-danger" ng-if="formOFE.FechaFin__c.$error.pattern">Formato requerido dd/MM/aaaa</span>
+								</div>
+							</div>	
+						</div>
+					</div>	
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="verifyField('FechaInicioReal__c')">
+								<label class="control-label col-sm-6">Fecha de inicio real *</label>
+								<div class="col-sm-6">
+									<input datepicker="currentPeriod.FechaInicioReal__c" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="true" placeholder="dd/MM/aaaa" name="FechaInicioReal__c" class="form-control" ng-model="currentPeriod.FechaInicioReal__c" ng-disabled="!isEditingC"></input>
+									<span class="help-tex label label-danger" ng-if="formOFE.FechaInicioReal__c.$error.pattern">Formato requerido dd/MM/aaaa</span>
+								</div>
+							</div>	
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="verifyField('FechaFinReal__c')">
+								<label class="control-label col-sm-6">Fecha fin real *</label>
+								<div class="col-sm-6">
+									<input datepicker="currentPeriod.FechaFinReal__c" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="true" placeholder="dd/MM/aaaa" name="FechaFinReal__c" class="form-control" ng-model="currentPeriod.FechaFinReal__c" ng-disabled="!isEditingC"></input>
+									<span class="help-tex label label-danger" ng-if="formOFE.FechaFinReal__c.$error.pattern">Formato requerido dd/MM/aaaa</span>
+								</div>
+							</div>	
+						</div>
+					</div>		
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label col-sm-6">Descripción</label>
+								<div class="col-sm-6">
+									<textarea rows="4" class="form-control" ng-model="currentPeriod.Descripcion__c" ng-disabled="!isEditingC"></textarea>
+								</div>
+							</div>	
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="control-label col-sm-6">Estatus</label>
+								<div class="col-sm-6">
+									<p class="form-control-static" ng-class="{'text-success': currentPeriod.Activo__c === 'Activo', 'text-danger': currentPeriod.Activo__c !== 'Activo'}" ng-if="!isEditingC">{{currentPeriod.Activo__c}}</p>
+									<select ng-if="isEditingC" class="form-control" ng-options="o.label for o in periodOpts.Activo__c" ng-model="periodOpts.SelectedActivo__c"></select>
+								</div>
+							</div>	
+							<div class="form-group">
+								<label class="control-label col-sm-6">Online</label>
+								<div class="col-sm-6">
+									<p class="form-control-static" ng-class="{'text-success': currentPeriod.ActivoOnline__c === 'Activo', 'text-danger': currentPeriod.ActivoOnline__c !== 'Activo'}" ng-if="!isEditingC">{{currentPeriod.ActivoOnline__c}}</p>
+									<select ng-if="isEditingC" class="form-control" ng-options="o.label for o in periodOpts.ActivoOnline__c" ng-model="periodOpts.SelectedActivoOnline__c"></select>
+								</div>
+							</div>	
+						</div>
+					</div>	
+					<div class="row" ng-if="errors.length>0 && !isEditingOA">
+						<div class="col-sm-6 col-sm-offset-6 text-right">
+							<div class="alert alert-danger">
+								<ul class="list-unstyled">
+									<li ng-repeat="err in errors">{{err}}</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="panel-footer" ng-if="isEditingC">
+					<div class="row">
+						<div class="col-sm-12 text-right">
+							<button ng-disabled="saving || formOFE.$invalid" ng-click="savePeriod()" class="btn btn-success">
+								<span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+								<span class="fa fa-save fa-fw"></span>
+								Guardar
+							</button>
+							<button ng-disabled="saving || formOFE.$invalid" ng-click="savePeriod(true)" class="btn btn-primary">
+								<span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+								<span class="fa fa-save fa-fw"></span>
+								Guardar y nuevo
+							</button>
+							<a ng-disabled="saving" ng-click="cancelEdit()" class="btn btn-default">
+								<span class="fa fa-mail-reply fa-fw"></span>
+								Cancelar
+							</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div><!-- end periodo -->
+		<div class="panel panel-default ieu-panel"><!-- oferta académica -->
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					{{titleOFE}}
+				</h3>
+			</div>
+			<div class="panel-body" ng-visible="currentPeriod.Id">
+				<div class="row" ng-if="errors.length>0 && isEditingOA">
+					<div class="col-sm-6 col-sm-offset-6 text-right">
+						<div class="alert alert-danger">
+							<ul class="list-unstyled">
+								<li ng-repeat="err in errors">{{err}}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-3" ng-if="!isEditingOA && !isEditingC && currentPeriod.Id">
+						<a ng-disabled="isEditingC" ng-click="editOA()" class="btn btn-success"><span class="fa fa-edit fa-fw"></span>Modificar oferta académica</a>
+					</div>
+					<div class="col-sm-9 text-center" ng-if="isEditingOA">
+						<button ng-disabled="formOfertaA.$invalid || actions.savingOFE" ng-click="saveOA()" class="btn btn-success">
+				        	<span ng-if="actions.savingOFE" class="fa fa-spinner fa-pulse fa-fw"></span>
+				        	<span ng-if="actions.savingOFE">Guardando</span>
+							<span class="fa fa-save fa-fw"></span>
+							Guardar
+						</button>
+						<a ng-click="cancelEditOA()" class="btn btn-default"><span class="fa fa-mail-reply fa-fw"></span>Cancelar</a>
+						<a ng-if="offers.length>0 && btns.sizeSelect>0" ng-click="cloneOA()" class="btn btn-primary"><span class="fa fa-clone fa-fw"></span>Copiar {{btns.sizeSelect}} fila(s)</a>
+
+						<a ng-if="btns.sizeSelect>0" data-toggle="modal" data-target="#removeOffers" class="btn btn-danger"><span class="fa fa-trash fa-fw"></span>Eliminar {{btns.sizeSelect}}</a>
+					</div>	
+					<div class="col-sm-3">
+						<div class="input-group">
+						    <span class="input-group-addon">Filtrar</span>
+						    <input type="text" class="form-control" ng-model="searchOff"></input>
+						</div>
+					</div>			
+				</div>
+
+				<div class="table-responsive">
+					<table class="table table-hover" ng-if="!isEditingOA">
+						<thead>
+							<tr>
+								<th><a ng-click="setFieldSort('Estatus__c')"> <span ng-class="iconSort('Estatus__c')"></span> Estatus </a> </th>
+								<th><a ng-click="setFieldSort('Name')"> <span ng-class="iconSort('Name')"></span> Nombre </a> </th>
+								<th><a ng-click="setFieldSort('Modalidad__C')"> <span ng-class="iconSort('Modalidad__C')"></span> Modalidad </a> </th>
+								<th><a ng-click="setFieldSort('Nivel__c')"> <span ng-class="iconSort('Nivel__c')"></span> Nivel </a> </th>
+								<th><a ng-click="setFieldSort('Programa__c')"> <span ng-class="iconSort('Programa__c')"></span> Programa </a> </th>
+								<th><a ng-click="setFieldSort('Plantel__c')"> <span ng-class="iconSort('Plantel__c')"></span> Plantel </a> </th>
+								<th><a ng-click="setFieldSort('Periodocidad__c')"> <span ng-class="iconSort('Periodocidad__c')"></span> Periodicidad </a> </th>
+								<th><a ng-click="setFieldSort('DuracionPrograma__c')"> <span ng-class="iconSort('DuracionPrograma__c')"></span> Duración </a> </th>
+								<th><a ng-click="setFieldSort('P_Name')"> <span ng-class="iconSort('P_Name')"></span> Periodo escolar </a> </th>
+								<th><a ng-click="setFieldSort('Conceptos__c')"> <span ng-class="iconSort('Conceptos__c')"></span> Conceptos </a> </th>
+								<th><a ng-click="setFieldSort('Grupo__c')"> <span ng-class="iconSort('Grupo__c')"></span> Grupos </a> </th>
+								<th class="ieu-th-btns">Configurar pagos</th>
+								<th class="ieu-th-btns">Configurar grupos</th>
+							</tr>
+						</thead>
+						<tbody>
+						<!-- orderBy:sortField:reverse|filter:filterBy|startFrom:(currentPage - 1)*itemsPerPage|limitTo:itemsPerPage -->
+							<tr ng-repeat="oferta in offers|filter:searchOff|orderBy:sortField:reverse as filteredItems track by $index">
+								<td>
+									{{oferta.Estatus__c}}
+								</td>
+								<td>{{oferta.Name}}</td>
+								<td>{{parseFromCatalog(oferta.Modalidad__c, catalogK)}}</td>
+								<td>{{parseFromCatalog(oferta.Nivel__c, catalogK)}}</td>
+								<td>{{parseFromCatalog(oferta.Programa__c, programK)}}</td>
+								<td>{{parseFromCatalog(oferta.Plantel__c, campusK)}}</td>
+								<td>{{oferta.Periodocidad__c}}</td>
+								<td>{{oferta.DuracionPrograma__c}}</td>
+								<td>{{periodSelected.Name}}</td>
+								<td>{{oferta.Conceptos__c}}</td>
+								<td>{{oferta.Grupo__c}}</td>
+								<td>Pago1, Pago2</td>
+								<td>GrupoA, GrupoB</td>
+							</tr>
+						</tbody>
+					</table>
+					<form name="formOfertaA" novalidate="true">
+					<table class="table table-hover" ng-if="isEditingOA">
+						<thead>
+							<tr>
+								<th>
+									<div class="checkbox">
+									    <label>
+									      <input type="checkbox" ng-model="btns.selectAll" ng-change="selectAll()"></input> Seleccionar
+									    </label>
+									</div>
+								</th>
+								<th><a ng-click="setFieldSort('Estatus__c')"> <span ng-class="iconSort('Estatus__c')"></span> Estatus </a> </th>
+								<th><a ng-click="setFieldSort('Name')"> <span ng-class="iconSort('Name')"></span> Nombre </a> </th>
+								<th><a ng-click="setFieldSort('Modalidad__C')"> <span ng-class="iconSort('Modalidad__C')"></span> Modalidad </a> </th>
+								<th><a ng-click="setFieldSort('Nivel__c')"> <span ng-class="iconSort('Nivel__c')"></span> Nivel </a> </th>
+								<th><a ng-click="setFieldSort('Programa__c')"> <span ng-class="iconSort('Programa__c')"></span> Programa </a> </th>
+								<th><a ng-click="setFieldSort('Plantel__c')"> <span ng-class="iconSort('Plantel__c')"></span> Plantel </a> </th>
+								<th><a ng-click="setFieldSort('Periodocidad__c')"> <span ng-class="iconSort('Periodocidad__c')"></span> Periodicidad </a> </th>
+								<th><a ng-click="setFieldSort('DuracionPrograma__c')"> <span ng-class="iconSort('DuracionPrograma__c')"></span> Duración </a> </th>
+								<th><a ng-click="setFieldSort('P_Name')"> <span ng-class="iconSort('P_Name')"></span> Periodo escolar </a> </th>
+								<th><a ng-click="setFieldSort('Conceptos')"> <span ng-class="iconSort('Conceptos')"></span> Conceptos </a> </th>
+								<th><a ng-click="setFieldSort('Grupo__c')"> <span ng-class="iconSort('Grupo__c')"></span> Grupos </a> </th>
+								<th class="ieu-th-btns">Configurar pagos</th>
+								<th class="ieu-th-btns">Configurar grupos</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="oferta in offers|filter:searchOff|orderBy:sortField:reverse">
+								<td>
+									<input ng-change="offerIsCheck(oferta)" type="checkbox" ng-model="oferta.isChecked"></input>
+									<label ng-if="offerIsInvalid(oferta)" class="label label-danger">Faltan datos</label>
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Estatus__c, oferta)">
+									<sf-select sf-field="fieldsK.offer.Estatus__c" sf-opts="fieldsK.offer.Estatus__c.values" sf-label-prop="'label'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Name, oferta)">
+									<input required="true" name="Name{{oferta.$$hashKey}}" minlength="3" maxlength="80" class="form-control" ng-model="oferta.Name"></input>
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Modalidad__c, oferta)">
+									<sf-select sf-field="fieldsK.offer.Modalidad__c" sf-opts="modalitys" sf-label-prop="'Name'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select required="true" name="Modalidad__c{{oferta.$$hashKey}}" ng-required="true" class="form-control" ng-options="o.Name for o in modalitys" ng-model="oferta.opts.Modalidad__c">
+									</select-->
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Nivel__c, oferta)">
+
+									<sf-select sf-filter-method="filterProgram()" sf-field="fieldsK.offer.Nivel__c"  sf-opts="levels" sf-label-prop="'Name'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select name="Nivel__c{{oferta.$$hashKey}}" ng-required="true" class="form-control" ng-change="filterProgram(oferta.opts)" ng-options="o.Name for o in levels" ng-model="oferta.opts.Nivel__c">
+									</select-->
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Programa__c, oferta)">
+
+									<sf-select sf-field="fieldsK.offer.Programa__c" sf-opts="oferta.opts.Programa__cOPTS" sf-label-prop="'Name'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select name="Programa__c{{oferta.$$hashKey}}" required="true" class="form-control" ng-options="o.Name for o in oferta.opts.Programa__cOPTS track by o.Id" ng-model="oferta.opts.Programa__c">
+									</select-->
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Plantel__c, oferta)">
+
+									<sf-select sf-field="fieldsK.offer.Plantel__c" sf-opts="campus" sf-label-prop="'Name'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select name="Plantel__c{{oferta.$$hashKey}}" ng-required="true" class="form-control" ng-options="o.Name for o in campus" ng-model="oferta.opts.Plantel__c"></select-->
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.Periodocidad__c, oferta)">
+
+									<sf-select sf-field="fieldsK.offer.Periodocidad__c" sf-opts="periodicity" sf-label-prop="'label'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select name="Periodocidad__c{{oferta.$$hashKey}}" ng-required="true" class="form-control" ng-options="o.label for o in periodicity" ng-model="oferta.opts.Periodocidad__c"></select-->
+								</td>
+								<td ng-class="setClassValid(formOfertaA, fieldsK.offer.DuracionPrograma__c, oferta)">
+
+									<sf-select sf-field="fieldsK.offer.DuracionPrograma__c" sf-opts="duration" sf-label-prop="'label'" sf-instance="oferta" sf-form="formOfertaA"></sf-select>
+
+									<!--select name="DuracionPrograma__c{{oferta.$$hashKey}}" ng-required="true" class="form-control" ng-options="o.label for o in duration" ng-model="oferta.opts.DuracionPrograma__c"></select-->
+								</td>
+								<td>
+									<select class="form-control" ng-options="o.Name for o in periods" ng-model="oferta.opts.Periodo__c"></select>
+								</td>
+
+								<td>
+									<textarea class="form-control" ng-model="oferta.Conceptos__c"></textarea>
+								</td>
+								<td>{{oferta.Grupo__c}}</td>
+								<td>
+									<a class="btn btn-success" ng-click="editPay(oferta)" data-toggle="modal" data-target="#modalPagos">
+										<span class="fa fa-usd fa-fw"></span>
+										Pagos
+									</a>
+								</td>
+								<td>
+									<a class="btn btn-primary" ng-click="editPay(oferta)" data-toggle="modal" data-target="#modalGrupos">
+									<span class="fa fa-users fa-fw"></span>
+									Grupos
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="13" class="text-left">
+									<a ng-click="addOA()" class="btn btn-primary">
+										<span class="fa fa-plus fa-fw"></span>
+										Agregar
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					</form>
+				</div>
+			</div>
+			<div class="panel-footer">
+				
+			</div>
+		</div><!-- oferta académica -->
+		</div><!-- end container-->
+
+
+   <div class="modal fade" tabindex="-1" id="removeOffers"><!-- modal remove -->
+	  <div class="modal-dialog ieu-modal-danger">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">Eliminar los elementos seleccionados?</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Elementos a eliminar: {{btns.sizeSelect}}</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">
+	        	<span class="fa fa-mail-reply fa-fw"></span>
+	        	Cancelar
+	        </button>
+	        <button ng-disabled="actions.deletingOFE" ng-click="removeOA()" type="button" class="btn btn-danger">
+	        	<span ng-if="actions.deletingOFE" class="fa fa-spinner fa-pulse fa-fw"></span>
+	        	<span ng-if="actions.deletingOFE">Eliminando</span>
+	        	<span class="fa fa-exclamation-triangle fa-fw"></span>
+	        	Confirmar
+	        </button>
+	      </div>
+	    </div>
+	  </div>
+	</div><!-- end modal remove -->
+
+	</div><!-- end controller -->
+   <script type="text/javascript">
+   		var app = angular.module('appIEU');
+   		app.controller('ofertaEducativaCtrl', ['$scope', '$timeout', '$filter', '$interval', 'sfService', 'sfDB', function($scope, $timeout, $filter, $interval, sfService, sfDB) {
+   			$scope.sfService = sfService;
+   			$scope.sortField = '';
+   			$scope.title = 'Información';
+   			$scope.class = {valid: 'has-success', invalid: 'has-error'};
+
+   			$scope.titleOFE = 'Información de la oferta académica'
+
+
+   			var periodGW = new sfService.gateway.periodo();
+   			var offerGW = new sfService.gateway.oferta();
+   			var catalogGW = new sfService.gateway.catalogo();
+   			var programGW = new sfService.gateway.programa();
+   			var campusGW = new sfService.gateway.plantel();
+
+   			$scope.periodFields = [];
+   			$scope.offerFields = [];
+   			$scope.catalogFields = [];
+   			$scope.levelFields = [];
+   			$scope.programFields = [];
+   			$scope.campusFields = [];
+   			$scope.errors = [];
+   			$scope.limit = 20;
+   			$scope.offset = 0;
+
+   			$scope.periods = [];
+   			$scope.offers  = [];
+   			$scope.periodSelected = {};
+   			$scope.currentPeriod  = false;
+   			$scope.isEditingC     = false;
+   			$scope.saving = false;
+   			$scope.duplicate      = false;
+   			$scope.errors = [];
+   			$scope.notifications = [];
+
+   			$scope.catalogK = {};
+   			$scope.programK = {};
+   			$scope.campusK = {};
+   			$scope.fields = {};
+
+
+   			$scope.catalog = [];
+   			$scope.program = [];
+   			$scope.campus  = [];
+   			$scope.isEditingOA = false;
+   			$scope.modalitys = [];
+   			$scope.levels = [];
+			$scope.periodicity = [];
+			$scope.duration = [];
+			$scope.periodOpts = {Activo__c: []};
+			$scope.delay = 500;
+			$scope.Timer = null;
+			$scope.actions = {savingOFE: false, deletingOFE: false};
+	
+			$scope.btns = {selectAll: false, keysSelect: {}, sizeSelect: 0};
+
+			$scope.fieldsK = {period: {}, offer: {}, catalog: {}, program: {}, campus: {}};			
+
+   			$scope.getCatalogs = function() {
+   				$scope.catalogs = [
+   				    {n: 'catalog', c: new sfService.gateway.catalogo()}, 
+   				    {n: 'program', c: new sfService.gateway.programa()}, 
+   				    {n: 'campus', c: new sfService.gateway.plantel()}
+   				];
+
+   				angular.forEach($scope.catalogs, function(cat, index) {
+   					$scope.sfDB({criteria: {}, action: 'retrieve'}, cat.c, function(err, res) {
+   						$scope.parseFromDB(res, $scope[cat.n+'Fields'], function(err, data) {
+	   						$scope[cat.n] = data;
+	   						angular.forEach($scope[cat.n], function(item, index) {
+	   							$scope[cat.n+'K'][item.Id] = item.Name; 
+	   						});
+   						});
+   					});
+   				});
+   			};
+   			/*list periods from DB*/
+   			$scope.getPeriods = function() {
+   				var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: parseInt($scope.limit)};
+				if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+				//console.log('\n\n[<- init getPeriods');
+				$scope.sfDB({criteria: criteria, action: 'retrieve'}, periodGW, function(err, res) {
+					$scope.parseFromDB(res, $scope.periodFields, function(err, data) {
+						if(!err) {
+							$scope.periods = data;
+							//console.log($scope.periods);
+							//console.log('finish getPeriods ->]');
+							$scope.setSelectedPeriod();
+						}
+					});
+				});
+   			};
+   			$scope.setSelectedPeriod = function(period) {
+   				//$scope.periodSelected = period || $scope.periods[$scope.periods.length - 1];
+   				$scope.periodSelected = period || $scope.periods[0];
+
+   				//validate if preserve editing
+   				$scope.isEditingC     = false;
+   				$scope.isEditingOA = false;
+   				if($scope.periodSelected !== 'udefined') {
+   				    $scope.currentPeriod = angular.copy($scope.periodSelected);
+   				    $scope.title = 'Información del periodo: ' + $scope.currentPeriod.Name;
+   				    /*get offers from period*/
+   				    $scope.getOffertByPeriod($scope.currentPeriod);
+   				}
+   			};
+   			$scope.editPeriod = function(period, duplicate) {
+   				//console.log('editPeriod');
+   				//console.log(period);
+
+   				$scope.isEditingC = true;
+   				$scope.isEditingOA = false;
+   				$scope.errors = [];
+   				$scope.periodOpts.SelectedActivo__c = {};
+   				$scope.periodOpts.SelectedActivoOnline__c = {};
+   				$scope.currentPeriod = angular.copy(period);
+				if($scope.currentPeriod.hasOwnProperty('Id')) {
+   					$scope.title = 'Editar periodo .: ' + $scope.currentPeriod.Name + ' :.';
+   				} else {
+   					$scope.title = 'Agregar periodo';
+   					$scope.offers = [];
+   				}
+   				if(duplicate) {
+   					$scope.duplicate = true;
+   					$scope.title = 'Duplicar periodo .: ' + $scope.currentPeriod.Name + ' :.';
+   				}
+
+   				var optActivo = $filter('filter')($scope.periodFields, {name: 'Activo__c'});
+   				console.log(optActivo);
+   				$scope.periodOpts.Activo__c = [];
+   				if(optActivo && optActivo.length>0) {
+   					$scope.periodOpts.Activo__c = angular.copy(optActivo[0].values);
+   					$scope.periodOpts.Activo__c.unshift({value:'', label: '-- Seleccione una opción --'});
+
+   					var selectedActivo__c = $filter('filter')($scope.periodOpts.Activo__c, {value: $scope.currentPeriod.Activo__c});
+   					if(selectedActivo__c && selectedActivo__c.length > 0) {
+   						$scope.periodOpts.SelectedActivo__c = selectedActivo__c[0];
+   					}
+   				}
+   				var optActivoOnline = $filter('filter')($scope.periodFields, {name: 'ActivoOnline__c'});
+   				$scope.periodOpts.ActivoOnline__c = [];
+   				if(optActivoOnline && optActivoOnline.length>0) {
+   					$scope.periodOpts.ActivoOnline__c = angular.copy(optActivoOnline[0].values);
+   					$scope.periodOpts.ActivoOnline__c.unshift({value:'', label: '-- Seleccione una opción --'});
+   					var selectedActivoOnline__c = $filter('filter')($scope.periodOpts.ActivoOnline__c, {value: $scope.currentPeriod.ActivoOnline__c});
+   					if(selectedActivoOnline__c && selectedActivoOnline__c.length > 0) {
+   						$scope.periodOpts.SelectedActivoOnline__c = selectedActivoOnline__c[0];
+   					}
+   				}
+
+   				$timeout(function() {$('#NamePeriodo').focus();}, 400);
+   			};
+   			$scope.savePeriod = function(addOther) {
+   				//console.log('[<- init savePeriod');
+   				//console.log($scope.currentPeriod);
+   				$scope.saving = true;
+				$scope.currentPeriod.Activo__c = $scope.periodOpts.SelectedActivo__c.value;
+				$scope.currentPeriod.ActivoOnline__c = $scope.periodOpts.SelectedActivoOnline__c.value;
+				var toStore = angular.copy($scope.currentPeriod);
+
+				toStore.FechaInicio__c = $scope.createDate(toStore.FechaInicio__c);
+				toStore.FechaFin__c = $scope.createDate(toStore.FechaFin__c);
+
+				toStore.FechaInicioReal__c = $scope.createDate(toStore.FechaInicioReal__c);
+				toStore.FechaFinReal__c = $scope.createDate(toStore.FechaFinReal__c);
+
+				//toStore.FechaInicioReal__c = toStore.FechaInicio__c;
+				//toStore.FechaFinReal__c = toStore.FechaFin__c;
+
+				delete toStore.CreatedDate;
+
+				//console.log('to toStore');
+				//console.log(toStore);
+
+   				if(toStore.hasOwnProperty('Id') && !$scope.duplicate) {//update instance
+   					$scope.sfDB({action: 'update'}, new sfService.gateway.periodo(toStore), function(err, res) {
+   						//console.log('finish savePeriod->');
+   						$scope.processResult(err, res, 'update');
+   						if(!err) {
+	   						for(key in $scope.currentPeriod) {
+			   					//if($scope.periodSelected.hasOwnProperty(key)) {
+			   						$scope.periodSelected[key] = $scope.currentPeriod[key];
+			   					//}
+		   					}
+	   						$scope.$apply();
+	   						$scope.cancelEdit();
+	   						if(addOther) {
+	   							$scope.editPeriod({});
+	   						}
+   						}
+   					});
+   				} else {//create instance
+   					delete toStore.Id;
+
+   					$scope.sfDB({instance: toStore, action: 'create'}, periodGW, function(err, res) {
+   						//console.log(err);
+   						//console.log(res);
+   						//console.log('finish savePeriod->');
+   						$scope.processResult(err, res, 'create');
+   						if(!err){
+   							$scope.currentPeriod.Id = res[0];
+   							if($scope.duplicate) {
+   								angular.forEach($scope.offers, function(item, index) {
+   									item.Periodo__c = $scope.currentPeriod.Id;
+   									delete item.Id;
+   								});
+   								$scope.saveOA();
+   							}
+	   						$scope.periods.unshift($scope.currentPeriod);
+	   						$scope.periodSelected = $scope.currentPeriod;
+	   						$scope.cancelEdit(true);
+	   						if(addOther) {
+	   							$scope.editPeriod({});
+	   						} 
+   						}
+   					});
+   				}
+   			};
+   			$scope.cancelEdit = function(useApply) {
+   				$scope.errors = [];
+   				$scope.isEditingC = false;
+   				$scope.isEditingOA = false;
+   				$scope.duplicate = false;
+	   			$scope.saving = false;
+   				$scope.setSelectedPeriod($scope.periodSelected);
+   				if(useApply) {
+   					$scope.$apply();
+   				}
+   			};
+   			$scope.getOffertByPeriod = function(period) {
+
+   				//$scope.fieldsK.offer.Estatus__c.required = true;
+
+   				$scope.modalitys = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Modalidad'});
+   				$scope.levels = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Nivel'});
+   				var periodicity = $filter('filter')($scope.offerFields, {name: 'Periodocidad__c'});
+   				var duration = $filter('filter')($scope.offerFields, {name: 'DuracionPrograma__c'});
+   				if(periodicity && periodicity.length>0){ $scope.periodicity = periodicity[0].values; }
+   				if(duration && duration.length>0){ $scope.duration = duration[0].values; }
+
+   				if(period && period.hasOwnProperty('Id')){
+					var criteria = {where: {Periodo__c: {eq: period.Id}}};
+					if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+					//console.log('\n\n[<- init getOffertByPeriod');
+					$scope.sfDB({criteria: criteria, action: 'retrieve'}, offerGW, function(err, res) {
+						$scope.parseFromDB(res, $scope.offerFields, function(err, data) {
+							if(!err) {
+								$scope.offers = data;
+								//console.log(data);
+								/*add values for search when use catalog*/
+
+								$scope.addIndexToFind($scope.offers, ['Modalidad__c','Nivel__c'], $scope.catalogK);
+								$scope.addIndexToFind($scope.offers, ['Programa__c'], $scope.programK);
+								$scope.addIndexToFind($scope.offers, ['Plantel__c'], $scope.campusK);
+
+								//console.log('finish getOffertByPeriod ->]');
+								$scope.$apply();
+							}
+						});
+					});
+				}
+   			};
+   			$scope.editOA = function () {
+   				$scope.isEditingOA = true;
+   				$scope.actions.savingOFE = false;
+   				$scope.actions.deletingOFE = false;
+   				$scope.btns = {selectAll: false, keysSelect: {}, sizeSelect: 0};
+
+   				$scope.fieldsK.offer.Estatus__c.required = true;
+
+
+   				angular.forEach($scope.offers, function(item, idx) {
+   					if(!item.hasOwnProperty('opts')) {
+   						item = $scope.detailsOffer(item);
+   					}
+   				});
+   			};
+   			$scope.cancelEditOA = function() {
+   				$scope.isEditingOA = false;
+   				$scope.errors = [];
+   				$scope.getOffertByPeriod($scope.currentPeriod);
+   			};
+   			$scope.saveOA = function() {
+   				//console.log('init save:::: ' + new Date());
+   				var length = $scope.offers.length;
+   				var sizeSaved = 0;
+   				$scope.actions.savingOFE = true;
+   				if(length > 0) {
+	   				angular.forEach($scope.offers, function(item, index) {
+	   					var toStore = angular.copy(item);
+	   					if(toStore.hasOwnProperty('opts')) {
+	   						if(toStore.opts.hasOwnProperty('Estatus__c')) {
+		   						toStore.Estatus__c = toStore.opts.Estatus__c.value;
+		   					}
+	   						if(toStore.opts.hasOwnProperty('Modalidad__c')) {
+		   						toStore.Modalidad__c = toStore.opts.Modalidad__c.Id;
+		   					}
+	   						if(toStore.opts.hasOwnProperty('Nivel__c')) {
+			   					toStore.Nivel__c = toStore.opts.Nivel__c.Id;
+			   				}
+	   						if(toStore.opts.hasOwnProperty('Programa__c')) {
+			   					toStore.Programa__c = toStore.opts.Programa__c.Id;
+			   				}
+	   						if(toStore.opts.hasOwnProperty('Plantel__c')) {
+			   					toStore.Plantel__c = toStore.opts.Plantel__c.Id;
+			   				}
+	   						if(toStore.opts.hasOwnProperty('Periodo__c')) {
+			   					toStore.Periodo__c = toStore.opts.Periodo__c.Id;
+			   				}
+	   						if(toStore.opts.hasOwnProperty('Periodocidad__c')) {
+			   					toStore.Periodocidad__c = toStore.opts.Periodocidad__c.value;
+			   				}
+	   						if(toStore.opts.hasOwnProperty('DuracionPrograma__c')) {
+			   					toStore.DuracionPrograma__c = toStore.opts.DuracionPrograma__c.value;
+			   				}
+	   					}
+
+	   					delete toStore.opts;
+	   					delete toStore.isChecked;
+	   					delete toStore.searchTo;
+	   					delete toStore.CreatedDate;
+	   					delete toStore.currentPeriod;
+	   					if(toStore.hasOwnProperty('Id')) {//update offer
+	   						$scope.sfDB({action: 'update'}, new sfService.gateway.oferta(toStore), function(err, res, all) {
+	   							$scope.processResult(err, res, 'update');
+   								sizeSaved++;
+	   							if(!err) {
+	   								for(key in toStore) {
+					   					if(item.hasOwnProperty(key)) {
+					   						item[key] = toStore[key];
+					   					}
+				   					}
+	   							}
+	   							if(index === (length - 1)) {
+	   								if(!err) {
+	   									//$scope.cancelEdit();
+	   								}
+	   								//console.log('finish save- in update:::: ' + new Date());
+	   							}
+	   						});
+	   					} else { //create offer
+	   						$scope.sfDB({instance: toStore, action: 'create'}, offerGW, function(err, res) {
+	   							//console.log(err);
+	   							//console.log(res);
+	   							$scope.processResult(err, res, 'create');
+	   							sizeSaved++;
+	   							if(index === (length - 1)) {
+	   								if(!err) {
+	   									item.Id = res[0];
+	   									//$scope.cancelEdit();
+	   								}
+	   								//console.log('finish save in create:::: ' + new Date());
+	   							}
+	   						});
+	   					}
+	   				});
+
+	   				$scope.Timer = $interval(function () {
+	                	if(sizeSaved === length) {
+	                		$interval.cancel($scope.Timer);
+   							$scope.actions.savingOFE = false;
+	                		if($scope.errors.length < 1) {
+	                			$scope.cancelEdit();
+	                		}
+	                	}
+	            	}, $scope.delay);
+
+   				} else {
+   					$scope.cancelEdit();
+   				}
+   			};
+   			$scope.addOA = function() {
+   				var instance = {opts:{Periodo__c: $scope.periodSelected}};
+   				$scope.offers.push(instance);
+   			};
+   			$scope.cloneOA = function() {
+   				angular.forEach($scope.offers, function(item, index) {
+   					if(item.isChecked) {
+   						var clone = {Conceptos__c:item.Conceptos__c,Estatus__c:item.Estatus__c, Modalidad__c:item.Modalidad__c, Name:item.Name, Nivel__c:item.Nivel__c, Periodo__c:item.Periodo__c,Plantel__c:item.Plantel__c,Programa__c:item.Programa__c, Periodocidad__c: item.Periodocidad__c, DuracionPrograma__c: item.DuracionPrograma__c};
+   						clone = $scope.detailsOffer(clone);
+   						//console.log(item);
+   						//console.log(clone);
+   						$scope.offers.push(clone);
+   					}
+   				});
+   				//$scope.editOA();
+   			};
+   			$scope.removeOA = function() {
+   				var sizeDeleted = 0;
+   				var offerDeleted = [];
+   				$scope.actions.deletingOFE = true;
+
+   				angular.forEach($scope.offers, function(item, index) {
+   					console.log('delete');
+   					console.log(item);
+   					if(item.isChecked && item.hasOwnProperty('Id') && item.Id.length>14) {
+   						$scope.sfDB({instance: item, action: 'del'}, offerGW, function(err, res) {
+   							$scope.processResult(err, res, 'update');
+   							$('#removeOffers').modal('hide');
+   							sizeDeleted++;
+   							if(!err) {
+   								offerDeleted.push(item);
+   							}
+   						});
+   					} else if(item.isChecked) {
+   						sizeDeleted++;
+   						offerDeleted.push(item);
+   					}
+   				});
+   				/*verify if action delete is finish*/
+   				$scope.Timer = $interval(function () {
+                	if(sizeDeleted === $scope.btns.sizeSelect) {
+                		$interval.cancel($scope.Timer);
+   						$scope.actions.deletingOFE = false;
+                		angular.forEach(offerDeleted, function(item) {
+
+   							item.isChecked = false;
+   							$scope.offerIsCheck(item);
+
+   							var index = $scope.offers.indexOf(item);
+                			$scope.offers.splice(index, 1);
+                			$('#removeOffers').modal('hide');
+                		});
+                	}
+            	}, $scope.delay);
+   			};
+   			$scope.offerIsInvalid = function(offer, index) {
+   				var isInvalid = false;
+   				angular.forEach(Object.keys($scope.fieldsK.offer), function(value, key){
+   					var field = $scope.formOfertaA[value+offer.$$hashKey];
+   					if(field && !isInvalid && field.$invalid) {
+   						isInvalid = true;
+   					}
+   				});
+   				return isInvalid;
+   			};
+   			$scope.setClassValid = function(form, field, instance) {
+   				var retClass = '';
+   				var field = form[field.name+instance.$$hashKey];
+   				if(field && field.$valid) {
+   					retClass = $scope.class.valid;
+   				} else if(field && field.$invalid) {
+   					retClass = $scope.class.invalid;
+   				} else {
+   					return '';
+   				}
+   				return retClass;
+   			};
+   			
+   			$scope.filterProgram = function(instance) {
+   				console.log('\n\nin filterProgram');
+   				console.log(instance);
+   				if(instance) {
+   					if(!instance.hasOwnProperty('opts')) {
+   						instance.opts = {};
+   					}
+	   				instance.opts.Programa__c = undefined;
+	   				instance.opts.Programa__cOPTS = undefined;
+	   				var programsF = $filter('filter')($scope.program, {Nivel__c: instance.opts.Nivel__c.Id});
+					if(programsF && programsF.length > 0) {
+						instance.opts.Programa__cOPTS = programsF;
+					} else {
+					//	opts.Programa__cOPTS = [];
+					//	opts.Programa__cOPTS.unshift({Id: '', Name: '-- Seleccione una opción --'});
+					}
+					//opts.Programa__c = opts.Programa__cOPTS[0];
+				}
+   			};
+
+   			$scope.detailsOffer = function(item) {
+   				if(!item.hasOwnProperty('opts')) {
+   					var estatus = $filter('filter')($scope.fieldsK.offer.Estatus__c.values, {value: item.Estatus__c});
+   					var modality = $filter('filter')($scope.modalitys, {Id: item.Modalidad__c});
+   					var level = $filter('filter')($scope.levels, {Id: item.Nivel__c});
+   					var program = $filter('filter')($scope.program, {Id: item.Programa__c});
+   					var campus = $filter('filter')($scope.campus, {Id: item.Plantel__c});
+
+   					var periodicity = $filter('filter')($scope.periodicity, {value: item.Periodocidad__c});
+   					var duration = $filter('filter')($scope.duration, {value: item.DuracionPrograma__c});
+
+
+   					item.opts = {Periodo__c: $scope.periodSelected};
+
+   					if(estatus && estatus.length > 0) {item.opts.Estatus__c = estatus[0];}
+   					if(modality && modality.length > 0) {item.opts.Modalidad__c = modality[0];}
+   					if(level && level.length > 0) {item.opts.Nivel__c = level[0]; }
+
+   					//filter program by level
+	   				item.opts.Programa__cOPTS = $filter('filter')($scope.program, {Nivel__c: item.opts.Nivel__c.Id});
+
+   					if(program && program.length > 0) {item.opts.Programa__c = program[0]; }
+   					if(campus && campus.length > 0) {item.opts.Plantel__c = campus[0]; }
+   					if(periodicity && periodicity.length > 0) {item.opts.Periodocidad__c = periodicity[0]; }
+   					if(duration && duration.length > 0) {item.opts.DuracionPrograma__c = duration[0]; }
+				}
+				return item;
+   			};
+   			$scope.addIndexToFind = function(data, fields, catalog) {
+   				angular.forEach(data, function(instance) {
+   					if(!instance.hasOwnProperty('searchTo')) {
+   						instance.searchTo = {};
+   					}
+	   				angular.forEach(fields, function(field) {
+	   					instance.searchTo[field] = $scope.parseFromCatalog(instance[field], catalog);
+	   				});
+   				});
+   			};
+
+   			/*utils for execute any task to DB salesforce
+			 * params object{action, criteria, instance}
+			 * gateway service for connect to salesforce
+			 * callback funtion for process response
+   			*/
+   			$scope.sfDB = function(params, gateway, callback) {
+   				var errors = [];
+   				if(typeof gateway === 'undefined' || typeof callback === 'undefined'){
+   					throw "method sfDB require three params (action, gateway, callback)";
+   				} else {
+	   				params.action   = params.action || 'retrieve';
+	   				params.criteria = params.criteria || {};
+	   				params.instance = params.instance || {};
+
+	   				if(params.action === 'retrieve') { //read data from DB salesforce
+	   					gateway.retrieve(params.criteria, function(err, res, all) {
+	   						$scope.processResponse(err, res, all, callback);
+	   					});
+	   				} else if(params.action === 'create') { // create instance to DB
+	   					gateway.create(params.instance, function(err, res, all) {
+	   						$scope.processResponse(err, res, all, callback);
+	   					});
+	   				} else if(params.action === 'update') { //update instance to DB
+						gateway.update(function(err, res, all) {
+							$scope.processResponse(err, res, all, callback);
+						});
+	   				} else if(params.action === 'del') { // remove record from DB salesforce
+	   					gateway.del(params.instance.Id, function(err, res) { 
+	   						$scope.processResponse(err, res, {}, callback);
+	   					});
+	   				} else if(params.action === 'describe') { // get metadata of any object from salesforce
+	   					gateway.describe(function(err, res, all) {
+	   						if(!err) {
+	   							var fields = [];
+	   							angular.forEach(res.fields, function(field, index) {
+	   								var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: field.required};
+	   								if(field.type === 'picklist' && field.hasOwnProperty('picklistValues')) {
+	   									var values = [];
+	   									angular.forEach(field.picklistValues, function(it) {
+	   										values.push({label: it.label, value: it.value});
+	   									});
+	   									mdField.values = values;
+	   								}
+				   					fields.push(mdField);
+				   				});
+				   				callback(null, fields);
+	   						}
+	   					});
+	   				} else {
+	   					callback('-> '+action + ' :: action has not yet defined.');
+	   				}
+	   			}
+   			};
+
+   			/*process response from salesforce for check errors, need main callback from sfDB*/
+   			$scope.processResponse = function(err, res, all, callback) {
+   				if(typeof err === 'undefined' || typeof res === 'undefined' || typeof all === 'undefined' || typeof callback === 'undefined'){
+   					throw 'method processResponse require four params (err, res, all, callback)';
+   				} else {
+					if(err) {
+	   					var errors = [];
+						if(all.errors) {
+							angular.forEach(all.errors, function(error) {
+								errors.push(error.toString());
+							});
+						} else {
+							errors.push(err.toString());
+						}
+						callback(errors);
+					} else {
+						callback(null, res);
+					}
+				}
+   			};
+   			/*process response of task 'retrieve' from salesforce gateway*/
+   			$scope.parseFromDB = function(res, fields, callback) {
+   				var ret = [];
+   				angular.forEach(res, function(model, index) {
+					var instance = {};
+					angular.forEach(fields, function(field, idx) {
+						var value = model.get(field.name);
+						if(typeof value !== 'undefined') {
+							if(field.type === 'date') {
+								value = $scope.parseDate(value);
+							} else if(field.type === 'picklist' && field.name === 'Estatus__c') {//obtener de metadatos
+								//value = (value === 'Activo');
+							}
+							instance[field.name] = value;
+						}
+					});
+					ret.push(instance);
+				});
+				callback(null, ret);
+   			};
+   			$scope.parseDate = function(date) {
+   				return $filter('date')(date, 'dd/MM/yyyy');
+   			};
+   			$scope.parseFromCatalog = function(key, catalog) {
+   				if(key && catalog && typeof catalog === 'object' && catalog.hasOwnProperty(key)) {
+   					return catalog[key];
+   				} else {
+   					return '';
+   				}
+   			};
+   			$scope.createDate = function(strDate) {
+   				var date = null;
+   				strDate = strDate || '';
+   				strDate = strDate.split('/');
+   				//console.log(strDate);
+   				if(strDate.length > 2) {
+   					date = new Date();
+   					date.setDate(strDate[0]);
+   					date.setMonth(strDate[1]  - 1);
+   					date.setFullYear(strDate[2]);
+   				}
+   				return date;
+   			};
+   			$scope.processResult = function(err, res, action) {
+   				if(err) {
+					$scope.errors = err;
+				} else {
+					//console.log(res);
+				}
+				$scope.saving = false;
+				$scope.$apply();
+   			};
+   			$scope.verifyField = function(fieldName) {
+   				if(!$scope.isEditingC || $scope.saving) {
+   					return '';
+   				} else {
+   					return $scope.formOFE[fieldName].$valid ? 'has-success' : 'has-error';
+   				}
+   			};
+
+   			$scope.offerIsCheck = function(offert) {
+   				if(offert.isChecked) {
+   					if(offert.Id) {
+   						$scope.btns.keysSelect[offert.Id] = true;
+   					} else {
+   						$scope.btns.keysSelect[offert.$$hashKey] = true;
+   					}
+   				} else {
+   					if(offert.Id) {
+   						delete $scope.btns.keysSelect[offert.Id];
+   					} else {
+   						delete $scope.btns.keysSelect[offert.$$hashKey];
+   					}
+   				}
+   				$scope.sizeToRemove();
+   			};
+   			$scope.sizeToRemove = function() {
+   				$scope.btns.sizeSelect = Object.keys($scope.btns.keysSelect).length;
+   				$scope.btns.selectAll = $scope.btns.sizeSelect === $scope.offers.length;
+   			};
+   			$scope.selectAll = function() {
+   				var isChecked = $scope.btns.selectAll;
+   				angular.forEach($scope.offers, function(item, index) {
+   					item.isChecked = isChecked;
+   					$scope.offerIsCheck(item);
+   				});
+   				//$scope.sizeToRemove();
+   			};
+
+   			$scope.editPay = function(offer) {
+   				$scope.sfService.offer = offer;
+   				$scope.sfService.offer.currentPeriod = $scope.currentPeriod;
+   				$scope.sfService.offer.currentPeriod.lastEDIT = new Date();
+   				$scope.sfService.groupDep = {catTurn: $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Turno'})};
+   			};
+   			$scope.arrayKeyToObj = function(fields, objName) {
+   				angular.forEach(fields, function(item, index) {
+   					$scope.fieldsK[objName][item.name] = item;
+   					$scope.fieldsK[objName][item.name]['objParent'] = objName;
+   				});
+   			};
+
+   			/*step 1:: get metadata of period and offer - and show periods*/
+   			sfDB.getRemoteAction({action: 'describe'}, periodGW, function(err, res) {
+   				if(!err) {$scope.periodFields = res; $scope.getPeriods();$scope.arrayKeyToObj(res, 'period');}
+   			});
+   			sfDB.getRemoteAction({action: 'describe'}, offerGW, function(err, res) {
+   				if(!err) {$scope.offerFields = res; $scope.arrayKeyToObj(res, 'offer');}
+   			});
+   			sfDB.getRemoteAction({action: 'describe'}, catalogGW, function(err, res) {
+   				if(!err) {$scope.catalogFields = res; $scope.arrayKeyToObj(res, 'catalog');}
+   			});
+   			sfDB.getRemoteAction({action: 'describe'}, programGW, function(err, res) {
+   				if(!err) {$scope.programFields = res; $scope.arrayKeyToObj(res, 'program');}
+   			});
+   			sfDB.getRemoteAction({action: 'describe'}, campusGW, function(err, res) {
+   				if(!err) {$scope.campusFields = res; $scope.arrayKeyToObj(res, 'campus');}
+   			});
+   			$scope.getCatalogs();
+
+   			$scope.modalidad = [{Id: 1, Name: 'Ejecutiva'}, {Id: 2, Name: 'Online'}, {Id: 3, Name: 'Presencial'}];
+   			$scope.nivel = [
+   				{Id: 1, Name: 'Maestría'}, 
+   				{Id: 2, Name: 'Licenciatura'}, 
+   				{Id: 3, Name: 'Curso'}, 
+   				{Id: 4, Name: 'Diplomado'}, 
+   				{Id: 5, Name: 'Bachillerato'}, 
+   				{Id: 6, Name: 'Doctorado'}, 
+   				{Id: 7, Name: 'Especialidad'}
+   			];
+
+   			$scope.setFieldSort = function(sortField) {
+		    	$scope.sortField = sortField;
+		    	$scope.reverse = !$scope.reverse;
+		    }
+   			var isSortedBy = function (fieldName) {return $scope.sortField === fieldName; }; 
+   			var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.reverse; }; 
+   			var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.reverse; }; 
+   			$scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; }; 
+   		}]);
+		app.directive('datepicker', function() {
+		    return {
+		        restrict: 'A',
+		        require : 'ngModel',
+		        link : function (scope, element, attrs, ngModelCtrl) {
+		            $(function(){
+		                element.datepicker({
+		                    dateFormat:'dd/mm/yy',
+		                    onSelect:function (date) {
+		                        scope.$apply(function () {
+		                            ngModelCtrl.$setViewValue(date);
+		                        });
+		                    }
+		                });
+		            });
+		        }
+		    }
+		});
+		app.factory('sfDB', function($filter) {
+			var processResponse = function(err, res, all, callback) {
+   				if(typeof err === 'undefined' || typeof res === 'undefined' || typeof all === 'undefined' || typeof callback === 'undefined'){
+   					throw 'method processResponse require four params (err, res, all, callback)';
+   				} else {
+					if(err) {
+	   					var errors = [];
+						if(all.errors) {
+							angular.forEach(all.errors, function(error) {
+								errors.push(error.toString());
+							});
+						} else {
+							errors.push(err.toString());
+						}
+						callback(errors);
+					} else {
+						callback(null, res);
+					}
+				}
+			};
+			var parseDate =  function(date) {
+   				return $filter('date')(date, 'dd/MM/yyyy');
+   			};
+			var parseFromDB = function(res, fields, callback) {
+   				var ret = [];
+   				angular.forEach(res, function(model, index) {
+					var instance = {};
+					angular.forEach(fields, function(field, idx) {
+						var value = model.get(field.name);
+						if(typeof value !== 'undefined') {
+							if(field.type === 'date') {
+								value = parseDate(value);
+							} else if(field.type === 'picklist' && field.name === 'Estatus__c') {//obtener de metadatos
+								value = (value === 'Activo');
+							}
+							instance[field.name] = value;
+						}
+					});
+					ret.push(instance);
+				});
+				callback(null, ret);
+   			};
+			var getRemoteAction = function(params, gateway, callback) {
+				var errors = [];
+   				if(typeof gateway === 'undefined' || typeof callback === 'undefined'){
+   					throw "method getRemoteAction require three params (action, gateway, callback)";
+   				} else {
+	   				params.action   = params.action || 'retrieve';
+	   				params.criteria = params.criteria || {};
+	   				params.instance = params.instance || {};
+
+	   				if(params.action === 'retrieve') { //read data from DB salesforce
+	   					gateway.retrieve(params.criteria, function(err, res, all) {
+	   						processResponse(err, res, all, callback);
+	   					});
+	   				} else if(params.action === 'create') { // create instance to DB
+	   					gateway.create(params.instance, function(err, res, all) {
+	   						this.processResponse(err, res, all, callback);
+	   					});
+	   				} else if(params.action === 'update') { //update instance to DB
+						gateway.update(function(err, res, all) {
+							this.processResponse(err, res, all, callback);
+						});
+	   				} else if(params.action === 'del') { // remove record from DB salesforce
+	   					gateway.del(params.instance.Id, function(err, res) { 
+	   						this.processResponse(err, res, {}, callback);
+	   					});
+	   				} else if(params.action === 'describe') { // get metadata of any object from salesforce
+	   					gateway.describe(function(err, res, all) {
+	   						if(!err) {
+	   							var fields = [];
+	   							angular.forEach(res.fields, function(field, index) {
+	   								var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+	   								var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired, referenceTo: field.referenceTo};
+	   								if((field.type === 'picklist' || field.type === 'multipicklist') && field.hasOwnProperty('picklistValues')) {
+	   									var values = [];
+	   									angular.forEach(field.picklistValues, function(it) {
+	   										values.push({label: it.label, value: it.value});
+	   									});
+	   									mdField.values = values;
+	   								}
+				   					fields.push(mdField);
+				   				});
+				   				callback(null, fields);
+	   						}
+	   					});
+	   				} else {
+	   					callback('-> '+action + ' :: action has not yet defined.');
+	   				}
+	   			}
+			}
+			var arrayToObj = function(fields, objName) {
+   				var keys = {};
+   				angular.forEach(fields, function(item, index) {
+   					keys[objName][item.name] = item;
+   					keys[objName][item.name]['objParent'] = objName;
+   				});
+   				return keys;
+   			}
+
+			return {
+				processResponse: processResponse,
+				parseDate: parseDate,
+				parseFromDB: parseFromDB,
+				getRemoteAction: getRemoteAction,
+				arrayToObj: arrayToObj
+			}
+		});
+		app.directive('sfInput', function() {
+			return {
+				restrict: 'E',
+				scope: {
+					field: '=sfField',
+					instance: '=sfInstance',
+					form:'=sfForm',
+					opts: '=sfOpts',
+					label:'=sfLabelProp'
+				},
+				templateUrl: 'sf-input.html',
+				controller: 'inputController'
+			}
+		});
+		app.controller('inputController', ['$scope', function($scope) {
+			console.log('in inputController');
+			console.log($scope);
+			$scope.$watch('instance', function () {
+		    	console.log('update instance...');
+		    	console.log($scope);
+
+		    }, true);
+		    $scope.isInputText = function(field) {
+		    	return field && field.type === 'string';
+		    };
+		    $scope.isSelectOption = function(field) {
+		    	return field && (field.type === 'reference' || field.type === 'picklist');
+		    };
+		    $scope.isMultipleOption = function(field) {
+		    	return field && field.type === 'multipicklist';
+		    };
+		    $scope.isInputDate = function(field) {
+		    	return field && field.type === 'date';
+		    };
+		}]);
+
+		app.directive('sfSelect', function() {
+			return {
+				restrict: 'E',
+				scope: {
+					field: '=sfField',
+					instance: '=sfInstance',
+					form:'=sfForm',
+					opts: '=sfOpts',
+					label:'=sfLabelProp',
+					callback: '&sfFilterMethod'
+				},
+				templateUrl: 'sf-select.html',
+				controller: 'inputSelectCtrl'
+			}
+		});
+		app.controller('inputSelectCtrl', ['$scope', function($scope) {
+			console.log('\n\nin inputSelectCtrl');
+			console.log($scope);
+			$scope.$watch('instance', function () {
+		    }, true);
+		}]);
+  		$(document).ready(function() {
+  			$.datepicker.regional['es'] = {
+                closeText: 'Cerrar',
+                prevText: '<Ant',
+                nextText: 'Sig>',
+                currentText: 'Hoy',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+                dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+    		$.datepicker.setDefaults($.datepicker.regional['es']);
+  		});
+   </script>
+   <!-- template -->
+   <script type="text/ng-template" id="sf-input.html">
+   		<div class="form-group" ng-class="{'has-success': form.{{field.objParent + '_' +field.name}}.$valid, 'has-error': form.{{field.objParent + '_' +field.name}}.$invalid}">
+			<label class="control-label col-sm-4"><span ng-bind="field.label"/> <span ng-if="field.required">*</span></label>
+			<div class="col-sm-8">
+				<!-- for input string -->
+				<input ng-if="isInputText(field)" ng-required="{{field.required}}" name="{{field.objParent + '_' +field.name}}" class="form-control" ng-model="instance[field.name]" id="{{field.name}}"></input>
+
+				<!-- for input date -->
+				<input ng-if="isInputDate(field)" datepicker="instance[field.name]" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="{{field.required}}" placeholder="dd/MM/aaaa" name="{{field.objParent + '_' +field.name}}" class="form-control" ng-model="instance[field.name]"></input>
+
+				<!-- for input select simple -->
+				<select ng-if="isSelectOption(field)"  name="{{field.objParent + '_' +field.name}}" ng-required="{{field.required}}" class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+					<option ng-if="opts.length > 0" value="" selected>-- Seleccione {{field.label}} --</option>
+				</select>
+
+				<!-- for input select multipe -->
+				<select ng-if="isMultipleOption(field)"  name="{{field.objParent + '_' +field.name}}" ng-required="{{field.required}}" multiple class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+					<option ng-if="opts.length > 0" value="" selected>-- Seleccione {{field.label}} --</option>
+				</select>
+
+			</div>
+		</div>
+   </script>
+   <script type="text/ng-template" id="sf-select.html">
+       <select name="{{field.name+instance.$$hashKey}}" ng-change="callback(instance)" ng-required="{{field.required}}" class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+			<option ng-if="opts.length > 0" value="" selected>-- Seleccione {{field.label}} --</option>
+		</select>
+   </script>
+   <style type="text/css">
+       /*.ieu-separator {height: 10px; background-color: rgba(255, 242, 0, 0.49); }*/
+       .ieu-panel>.panel-heading{background-color: #2a94d6;border-color: #2585c1; color: white;}
+       .ieu-th-btns{max-width: 50px;white-space: normal;}
+       .ieu-modal-danger>.modal-header{color: #ffffff; background-color: #cf5c60; border-color: #c9484d;}
+       .form-control:focus{background-color: #F3EFEF;}
+   </style>
+   <!--div class="form-group" ng-class="{'has-error': form.dataSelect.$invalid, 'has-success': form.dataSelect.$valid}">
+		<label class="control-label col-sm-4">Selecciona</label>
+		<div class="col-sm-8">
+		    {{dataSelected|json}}
+			<select name="dataSelect" class="form-control" ng-model="dataSelected.foo" ng-options="foo as foo.firstName for foo in data"  required>
+		        <option ng-if="data.length > 1" value="" selected>Choose</option>
+		    </select>
+		</div>
+	</div-->
+
+</apex:component>

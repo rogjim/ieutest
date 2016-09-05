@@ -1,0 +1,167 @@
+<apex:component controller="LEAD_BecasCtrl" allowDML="true"  >
+    <apex:attribute name="candidatoCopia" type="Lead" description="" assignTo="{!candidato}" />
+    
+    
+    <script>
+    j$ = jQuery.noConflict();
+    </script>
+   
+ 
+        <div class="row">
+            <apex:actionFunction action="{!seleccionaBeca}" name="seleccionaBeca" reRender="cuerpoBeca,mensajes,seleccionBecaConvenio" oncomplete="setTimeout(renderizado, 1000);" />
+            <apex:actionFunction action="{!setBecaAplicada}" name="setBecaAplicada" reRender="cuerpoBeca,mensajes,seleccionBecaConvenio,becaSelect,becaSelect1" />
+            
+            <apex:actionFunction name="renderizado" reRender="cuerpoBeca,mensajes,seleccionBecaConvenio,becaSelect,becaSelect1"  />
+            
+            <div class="col-md-6">
+                <c:Panel title="Beca" idCollapse="scholarship"  id="scholarship" idParent="panelParent" expanded="true" >
+                    
+                    <div class="row">
+                        <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.TipoBeca__c.Label}" >
+                            <apex:inputField styleClass="form-control" value="{!candidato.TipoBeca__c}" onchange="seleccionaBeca()" />
+                        </c:PanelCell>
+                    </div>
+                    
+                    <apex:outputPanel id="cuerpoBeca" >
+                        
+                        <apex:outputPanel rendered="{!IF(candidato.TipoBeca__c =='Comercial',true,false)}" styleClass="row" >
+                            <c:PanelCell columns="6" id="porcentajeBeca" label="{!$ObjectType.Lead.fields.PorcentajeBeca__c.Label}"  >
+                                <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!PorcentajeBecaString}" onchange="setBecaAplicada()" >
+                                    <apex:selectOptions value="{!porcentajeBeca}"/>
+                                </apex:selectList>
+                            </c:PanelCell>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel rendered="{!IF(candidato.TipoBeca__c =='Convenio',true,false)}" styleClass="row" >
+                            <c:PanelCell columns="6" id="seleccionBeca" label="Selecciona Beca" >
+                                <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!PorcentajeBecaString}" onchange="setBecaAplicada()" >
+                                    <apex:selectOptions value="{!listaBecasConvenio}"/>
+                                </apex:selectList>
+                            </c:PanelCell>
+                        </apex:outputPanel>
+                        
+                        
+                        <!-- Selección en caso de que la Beca sea de tipo Convenio -->
+                        <apex:outputPanel id="seleccionBecaConvenio" rendered="{!IF(tipoBecaConvenio !=null,true,false)}" styleClass="row" >
+                            <c:PanelCell id="becaSelect" columns="6" label="{!$ObjectType.Lead.fields.PorcentajeBeca__c.Label}"  >
+                                <apex:selectList id="becaSelect"  size="1" multiselect="false" styleClass="form-control" value="{!PorcentajeBecaRango}" rendered="{!IF(tipoBecaConvenio=='Rango',true,false)}" >
+                                    <apex:selectOptions value="{!becaConvenioRango}"/>
+                                </apex:selectList>
+                                
+                                <apex:outputText value="{!candidato.PorcentajeBeca__c}" rendered="{!IF(tipoBecaConvenio=='Fijo',true,false)}" />
+                            </c:PanelCell>
+                        </apex:outputPanel>
+                        
+                        
+                    </apex:outputPanel>
+                </c:Panel>
+            </div>
+            
+            
+            
+            
+            <div class="col-md-6">
+                <c:Panel title="Descuento" idCollapse="discount"  id="discount" idParent="panelParent" expanded="true" >
+                    <apex:outputPanel rendered="{!IF(descuentoVigente!=null,true,false)}">
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="% Descuento aplicable"  >
+                                <apex:outputText value="{!descuentoVigente.PorcentajeDescuento__c}"/>
+                            </c:PanelCell>
+                        </div>
+                        
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="Vigente hasta"  >
+                                <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                    <apex:param value="{!descuentoVigente.FechaFinVigencia__c}" /> 
+                                </apex:outputText>
+                            </c:PanelCell>
+                        </div>
+                        
+                    </apex:outputPanel>
+                    
+                    <div class="row text-center" >
+                        <input type="button" class="btn btn-info" value="Solicitar promoción" id="modalPromocionBtn" />
+                    </div>
+                    
+                    <div class="row text-center" >
+                        <apex:outputText value="{!leyendaSolicitudPromocion}"  ></apex:outputText>
+                    </div>
+                    
+                    
+                    
+                    <div class="row" >
+                        <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.SolicitudPromocion__c.Label}"   >
+                            <apex:inputCheckbox value="{!candidato.SolicitudPromocion__c}" disabled="true" />
+                        </c:PanelCell>
+                    </div>
+                    
+                    <div class="row" >
+                        <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.DisponiblePromocionCero__c.Label}"   >
+                            <apex:inputCheckbox value="{!candidato.DisponiblePromocionCero__c}" disabled="true" />
+                        </c:PanelCell>
+                    </div>
+                    
+                </c:Panel>
+            </div>
+        </div>
+        
+ 
+        <apex:actionFunction action="{!guardaSolicitudPromocion}" name="guardaSolicitudPromocion" reRender="cuerpoBeca,mensajes"/>
+        <div id="modalPromocion" title="Solicitud de promoción">
+            <div class="alert alert-danger error" id="modalDireccionNuevoMensajeError" style="display:none">Esto es un mensaje</div>
+            <div class="row" >
+                <c:PanelCell columns="6" label="Descuento"  >
+                    <apex:inputField value="{!solicitudPromocion.PorcentajeDescuento__c}" styleClass="form-control" />
+                </c:PanelCell>
+            </div>
+            <div class="row" >
+                <c:PanelCell columns="6" label="Del:"  >
+                    <apex:inputField value="{!solicitudPromocion.FechaInicioVigencia__c}" type="date" styleClass="form-control" showDatePicker="false" style="width:100%;" />
+                </c:PanelCell>
+            </div>
+            <div class="row" >
+                <c:PanelCell columns="6" label="Al:"  >
+                    <apex:inputField value="{!solicitudPromocion.FechaFinVigencia__c}"  type="date" styleClass="form-control" showDatePicker="false" style="width:100%;" />
+                </c:PanelCell>
+            </div>
+            
+            <div class="row" >
+                <c:PanelCell columns="6" label="Comentario"  >
+                    <apex:inputField value="{!solicitudPromocion.Comentarios__c }" styleClass="form-control"/>
+                </c:PanelCell>
+            </div>
+             <apex:commandButton action="{!guardaSolicitudPromocion}" value="Save" id="theButton"  reRender="cuerpoBeca,mensajes"/>
+        </div>
+       
+    <script>
+     var dialogoPromocion;
+    j$(document).ready(function(){
+        
+    	dialogoPromocion = j$("#modalPromocion").dialog({
+        autoOpen: false,
+        height: 'auto',
+        minWidth: 600,
+        modal: true,
+        buttons: {
+            Cancelar: function() {
+                dialogoPromocion.dialog("close");
+            }
+            
+        },
+        close: function() {
+        },
+        open: function() {
+            j$('#modalDireccionNuevoMensajeError').attr('style','display:none');
+        }
+    	});
+    });
+    
+   
+    
+    j$("#modalPromocionBtn").on( "click" , function() {
+        dialogoPromocion.dialog( "open" );
+    });
+    
+    </script>
+    
+</apex:component>

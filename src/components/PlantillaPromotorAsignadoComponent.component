@@ -1,0 +1,157 @@
+<apex:component controller="PlantillaPromotorAsignadoController" access="global">
+       <apex:attribute name="ToID" type="string" description="the lead owner ID" assignTo="{!salesRepID}" />      
+       <apex:datatable value="{!InactiveLeads}" var="item" border="1">      
+       </apex:datatable>            
+       
+   <table width="567" border="0" cellspacing="0" cellpadding="0">      
+     <tbody>
+         <tr>
+             <td width="1" bgcolor="#f4942d">
+                 <img src="https://ci5.googleusercontent.com/proxy/dir-9u9HvQfztQL6WYYFC3I1UaJPhm8ry1JoUBAoSJSskSlypl1lBMrw3bgMxpYS6m6msKryQOb4_Ck5Oe354g8Z9T2KRXRN0Ce3OLFjQV5Z40gQFA=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/raya.jpg" width="1" height="1" class="CToWUd"/>
+             </td>
+             <td align="center" width="565">
+             <table width="95%" border="0" cellspacing="0" cellpadding="4">
+                 <tbody>
+                     <tr>
+                         <td height="10" scope="row"></td>
+                     </tr>
+                     <tr>
+                         <td scope="row">
+                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                 <tbody><tr>
+                                     <td width="110" align="left" scope="row">
+                                             <img src="" width="100" height="100" class="CToWUd"/>
+                                     </td>
+                                     <td bgcolor="#feeddb">
+                                         <div>
+                                             <font face="Arial" size="2">Apreciable    {!InactiveLeads.Name} , IEU agradece tu interés en nuestra oferta educativa. 
+                                             Para nosotros es primordial la atención personalizada por lo que a partir de este momento seré tu asesor, soy .</font><br/>
+                                         </div>
+                                         <div>
+                                             <font face="Arial" size="2">Respecto a tus preguntas, aprovecho para enviarte la información que amablemente has solicitado:</font>
+                                         </div>
+                                     </td>
+                                 </tr></tbody>
+                             </table>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="11" scope="row">
+                             <img src="https://ci3.googleusercontent.com/proxy/gCXWD4Fb7MM_AlCzkkLJsAAjIFqXJTvixG6YYcu4KDWwBMm5QePpFRLaT4sS5JaABopupcyxhQtIN8A0fcmiMMrRsXfjV2nny86XR6BDC5CrkWEmTkvO3_Ostg=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/horizontal.jpg" width="535" height="1" class="CToWUd"/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="50" align="center" bgcolor="#f37d01" scope="row">
+                             <br/><font face="Arial" size="2" color="#3c1f00"><strong>¡Más de 36 años de experiencia nos respaldan!</strong></font><br/>&nbsp;<br/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="11" scope="row"><img src="https://ci3.googleusercontent.com/proxy/gCXWD4Fb7MM_AlCzkkLJsAAjIFqXJTvixG6YYcu4KDWwBMm5QePpFRLaT4sS5JaABopupcyxhQtIN8A0fcmiMMrRsXfjV2nny86XR6BDC5CrkWEmTkvO3_Ostg=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/horizontal.jpg" alt="" width="535" height="1" class="CToWUd"/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td align="left" scope="row"><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span>
+                             <strong>¿Cuál es el monto o costo de inscripción?   </strong></span><br/><font face="Arial" size="2">Incorporarse a IEU es muy fácil, ya que la inscripción para el programa de  {!InactiveLeads.Programa__r.Name}	 es sumamente accesible, puedes dar este muy importante paso por tan sólo <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!InactiveLeads.Inscripcion__c}"/> </apex:outputText>           . Esta inscripción es <strong>cuatrimestral</strong>, considerando que la {!InactiveLeads.Nivel__r.Name}  se cursa en sólo 3 años.<br/>
+                             Es importante  informarte que para este periodo contamos con apoyo para ayudarte a dar este gran paso, se trata de un descuento en la inscripción, llámanos y pregunta por el porcentaje vigente. 
+                             Este apoyo estará disponible hasta el {!InactiveLeads.VigenciaDescuento__c} .</font><br/><br/>
+                             <img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>
+                             ¿Cuál es el monto o costo por colegiatura?   </strong></span><br/><font face="Arial" size="2">?  
+                             Con respecto a la inversión en tu programa de {!InactiveLeads.Name} te comento que la colegiatura mensual es de sólo  <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!InactiveLeads.Colegiatura__c}"/> </apex:outputText>    , que representa un precio razonable para los beneficios que ofrecemos: <br/>?  37 años de experiencia.<br/>?    Acreditación multicampi en FIMPES.<br/>? Excelente nivel académico.<br/>? Más de 30,000 egresados nos respaldan.<br/>Sin embargo en el IEU entendemos que esta decisión que te estas planteando tomar siempre implica un esfuerzo económico por eso te ofrecemos un atractivo programa de becas para cursar tus estudios de 
+                             {!InactiveLeads.Programa__r.Name}. 
+                             Llámanos y con gusto te asesoraremos respecto a nuestro programa de becas para adaptar tus estudios a tu presupuesto.<br/>   ? Te invitamos a vivir la experiencia IEU!</font><br/><br/>
+                             <img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>
+                             ¿Qué documentos se requieren?</strong></span><br/><font face="Arial" size="2">
+                             Los documentos necesarios para ingresar a {!InactiveLeads.Nivel__r.Name} son:<br/>
+                             - Acta de nacimiento<br/>
+                             - Certificado de preparatoria<br/>
+                             - Certificado de secundaria</font><br/><br/>
+                             <img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Cuál es el proceso de admisión?  </strong></span><br/><font face="Arial" size="2">Nuestro proceso de admisión es muy fácil solo debes de: <br/>1) Llenar la solicitud de admisión por internet.<br/>2) Realizar el pago de la 1era inscripción. 
+                             (No olvides llamarnos y preguntar por el apoyo vigente de pago de inscripción)<br/>3)   Entregar ficha.<br/>4)   Presentar examen.<br/>
+                             5) Entregar los documentos en el Plantel {!InactiveLeads.Plantel__r.name } ubicado en: {!InactiveLeads.Plantel__r.Calle__c } {!InactiveLeads.Plantel__r.NumeroExterior__c} {!InactiveLeads.Plantel__r.Colonia__c } CP {!InactiveLeads.Plantel__r.CodigoPostal__c } {!InactiveLeads.Plantel__r.Ciudad__c } {!InactiveLeads.Plantel__r.Estado__r.Name}, México.<br/>?
+                             Bienvenido a la Comunidad IEU!</font><br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>Quiero conocer el Plan de Estudios.</strong></span><br/><font face="Arial" size="2">Para conocer el plan de estudios de la {!InactiveLeads.Programa__r.Name} en el Plantel {!InactiveLeads.Plantel__r.name } por favor dar clic en la siguiente liga: </font><br/><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-en-sistemas-y-tecnologias-de-la-informacion" target="_blank">Plan de Estudios</a><br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿En qué tiempo se cursa este programa?</strong></span><br/><font face="Arial" size="2">?
+                             El tiempo es el recurso más valioso! y conscientes de ello, en IEU se han estructurado los programas de {!InactiveLeads.Modalidad__c } ser cursados en tan sólo 3 años.Aprovecha esta oportunidad y mejora tu vida, recuerda llamarnos para poder asesorarte acerca de nuestro atractivo programa de becas para adaptar tus estudios no sólo a tu tiempo sino a tu presupuesto.</font>
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Cuándo es el inicio de cursos?</strong></span><br/><font face="Arial" size="2">
+                             Iniciamos la {!InactiveLeads.Nivel__r.Name} próximo Inscripciones abiertas. <br/>?
+                             Aún hay tiempo para potenciar tu desarrollo profesional! </font>
+                             
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Cuál es el horario? </strong></span>          <br/><font face="Arial" size="2">
+                             Es muy grato comentarte que el horario que maneja el IEU para la {!InactiveLeads.Programa__r.Name} en el Plantel {!InactiveLeads.Plantel__r.name } es de Lunes a Viernes de 7:00 a 14:00 horas. <br/>? Te esperamos!  </font>
+                             
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span> <strong>¿Cuentan con becas o financiamiento? </strong></span>  <br/>  <font face="Arial" size="2">
+                             El IEU se preocupa por apoyar a personas con interés en superarse por lo que cuenta con un importante <strong>plan de apoyo financiero</strong> para sus alumnos, a través de becas otorgadas por la firma de convenios con instituciones, empresas y organismos tanto públicos como privados que, junto con el IEU promueven la educación de las personas en su entorno.En el IEU entendemos que esta decisión que te estas planteando tomar siempre implica un esfuerzo económico por eso te ofrecemos un atractivo programa de becas para cursar tus estudios de {!InactiveLeads.Programa__r.Name}. Llámanos o proporciónanos un número telefónico y con gusto te asesoraremos respecto a nuestro programa de becas para adaptar tus estudios a tu presupuesto. Pregunta por nuestra beca promocional y 
+                             nuestra ?Beca Recomendaci?n?.<br/><br/>He aqu? algunas caracter?sticas del algunas de nuestras becas:
+                             <br/>- Beca sin requisitos académicos o administrativos. <br/>- Beca para todas las colegiaturas. <br/>- Beca desde el inicio del programa educativo. <br/>- Beca sin realizar estudios socioecon?micos. <br/>- Beca segura. <br/>- Beca sin condicionante laboral u horas práctica. <br/>- Beca para conseguir tus objetivos con la menor cantidad posible de sacrificio. <br/>Toma la mejor decisión? Contáctanos.     
+                             <br/></font>
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Cuáles son las formas de pago? </strong></span>          <br/><font face="Arial" size="2">
+                             Para IEU es importante el brindarte las mejores opciones para tu  comodidad por lo que contamos con diferentes formas para realizar los pagos:<br/>A) Pago con tarjeta de crédito o débito (Visa o Master Card, no aplica American Express) llamándome directamente al 01800 00 00 IEU.<br/>B) Pago directo en el banco HSBC con ficha electrónica se te envía la ficha a tu correo electrónico.<br/>
+                             C) Pago con tarjeta de crédito o débito (Visa o Master Card, no aplica American Express) directo en el Plantel {!InactiveLeads.Plantel__r.name }  ubicado en {!InactiveLeads.Plantel__r.Calle__c } {!InactiveLeads.Plantel__r.NumeroExterior__c} {!InactiveLeads.Plantel__r.Colonia__c } CP {!InactiveLeads.Plantel__r.CodigoPostal__c } {!InactiveLeads.Plantel__r.Ciudad__c } {!InactiveLeads.Plantel__r.Estado__r.Name}, México.<br/>NOTA: no se acepta efectivo.<br/>? Decídete a invertir en un mejor futuro y forma parte de la comunidad IEU!<br/></font>
+                             
+                              <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿En qué ciudades tienen plantel?</strong></span>          <br/><font face="Arial" size="2">
+                            En IEU tenemos 37 años de experiencia en el ámbito educativo, contamos con registro de validez oficial ante la Secretaría de Educación Pública y somos una institución con acreditación multicampi en calidad por FIMPES. <br/> Tenemos presencia en 18 planteles: <br/>Acapulco <br/>Campeche <br/>Cancún <br/>Carmen <br/>Chilpancingo <br/>Coatzacoalcos <br/>Iguala <br/>Oaxaca <br/>Poza rica <br/>Puebla <br/>Salamanca <br/>Tehuacán <br/>Teziutlán <br/>Tuxtla Gutiérrez <br/> Veracruz <br/>Villahermosa <br/>Xalapa  <br/>Zihuatanejo<br/>? Te invitamos a conocernos!</font>
+                             
+                            <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Qué opciones de titulación tienen?  </strong></span>          <br/><font face="Arial" size="2">
+                            En IEU  nos interesa que cada uno de nuestros alumnos culmine completamente sus estudios por lo que ofrecemos para la {!InactiveLeads.Programa__r.Name}  las siguientes opciones de titulación: <br/>- Elaboración de tesis y defensa de la misma con sustentación de examen profesional en defensa de su trabajo<br/>- Obtención del título profesional al cumplir con 45% créditos de estudios de maestría o especialidad<br/>- Examen general para el egreso de licenciaturas (EGEL por CENEVAL) del área correspondiente</font>
+                             <br/><br/>
+                             
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Mis estudios son reconocidos? </strong></span>          <br/><font face="Arial" size="2">
+                            Sí; tus estudios son reconocidos porque contamos con Reconocimiento de Validez Oficial de Estudios (RVOE)  ante la Secretaría de Educación Pública  del Estado y también estamos registrados en la Dirección General de Profesiones por lo que <strong>tus estudios son validos a nivel nacional</strong>.<br/>Todos nuestros estudios tienen validez por lo que te proporcionamos el RVOE de la {!InactiveLeads.Programa__r.Name}  en el Plantel {!InactiveLeads.Plantel__r.name } : 20081647<br/>Por nuestra calidad académica tenemos acreditaciones y reconocimientos en asociaciones nacionales y extranjeras como FIMPES, CASE y CONAHEC.<br/>?Te esperamos! Forma parte de la Comunidad IEU.<br/>Para más información llámanos al 01800 00 00 438</font>
+                             <br/><br/>
+                            
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Hasta cuándo puedo inscribirme? </strong></span>          <br/><font face="Arial" size="2">
+                             Aún estás en tiempo, puedes inscribirte  hasta el Inscripciones abiertas y vivir la fantástica experiencia de estudiar integralmente, lo que te brinda la posibilidad de invertir en un mejor futuro.<br/>? Te esperamos! Vive en el IEU una experiencia dinámica, enriquecedora y de calidad como complemento ideal a tu formación académica.</font>
+                             <br/><br/>
+                             
+                             <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Existe algún examen de admisión? </strong></span>          <br/><font face="Arial" size="2">
+                             En el IEU se realiza un examen de ubicación, el cuál no condiciona el ingreso, se realiza en el plantel de {!InactiveLeads.Plantel__r.name } , ubicado en {!InactiveLeads.Plantel__r.Calle__c } {!InactiveLeads.Plantel__r.NumeroExterior__c} {!InactiveLeads.Plantel__r.Colonia__c } CP {!InactiveLeads.Plantel__r.CodigoPostal__c } {!InactiveLeads.Plantel__r.Ciudad__c } {!InactiveLeads.Plantel__r.Estado__r.Name}, México. Para programar tu examen por favor comunicate al teléfono:  01 800 00 00 IEU.</font>
+                             <br/><br/>
+                             
+                              <br/><br/><img src="https://ci5.googleusercontent.com/proxy/GqfkmLOJyZv9k9tww9x1rj-lnaTudljdLBEgUoQKRnXMsE4Ob4DpMgnJ330PKolwRCAXJH9xLZX0z105OrXs3ZaLZmZtv4-UVZnyNlgdtT4A6SthRUo-KUC-jjEm=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaBlanca.jpg" class="CToWUd"/>&nbsp;<span><strong>¿Cuál es el modelo Educativo?</strong></span>          <br/><font face="Arial" size="2">
+                             El Instituto de Estudios Universitarios define su modelo educativo a partir del concepto que tiene de su relación con la sociedad.<br/>a) En cuanto a su relación con la sociedad, el IEU, desde 1976 inició su proyecto educativo con la convicción de ser una Institución promotora de cultura, para propiciar el mejoramiento de la calidad de vida de sus integrantes y con ello desarrollar iniciativas y liderazgos para impulsar su zona de influencia.<br/>b) Los principios educativos institucionales devienen de la Misión, que define el quehacer educativo del IEU, como el mejoramiento continuo y de excelencia académica, que consiste en ofrecer formación y actualización del ejercicio profesional del estudiante para fortalecer su participación en el desarrollo de su entorno. En este sentido, la oferta educativa del Instituto incorpora procesos de autoestudio y certificación de la calidad, a través de procesos de evaluación permanente. <br/>c) Organización Académica. El modelo educativo se refleja en la organización técnica y académica de la Institución. El carácter académico se retroalimenta con la incorporación de aportaciones conceptuales y metodológicas de diferentes disciplinas con el propósito de enriquecer el contenido curricular. El diseño de los programas académicos pone énfasis en los requerimientos y en las tendencias de una sociedad cambiante, situación que exige profesionales capaces para incorporarse en los escenarios sociales cada vez más competitivos y, al mismo tiempo, desarrollar una actitud de trabajo y de servicio a la comunidad. <br/>Herramientas académico-administrativas: <br/>- Cursos propedéuticos.  <br/>- Asesoría de tesis.  <br/>- Taller de asesoría de tesis.  <br/>- Diplomados, cursos, talleres y seminarios.  <br/>- Manual para la elaboración de tesis de grado. <br/>- Revista de difusión académica. <br/>- Digestos o materiales didácticos de apoyo. <br/>- Evaluación del desempeño docente <br/>- Proyecto Institucional de Seguimiento de Egresados </font>
+                             <br/><br/>     
+                         </td>
+                     </tr>        
+                     <tr>
+                         <td height="11" scope="row">
+                             <img src="https://ci3.googleusercontent.com/proxy/gCXWD4Fb7MM_AlCzkkLJsAAjIFqXJTvixG6YYcu4KDWwBMm5QePpFRLaT4sS5JaABopupcyxhQtIN8A0fcmiMMrRsXfjV2nny86XR6BDC5CrkWEmTkvO3_Ostg=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/horizontal.jpg" alt="" width="535" height="1" class="CToWUd"/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="90" align="left" bgcolor="#fffcdf" scope="row">
+                             <div><br/>
+                                 <font face="Arial" size="2">En el IEU buscamos ofrecerte un servicio de calidad a través de una atención personalizada, para aclarar posibles dudas ¿te gustaría que te contactara ?</font></div>
+                                 <div><br/>
+                                 <img src="https://ci4.googleusercontent.com/proxy/FrOBut4wBQIB4VYO5dJi5DHkln-SXaC1-Zvet8cO34PEMKuouCJJESQote6JvIBuyCU1GJI1relZfKstfrS0A_cGhc9FMuJ0_TPAQj3P7v2Q-ePmZm5jrvoi_mg6I4E=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/vinetaAmarilla.jpg" class="CToWUd"/>&nbsp;
+                                 
+                                 <br/>&nbsp;
+                             </div>
+                             <div>
+                                 &nbsp;<br/>
+                             </div><br/><br/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="11" scope="row">
+                             <img src="https://ci3.googleusercontent.com/proxy/gCXWD4Fb7MM_AlCzkkLJsAAjIFqXJTvixG6YYcu4KDWwBMm5QePpFRLaT4sS5JaABopupcyxhQtIN8A0fcmiMMrRsXfjV2nny86XR6BDC5CrkWEmTkvO3_Ostg=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/horizontal.jpg" alt="" width="535" height="1" class="CToWUd"/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="60" align="left" bgcolor="#FEEDDB" scope="row">
+                             <font face="Arial" size="2">Quedo en espera de tu respuesta para confirmar que hayan sido aclaradas todas tus dudas.</font><br/>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td height="10" scope="row">
+                         </td>
+                     </tr>
+                 </tbody>
+             </table>
+             </td>
+             <td width="1" background="https://ci5.googleusercontent.com/proxy/dir-9u9HvQfztQL6WYYFC3I1UaJPhm8ry1JoUBAoSJSskSlypl1lBMrw3bgMxpYS6m6msKryQOb4_Ck5Oe354g8Z9T2KRXRN0Ce3OLFjQV5Z40gQFA=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/raya.jpg"><img src="https://ci5.googleusercontent.com/proxy/dir-9u9HvQfztQL6WYYFC3I1UaJPhm8ry1JoUBAoSJSskSlypl1lBMrw3bgMxpYS6m6msKryQOb4_Ck5Oe354g8Z9T2KRXRN0Ce3OLFjQV5Z40gQFA=s0-d-e1-ft#http://www.sistemaieu.edu.mx/cgi-bin/prospectos/imagen/raya.jpg" width="1" height="2" class="CToWUd"/></td>
+         </tr>
+     </tbody>
+     </table>
+
+
+
+
+</apex:component>

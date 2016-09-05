@@ -1,0 +1,522 @@
+<apex:page standardStylesheets="false" applyHtmlTag="true" showHeader="true" sidebar="false">
+    <!-- JQuery and Bootstrap js -->
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    <!--link rel="stylesheet" type="text/css" href="https://c.cs20.visual.force.com/resource/1445012370000/jqueryui/jquery-ui.css"/-->
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'bootstrap-duallistbox.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <style>
+        .green{
+            background-color : #CAEECA;
+        }
+        .red{
+            background-color : #FFCCCC;
+        }
+        .yellow{
+            background-color : #FFFFD9;
+        }
+    </style>
+    
+    <script>
+        google.charts.load('current', {'packages':['gauge']})
+        function drawChart(promotor) {
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['Leads', promotor.Estatus]
+            ]);
+            var valueOfEstatus = (promotor.Estatus < 0) ? promotor.Estatus * -1 : promotor.Estatus;
+            var valueDiv3 = (valueOfEstatus == 0) ? 20 : parseInt(valueOfEstatus / 3);
+            var options = {
+                width: 400, height: 300,
+                redColor : 'ee1111',
+                yellowColor: 'ffc40d',
+                greenColor: '00a300',
+                redFrom: (valueOfEstatus == 0) ? -55 : (valueOfEstatus * -1),
+                redTo: (valueDiv3 * -1),
+                yellowFrom: (valueDiv3 * -1),
+                yellowTo: valueDiv3,
+                greenFrom: valueDiv3,
+                greenTo: (valueOfEstatus == 0) ? 55 : valueOfEstatus,
+                max: (valueOfEstatus == 0) ? 55 : valueOfEstatus,
+                min: (valueOfEstatus == 0) ? -55 : (valueOfEstatus * -1)
+            };
+            
+            var chart = new google.visualization.Gauge(document.getElementById('chart_Leads'));
+            chart.draw(data, options);
+        }
+        function drawChartIns(promotor) {
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['Inscritos', promotor.Inscrito]
+            ]);
+            var valueOfInscrito = (promotor.Inscrito < 0) ? promotor.Inscrito * -1 : promotor.Inscrito;
+            var valueDiv3 = (promotor.Inscrito == 0) ? 20 : parseInt(valueOfInscrito / 3);
+            var options = {
+                width: 400, height: 300,
+                redColor : 'ee1111',
+                yellowColor: 'ffc40d',
+                greenColor: '00a300',
+                redFrom: (valueOfInscrito == 0) ? -55 : (valueOfInscrito * -1),
+                redTo: (valueDiv3 * -1),
+                yellowFrom: (valueDiv3 * -1),
+                yellowTo: valueDiv3,
+                greenFrom: valueDiv3,
+                greenTo: (valueOfInscrito == 0) ? 55 : valueOfInscrito,
+                max: (valueOfInscrito == 0) ? 55 : valueOfInscrito,
+                min: (valueOfInscrito == 0) ? -55 : (valueOfInscrito * -1)
+            };
+            
+            var chartIns = new google.visualization.Gauge(document.getElementById('chart_Inscritos'));
+            console.log(data);
+            chartIns.draw(data, options);
+        }
+        
+    </script>
+    
+    <body ng-app="appMedidor" >
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js">
+        </script>
+        <script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.min.js">
+        </script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.js">
+        </script>
+        <div class="container" ng-controller="medidorCtrl">
+            <center>
+                Periodo:&nbsp;
+                <select style="width:20% !important" class="form-control" ng-model="periodSelected" ng-change="getPromotores()" ng-options="period.Id as period.Name for period in periods">
+                </select>
+                <br/><br/>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>
+                            <a href="" ng-click="sortType = 'Name'; sortReverse = !sortReverse">
+                                Nombre del promotor
+                                <span ng-show="sortType == 'Name' && !sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="sortType == 'Name' && sortReverse" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        
+                        <th>
+                            <a href="#" ng-click="sortType = 'Estatus'; sortReverse = !sortReverse">
+                                Estatus Leads/Aspirantes
+                                <span ng-show="sortType == 'Estatus' && !sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="sortType == 'Estatus' && sortReverse" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" ng-click="sortType = 'Inscrito'; sortReverse = !sortReverse">
+                                Estatus inscritos
+                                <span ng-show="sortType == 'Inscrito' && !sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="sortType == 'Inscrito' && sortReverse" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                    </tr>
+                    <!--<tr ng-repeat="promo in pagination.filtered | orderBy:sortType:sortReverse | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage as offerFiltered">-->
+                    <tr ng-repeat="promo in pagination.filtered | orderBy:sortType:sortReverse | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage ">
+                        <td><a ng-click="promotorClick(promo)">{{promo.Name}}</a></td>
+                        <td class="{{(promo.Estatus == 0) ? 'yellow' : (promo.Estatus > 0) ? 'green' : 'red'}}"><b>{{promo.Estatus}}</b></td>
+                        <td class="{{(promo.Inscrito == 0) ? 'yellow' : (promo.Inscrito > 0) ? 'green' : 'red'}}"><b>{{promo.Inscrito}}</b></td>
+                    </tr>
+                </table>
+                
+                <uib-pagination ng-if="pagination.filtered.length > pagination.itemsPerPage"
+                                items-per-page="pagination.itemsPerPage" 
+                                total-items="pagination.totalItems" 
+                                ng-model="pagination.currentPage" 
+                                max-size="pagination.maxPages" 
+                                boundary-links="true" 
+                                force-ellipses="true" 
+                                first-text="{{pagination.first}}" 
+                                previous-text="{{pagination.previous}}" 
+                                next-text="{{pagination.next}}" 
+                                last-text="{{pagination.last}}">
+                </uib-pagination>
+            </center>
+            <div style="display:{{(promotorSelected == '') ? 'none' : 'inline'}}">
+                <center >
+                    <table class="table table-striped table-bordered" >
+                        <tr >
+                            <th colspan="2" style="text-align:center; background-color: #2a94d6;border-color: #2585c1; color: white;"> Promotor: {{promotorSelected.Name}}</th>
+                        </tr>
+                        <tr >
+                            <th width="49%" style="text-align:center; background-color: #2a94d6;border-color: #2585c1; color: white;">Leads y aspirantes</th>
+                            <th width="49%" style="text-align:center; background-color: #2a94d6;border-color: #2585c1; color: white;">Inscritos</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <center>
+                                    <div id="chart_Leads" style="width: 400px; height: 300px;"/>
+                                </center>
+                            </td>
+                            <td>
+                                <center>
+                                    <div id="chart_Inscritos" style="width: 400px; height: 300px;"/>
+                                </center>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-striped table-bordered">
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Plantel</th>
+                                        <th>Nivel</th>
+                                        <th>Programa</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                    <tr ng-repeat="recordLead in pagination2.filtered | orderBy:sortType:sortReverse | startFrom:(pagination2.currentPage - 1) * pagination2.itemsPerPage | limitTo: pagination2.itemsPerPage ">
+                                        <td><a href="https://cs2.salesforce.com/{{recordLead.Id}}" target="_blank">Ver</a></td>
+                                        <td>{{recordLead.Plantel__r.Name}}</td>
+                                        <td>{{recordLead.Nivel__r.Name}}</td>
+                                        <td>{{recordLead.Programa__r.Name}}</td>
+                                        <td>{{recordLead.Name}}</td>
+                                    </tr>
+                                </table>
+                                
+                                <uib-pagination ng-if="pagination2.filtered.length > pagination2.itemsPerPage"
+                                                items-per-page="pagination2.itemsPerPage"
+                                                total-items="pagination2.totalItems" 
+                                                ng-model="pagination2.currentPage" 
+                                                max-size="pagination2.maxPages" 
+                                                boundary-links="true" 
+                                                force-ellipses="true" 
+                                                first-text="{{pagination2.first}}" 
+                                                previous-text="{{pagination2.previous}}" 
+                                                next-text="{{pagination2.next}}" 
+                                                last-text="{{pagination2.last}}">
+                                </uib-pagination>
+                            </td>
+                            <td>
+                                <table class="table table-striped table-bordered">
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Plantel</th>
+                                        <th>Nivel</th>
+                                        <th>Programa</th>
+                                        <th>Nombre</th>
+                                    </tr>
+                                    <tr ng-repeat = "recordLead in pagination3.filtered | orderBy:sortType:sortReverse | startFrom:(pagination3.currentPage - 1) * pagination3.itemsPerPage | limitTo: pagination3.itemsPerPage ">
+                                        <td><a href="https://cs2.salesforce.com/{{recordLead.Id}}" target="_blank">Ver</a></td>
+                                        <td>{{recordLead.Plantel__r.Name}}</td>
+                                        <td>{{recordLead.Nivel__r.Name}}</td>
+                                        <td>{{recordLead.Programa__r.Name}}</td>
+                                        <td>{{recordLead.Name}}</td>
+                                    </tr>
+                                </table>
+                                <uib-pagination ng-if="pagination3.filtered.length > pagination3.itemsPerPage"
+                                                items-per-page="pagination3.itemsPerPage"
+                                                total-items="pagination3.totalItems" 
+                                                ng-model="pagination3.currentPage" 
+                                                max-size="pagination3.maxPages" 
+                                                boundary-links="true" 
+                                                force-ellipses="true" 
+                                                first-text="{{pagination3.first}}" 
+                                                previous-text="{{pagination3.previous}}" 
+                                                next-text="{{pagination3.next}}" 
+                                                last-text="{{pagination3.last}}">
+                                </uib-pagination>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+            </div>
+        </div>
+    </body>
+    <script src="../../soap/ajax/36.0/connection.js"/>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.js"></script>
+    <script>
+        var app = angular.module('appMedidor',['ngSanitize', 'ui.bootstrap']);
+        app.controller('medidorCtrl',['$scope','$filter',function($scope, $filter){
+            try{
+                sforce.connection.sessionId='{!GETSESSIONID()}';
+            }catch(error){console.log(error);}
+            $scope.sortType     = 'name'; 
+            $scope.sortReverse  = false;
+            $scope.promotorSelected = '';
+            $scope.periods = [];
+            $scope.promotors = [];
+            $scope.puntaje = [];
+            $scope.puntajePromotor = [];
+            $scope.leadsOpp = [];
+            $scope.oppWin = [];
+            $scope.callbackPeriod = {onSuccess: getDataPeriod, onFailure: getError}
+            $scope.callbackPromotor = {onSuccess: getDataPromotor, onFailure: getError}
+            $scope.callbackPromotorOpp = {onSuccess: getDataPromotorOpp, onFailure: getError}
+            $scope.callbackPromotorOppWin = {onSuccess: getDataPromotorOppWin, onFailure: getError}
+            $scope.callbackPuntaje = {onSuccess: getDataPuntuaje, onFailure: getError}
+            $scope.periodSelected = "";
+            sforce.connection.query("SELECT Id, Name FROM Periodo__c WHERE Activo__c = 'Activo'", $scope.callbackPeriod);
+            
+            $scope.pagination = {
+                  itemsPerPage: 5,  
+                  maxPages: 5, 
+                  totalItems: 0, 
+                  currentPage: 0,
+                  totalPages: 0,
+                  first: 'Primero',
+                  previous: 'Ant',
+                  next: 'Sig',
+                  last: 'Último',
+                  filtered: [],
+                  pageSize : [10],
+                  sortField: 'name',
+                  reverse: true,
+                  search: '',
+                  visibles: {}
+                };
+            $scope.search = '';
+            $scope.getPromotores = function(){
+                sforce.connection.query("SELECT Id, OwnerId, LetraBeca__c, Owner.Name, Plantel__r.Name, Nivel__r.Name, Programa__r.Name, Name "
+                                        + "FROM Lead WHERE IsConverted = false AND TipoBeca__c = 'Comercial' AND periodo__r.Id = '"+$scope.periodSelected+"'",$scope.callbackPromotor);    
+            }
+            
+            sforce.connection.query("SELECT Name, Valor__c FROM PuntajeBeca__c",$scope.callbackPuntaje);
+
+            function getDataPuntuaje(queryResult){
+                if (queryResult.size > 0) {
+                    var records = queryResult.getArray('records');
+                    for (var i = 0; i < records.length; i++) {
+                        var data = records[i];
+                        $scope.puntaje[data.Name] = data.Valor__c;
+                    }
+                }
+                $scope.$apply();
+            }
+            
+            function getDataPromotor(queryResult){
+                $scope.pagination = {
+                  itemsPerPage: 5,  
+                  maxPages: 5, 
+                  totalItems: 0, 
+                  currentPage: 0,
+                  totalPages: 0,
+                  first: 'Primero',
+                  previous: 'Ant',
+                  next: 'Sig',
+                  last: 'Último',
+                  filtered: [],
+                  pageSize : [10],
+                  sortField: 'name',
+                  reverse: true,
+                  search: '',
+                  visibles: {}
+                };
+                $scope.pagination2 = {
+                  itemsPerPage: 5,  
+                  maxPages: 5, 
+                  totalItems: 0, 
+                  currentPage: 0,
+                  totalPages: 0,
+                  first: 'Primero',
+                  previous: 'Ant',
+                  next: 'Sig',
+                  last: 'Último',
+                  filtered: [],
+                  pageSize : [10],
+                  sortField: 'name',
+                  reverse: true,
+                  search: '',
+                  visibles: {}
+                };
+                $scope.pagination3 = {
+                  itemsPerPage: 5,  
+                  maxPages: 5, 
+                  totalItems: 0, 
+                  currentPage: 0,
+                  totalPages: 0,
+                  first: 'Primero',
+                  previous: 'Ant',
+                  next: 'Sig',
+                  last: 'Último',
+                  filtered: [],
+                  pageSize : [10],
+                  sortField: 'name',
+                  reverse: true,
+                  search: '',
+                  visibles: {}
+                };
+                $scope.promotorSelected = '';
+                $scope.promotors = [];
+                $scope.puntajePromotor = [];
+                $scope.leadsOpp = [];
+                $scope.oppWin = [];
+                $scope.PromotorId = [];
+                if (queryResult.size > 0) {
+                    var records = queryResult.getArray('records');
+                    for (var i = 0; i < records.length; i++) {
+                        var data = records[i];
+                        if($scope.PromotorId.indexOf(data.OwnerId) == -1){
+                            $scope.PromotorId.push(data.OwnerId);
+                            $scope.promotors.push({'Id':data.OwnerId, 'Name':data.Owner.Name, 
+                                                   'Estatus': parseInt(getValueLetter(data.LetraBeca__c)), 'Inscrito': 0});    
+                        }else{
+                            for(var j = 0; j<$scope.promotors.length; j++){
+                                if($scope.promotors[j].Id == data.OwnerId){
+                                    $scope.promotors[j].Estatus += parseInt(getValueLetter(data.LetraBeca__c));
+                                }
+                            }
+                        }
+                        $scope.leadsOpp.push(records[i]);
+                    }
+                }
+                $scope.$apply();
+                var valuePeriod = $scope.periodSelected;
+                var query = "SELECT Id, OwnerId, LetraBeca__c, Owner.Name, Plantel__r.Name, Nivel__r.Name, Programa__r.Name, Name "
+                            +" FROM Opportunity WHERE TipoBeca__c = 'Comercial' AND StageName = 'Aspirante' AND periodo__c = '"+valuePeriod.substring(0,15)+"'";
+                sforce.connection.query(query,$scope.callbackPromotorOpp);
+            }
+            
+            function getValueLetter (letra){
+                if(letra != null){
+                    return $scope.puntaje[letra];
+                }
+                return 0;
+            }
+            
+            function getDataPromotorOpp(queryResult){
+                if (queryResult.size > 0) {
+                    var records = queryResult.getArray('records');
+                    for (var i = 0; i < records.length; i++) {
+                        var data = records[i];
+                        if($scope.PromotorId.indexOf(data.OwnerId) == -1){
+                            $scope.PromotorId.push(data.OwnerId);
+                            $scope.promotors.push({'Id':data.OwnerId, 'Name':data.Owner.Name, 'Estatus': parseInt(getValueLetter(data.LetraBeca__c)), 'Inscrito' : 0});    
+                        }else{
+                            for(var j = 0; j<$scope.promotors.length; j++){
+                                if($scope.promotors[j].Id == data.OwnerId){
+                                    $scope.promotors[j].Estatus += parseInt(getValueLetter(data.LetraBeca__c));
+                                }
+                            }
+                        }
+                        $scope.leadsOpp.push(records[i]);
+                    }
+                }
+                $scope.$apply();
+                var valuePeriod = $scope.periodSelected;
+                var query = "SELECT Id, OwnerId, LetraBeca__c, Owner.Name, Plantel__r.Name, Nivel__r.Name, Programa__r.Name, Name"
+                            + " FROM Opportunity WHERE (StageName = 'Ganada' OR StageName = 'Inscrito') AND periodo__c = '"+valuePeriod.substring(0,15)+"'";
+                sforce.connection.query(query,$scope.callbackPromotorOppWin);
+            }
+            
+            function getDataPromotorOppWin(queryResult){
+                if (queryResult.size > 0) {
+                    var records = queryResult.getArray('records');
+                    for (var i = 0; i < records.length; i++) {
+                        var data = records[i];
+                        if($scope.PromotorId.indexOf(data.OwnerId) == -1){
+                            $scope.PromotorId.push(data.OwnerId);
+                            $scope.promotors.push({'Id':data.OwnerId, 'Name':data.Owner.Name, 'Estatus': 0, 'Inscrito': parseInt(getValueLetter(data.LetraBeca__c))});
+                        }else{
+                            for(var j = 0; j<$scope.promotors.length; j++){
+                                if($scope.promotors[j].Id == data.OwnerId){
+                                    $scope.promotors[j].Inscrito += parseInt(getValueLetter(data.LetraBeca__c));
+                                }
+                            }
+                        }
+                        $scope.oppWin.push(records[i]);
+                    }
+                }
+                $scope.viewPagination(1);
+                $scope.viewPagination2(1);
+                $scope.viewPagination3(1);
+                $scope.$apply();
+                
+            }
+            
+            function getDataPeriod(queryResult){
+                if (queryResult.size > 0) {
+                    var records = queryResult.getArray('records');
+                    for (var i = 0; i < records.length; i++) {
+                        var data = records[i];
+                        $scope.periods.push({'Id':data.Id, 'Name':data.Name});
+                    }
+                }
+                $scope.periodSelected = $scope.periods[1].Id;
+                $scope.getPromotores();
+                $scope.$apply();
+            }
+            
+            function getError(error){
+                console.log(error);
+            }
+            
+            $scope.promotorClick = function(promotor){
+                $scope.promotorSelected = promotor;
+                $scope.leadsPromotor = $filter('filter')($scope.leadsOpp,{OwnerId : $scope.promotorSelected.Id});
+                console.log($scope.leadsPromotor);
+                $scope.oppsWon = $filter('filter')($scope.oppWin,{OwnerId : $scope.promotorSelected.Id});
+                drawChart(promotor);
+                drawChartIns(promotor);
+            }
+            
+            $scope.$watch('[pagination.search, pagination.itemsPerPage]', function (value) {
+                    $scope.viewPagination(1);
+            }, true);
+            $scope.viewPagination = function(page) {
+                //console.log('in pagination: ' + new Date());
+                if($scope.promotors && $scope.promotors.length > 0) {
+                    $scope.pagination.filtered = $scope.promotors;
+                    $scope.pagination.totalItems  = $scope.pagination.filtered.length;
+                    $scope.pagination.totalPages  = Math.ceil($scope.pagination.totalItems / $scope.pagination.itemsPerPage);
+                    $scope.pagination.currentPage = page;
+                }
+            };
+            
+            $scope.$watch('[pagination2.search, pagination2.itemsPerPage, promotorSelected]', function (value) {
+                    $scope.viewPagination2(1);
+            }, true);
+            $scope.viewPagination2 = function(page) {
+                if($scope.leadsPromotor && $scope.leadsPromotor.length > 0) {
+                    $scope.pagination2.filtered = $scope.leadsPromotor;
+                    $scope.pagination2.totalItems  = $scope.pagination2.filtered.length;
+                    $scope.pagination2.totalPages  = Math.ceil($scope.pagination2.totalItems / $scope.pagination2.itemsPerPage);
+                    $scope.pagination2.currentPage = page;
+                }else{
+                	$scope.pagination2.filtered = [];
+                    $scope.pagination2.totalItems  = 0;
+                    $scope.pagination2.totalPages  = 0;
+                    $scope.pagination2.currentPage = 0;
+                }
+            };
+            
+            $scope.$watch('[pagination3.search, pagination3.itemsPerPage, promotorSelected]', function (value) {
+                    $scope.viewPagination3(1);
+            }, true);
+            $scope.viewPagination3 = function(page) {
+                if($scope.oppsWon && $scope.oppsWon.length > 0) {
+                    $scope.pagination3.filtered = $scope.oppsWon;
+                    $scope.pagination3.totalItems  = $scope.pagination3.filtered.length;
+                    $scope.pagination3.totalPages  = Math.ceil($scope.pagination3.totalItems / $scope.pagination3.itemsPerPage);
+                    $scope.pagination3.currentPage = page;
+                }else{
+                	$scope.pagination3.filtered = [];
+                    $scope.pagination3.totalItems  = 0;
+                    $scope.pagination3.totalPages  = 0;
+                    $scope.pagination3.currentPage = 0;
+                }
+            };
+        }]);
+        app.filter('startFrom', function() {
+            return function(input, start) {
+                if(input) {
+                    start = +start; //parse to int
+                    return input.slice(start);
+                }
+                return [];
+            }
+        });
+    </script>
+    
+    <style type="text/css">
+       .form-control:focus{background-color: #F3EFEF;}
+    </style>
+</apex:page>

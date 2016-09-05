@@ -1,0 +1,165 @@
+<apex:page showHeader="false" sidebar="false"   renderAs="PDF"  controller="BarCodeMovilCtrl"
+           applyHtmlTag="false" applyBodyTag="false"  >
+      <apex:repeat value="{!fichas}" var="ficha"> 
+      <head>
+            <style>
+                @page{margin-top: 0px;}
+            </style>
+        </head>
+        
+        <body>
+            <table  width="100%" style="font-size:12px; border: 1px solid black;">
+                <tr>
+                    <td colspan="2"><p>Nombre:</p></td>
+                    <td style="text-align: right;">Folio: <b>{!ficha.Name}</b></td>
+                    
+                </tr>
+                
+                <tr>
+                    <td >Teléfono:</td>
+                    <td >Mail: </td>
+                    <td style="text-align: right;"><b>{!plantel}</b></td>
+                </tr>
+                 <tr>
+                     <td colspan="2">
+                         <apex:variable var="cnt" value="{!0}" /> 
+                         <apex:repeat value="{!programas}"  var="programa">
+                             <apex:image url="{!$Resource.checkbox_empty}" rendered="{!IF(MOD(cnt,2)==0,true,false)}" width="10px" height="10px"/>
+                             <apex:outputText rendered="{!IF(MOD(cnt,2)==0,true,false)}" value="{!programa}" escape="false"  />
+                             <apex:variable var="cnt" value="{!cnt+1}"/>
+                         </apex:repeat>                         
+                     </td>
+                     <td>
+                         <apex:variable var="cntt" value="{!0}" /> 
+                         <apex:repeat value="{!programas}" var="programa">
+                             <apex:image url="{!$Resource.checkbox_empty}" rendered="{!IF(MOD(cntt,2)!=0,true,false)}" width="10px" height="10px"/>
+							 <apex:outputText rendered="{!IF(MOD(cntt,2)!=0,true,false)}" value="{!programa}" escape="false"  />
+                             <apex:variable var="cntt" value="{!cntt+1}"/>
+                         </apex:repeat>                         
+                     </td>
+                </tr>                
+            </table>
+            
+            <hr style="border-top: dotted 1px;" />
+    
+            <table style="margin-bottom:7px; font-size:12px; border-collapse: collapse; border: 1px solid black;">
+                <tr>
+                    <td colspan="2"  style="border: 1px solid black;">
+                        <apex:image url="{!encabezado}" width="98%"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                       <!-- Recibimos de:  <b>{!recibimosde} </b><br/>-->
+                        Folio: <b>{!ficha.Name}</b><br/>
+                        <br/>
+                        Total a pagar: ${!totalPagar}  <br/>
+                        Hasta el día: {!hasta}<br/>
+                        <br/>
+                        <b><apex:outputText value="{!concept}" escape="false"/></b><br/>
+                        <b>Nota:</b> {!nota1} <br/>
+                        {!nota2}
+                    </td>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                        PAGAR EN HSBC
+                        <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/>
+                        <br/>
+                        <a style="color:#000; font-size:12px">No. Serv: 1308 Referencia: {!ficha.ReferenciaHSBC__c} </a><br/>
+                        <br/>
+                        PAGAR EN OXXO:
+                        <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                        <br/>
+                        <center>
+                            <img src="https://www.barcodesinc.com/generator/image.php?code={!ficha.ReferenciaOXXO__c}&style=196&type=C128B&width=350&height=80&xres=1&font=2"/>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                        COPIA PARA LA BANCO
+                    </td>
+                </tr>
+            </table>
+          
+            <table style="margin-bottom:7px; font-size:12px; border-collapse: collapse; border: 1px solid black;">
+                <tr>
+                    <td colspan="2"  style="border: 1px solid black;">
+                        <apex:image url="{!encabezado}" width="98%"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                        <!-- Recibimos de:  <b>{!recibimosde} </b><br/>-->
+                        Folio: <b>{!ficha.Name}</b><br/>
+                        <br/>
+                        Total a pagar: ${!totalPagar}  <br/>
+                        Hasta el día: {!hasta}<br/>
+                        <br/>
+                        <b><apex:outputText value="{!concept}" escape="false"/></b><br/>
+                        <b>Nota:</b> {!nota1}<br/>
+                        {!nota2}
+                    </td>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                        PAGAR EN HSBC
+                        <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/>
+                        <br/>
+                        <a style="color:#000; font-size:12px">No. Serv: 1308Referencia: {!ficha.ReferenciaHSBC__c} </a><br/>
+                        <br/>
+                        PAGAR EN OXXO:
+                        <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                        <br/>
+                        <center>
+                            <img src="https://www.barcodesinc.com/generator/image.php?code={!ficha.ReferenciaOXXO__c}&style=196&type=C128B&width=350&height=80&xres=1&font=2"/>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                        COPIA PARA LA INSTITUCION
+                    </td>
+                </tr>
+            </table>
+           
+            <table style="margin-bottom:7px; font-size:12px; border-collapse: collapse; border: 1px solid black;">
+                <tr>
+                    <td colspan="2"  style="border: 1px solid black;">
+                        <apex:image url="{!encabezado}" width="98%"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                        <!-- Recibimos de:  <b>{!recibimosde} </b><br/>-->
+                        Folio: <b>{!ficha.Name}</b><br/>
+                        <br/>
+                        Total a pagar: ${!totalPagar}  <br/>
+                        Hasta el día: {!hasta}<br/>
+                        <br/>
+                        <b><apex:outputText value="{!concept}" escape="false"/></b><br/>
+                        <b>Notas:</b> {!nota1}<br/>
+                        {!nota2}
+                    </td>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                        PAGAR EN HSBC:
+                        <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/><br/>
+                        <a style="color:#000; font-size:12px">No. Serv: 1308 Referencia: {!ficha.ReferenciaHSBC__c} </a><br/>
+                        <br/>
+                        PAGAR EN OXXO:
+                        <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                        <br/>
+                        <center>
+                            <img src="https://www.barcodesinc.com/generator/image.php?code={!ficha.ReferenciaOXXO__c}&style=196&type=C128B&width=350&height=80&xres=1&font=2"/>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                        COPIA PARA EL ALUMNO
+                    </td>
+                </tr>
+            </table>    
+		</body>
+        <div style="page-break-after: always"/>
+
+	</apex:repeat>
+    
+</apex:page>

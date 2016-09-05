@@ -1,0 +1,560 @@
+<apex:page applyBodyTag="false" docType="html-5.0" showHeader="true" sidebar="false" standardStylesheets="false">
+    <apex:remoteObjects >
+    	 <apex:remoteObjectModel name="Periodo__c" jsShorthand="PeriodGateway" 
+		fields="Id,Name,Activo__c,ActivoPresencial__c,ActivoOnline__c,ActivoEjecutiva__c,Descripcion__c,FechaFin__c,FechaFinReal__c,FechaInicio__c,FechaInicioReal__c,CreatedDate"
+		/>
+        <!-- IMPORTANT: if new fields are created for the scholarship they must be referenced here -->
+    	<apex:remoteObjectModel name="Beca__c" jsShorthand="ScholarshipGateway"
+        fields="Id,Name,Descripcion__c,NombreConvenio__c,OfertaEducativa__c,EstatusBeca__c,TipoPorcentaje__c,AplicaPara__c,NoAplicaPara__c,FechaFirma__c,CreatedDate,CategoriaLetra__c,Beneficiados__c,PorcentajeBeca__c,RequiereAutorizacion__c,Inicial__c,Final__c,A__c,B__c,C__c,D__c,E__c,F__c,G__c,H__c,VisiblePara__c,TipoAutorizacion__c,Incrementos__c,Plantel__c,Nivel__c,Programa__c"
+        />
+        <apex:remoteObjectModel name="Descuento__c" jsShorthand="DiscountGateway"
+        fields="Id,Name,DescuentoFinal__c,DescuentoInicial__c,Estatus__c,FechaFinVigencia__c,FechaInicioVigencia__c,Nivel__c,Periodo__c,PorcentajeDescuento__c,TipoDescuento__c"
+        />
+        <apex:remoteObjectModel name="OfertaConceptoPagos__c" jsShorthand="PaymentsGateway" 
+		fields="Id,Name,CreatedDate,Activo__c,Cantidad__c,ConceptoPago__c,Monto__c,OfertaEducativa__c"
+		/>
+		<apex:remoteObjectModel name="Grupo__c" jsShorthand="GroupGateway" 
+		fields="Id,Grupo__c,Name,AulaAsignada__c,Esquema__c,PeriodoAperturaGrupo__c,FechaRegistro__c,FechaInicioClases__c,Estatus__c,Activo__c,AperturaOperativo__c,AperturaAcademico__c,GrupoProcesado__c,UsuarioApertura__c,FechaApertura__c,CondicionanteGrupo__c,OfertaEducativa__c,HoraSalida__c,HoraEntrada__c,Dia__c,Docente__c,Materia__c,Cupo__c,Nomenclatura__c"
+		/>
+		<apex:remoteObjectModel name="BecaCalculadora__c" jsShorthand="CalculatorGateway"
+        fields="Id,Name,Promedio__c,DescuentoInscripcion__c,CategoriaLetra__c"
+        />
+		<apex:remoteObjectModel name="OfertaEducativa__c" jsShorthand="OfferGateway" 
+		fields="Id,Name,Estatus__c,Modalidad__c,Nivel__c,Periodo__c,Plantel__c,Programa__c,CreatedDate,Beca__c,Descuento__c,NumeroMensualidades__c,NumeroColegiaturas__c,NumeroInscripciones__c,Periodicidad__c,DuracionPrograma__c,Conceptos__c,Grupo__c"
+		/>
+		<apex:remoteObjectModel name="Catalogo__c" jsShorthand="CatalogGateway" 
+		fields="Id,Name,Descripcion__c,TipoCatalogo__c,CreatedDate,Letra__c"
+		/>
+		<apex:remoteObjectModel name="Plantel__c" jsShorthand="CampusGateway" 
+		fields="Id,Name,Calle__c,Ciudad__c,CodigoPostal__c,Colonia__c,Coordenadas__c,DelegaMunicipio__c,Estado__c,IncorporadoSEP__c,NumeroExterior__c,NumeroInterior__c,RazonSocial__c,Sede__c,TelefonoPlantel__c,TipoPlantel__c,CreatedDate,Abreviatura__c"
+		/>
+		<apex:remoteObjectModel name="Programa__c" jsShorthand="ProgramGateway" 
+		fields="Id,Name,Nivel__c,Plantel__c,CreatedDate,AbreviaturaPrograma__c"
+		/>
+		<apex:remoteObjectModel name="Requisito__c" jsShorthand="RequirementGateway" 
+		fields="Id,Name,Nivel__c,Estatus__c,CreatedDate,Caras__c,Entregable__c,Tipo__c"
+		/>
+		<apex:remoteObjectModel name="RequisitoBeca__c" jsShorthand="RequirementScholarGateway" 
+		fields="Id,Name,Beca__c,Requisito__c"
+		/>
+		<apex:remoteObjectModel name="Profile" jsShorthand="ProfileGateway" 
+		fields="Id,Name"
+		/>
+		<apex:remoteObjectModel name="RecordType" jsShorthand="RecordTypeGateway" 
+		fields="Id,Name,NamespacePrefix,DeveloperName,Description"
+		/>	
+    </apex:remoteObjects>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    <!--link rel="stylesheet" type="text/css" href="https://c.cs20.visual.force.com/resource/1445012370000/jqueryui/jquery-ui.css"/-->
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'bootstrap-duallistbox.min.css')}" />
+
+    <body ng-app="appIEU" ng-cloak="ngCloak" style="max-width: 100%;">
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+    	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    	
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        
+        <!-- SPA IEU:OfertaEducativa -->
+	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+		<script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.min.js"></script>
+   		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.js"></script>
+		<script src="/soap/ajax/13.0/connection.js"></script>
+		<script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';}</script>
+
+	  	<script type="text/javascript">
+	  		(function(angular) {
+	  			angular.module('appIEU', ['ngSanitize', 'ctc.directives', 'ui.bootstrap'])
+	  			.service('sfService', function() {
+	  				return {
+	  					gateway: {
+                            period:  SObjectModel.PeriodGateway,
+		  					scholarship:  SObjectModel.ScholarshipGateway,
+		  					discount:  SObjectModel.DiscountGateway,
+                            calculator: SObjectModel.CalculatorGateway,
+                            offer:  SObjectModel.OfferGateway,
+                            catalog:  SObjectModel.CatalogGateway,
+                            campus:  SObjectModel.CampusGateway,
+                            program:  SObjectModel.ProgramGateway,
+                            requirement: SObjectModel.RequirementGateway,
+                            requirementScholarship: SObjectModel.RequirementScholarGateway,
+                            profile: SObjectModel.ProfileGateway,
+                            payments:  SObjectModel.PaymentsGateway,
+		  					group: SObjectModel.GroupGateway,
+		  					recordType: SObjectModel.RecordTypeGateway
+		  					
+	  					}
+	  				}
+	  			})
+	  			.factory('sfDB', function($filter) {
+            		var processResponse = function(err, res, all, callback) {
+		                if(typeof err === 'undefined' || typeof res === 'undefined' || typeof all === 'undefined' || typeof callback === 'undefined'){
+		                    throw 'method processResponse require four params (err, res, all, callback)';
+		                } else {
+		                    if(err) {
+		                        var errors = [];
+		                        if(all.errors) {
+		                            angular.forEach(all.errors, function(error) {
+		                                errors.push(error.toString());
+		                            });
+		                        } else {
+		                            errors.push(err.toString());
+		                        }
+		                        callback(errors);
+		                    } else {
+		                        callback(null, res);
+		                    }
+		                }
+		            };
+		            var parseDate =  function(date) {
+		                return $filter('date')(date, 'dd/MM/yyyy');
+		            };
+		            var createDate = function(strDate) {
+		                var date = null;
+		                strDate = strDate || '';
+		                strDate = strDate.split('/');
+		                if(strDate.length > 2) {
+		                    date = new Date();
+		                    date.setDate(strDate[0]);
+		                    date.setMonth(strDate[1]  - 1);
+		                    date.setFullYear(strDate[2]);
+		                }
+		                return date;
+		            };
+		            var parseFromDB = function(res, fields, callback) {
+		                var ret = [];
+		                angular.forEach(res, function(model, index) {
+		                    var instance = {};
+		                    angular.forEach(fields, function(field, idx) {
+		                        var value = model.get(field.name);
+		                        if(typeof value !== 'undefined') {
+		                            if(field.type === 'date') {
+		                                value = parseDate(value);
+		                            }
+		                            instance[field.name] = value;
+		                        }
+		                    });
+		                    ret.push(instance);
+		                });
+		                callback(null, ret);
+		            };
+		            var getRemoteAction = function(params, gateway, callback) {
+		                var errors = [];
+		                if(typeof gateway === 'undefined' || typeof callback === 'undefined'){
+		                    throw "method getRemoteAction require three params (action, gateway, callback)";
+		                } else {
+		                    params.action   = params.action || 'retrieve';
+		                    params.criteria = params.criteria || {};
+		                    params.instance = params.instance || {};
+
+		                    if(params.action === 'retrieve') { //read data from DB salesforce
+		                        gateway.retrieve(params.criteria, function(err, res, all) {
+		                            processResponse(err, res, all, callback);
+		                        });
+		                    } else if(params.action === 'create') { // create instance to DB
+		                        gateway.create(params.instance, function(err, res, all) {
+		                            processResponse(err, res, all, callback);
+		                        });
+		                    } else if(params.action === 'update') { //update instance to DB
+		                        gateway.update(function(err, res, all) {
+		                            processResponse(err, res, all, callback);
+		                        });
+		                    } else if(params.action === 'upsert') { //upsert instance to DB
+		                        gateway.upsert(function(err, res, all) {
+		                            processResponse(err, res, all, callback);
+		                        });
+		                    }  
+		                    else if(params.action === 'del') { // remove record from DB salesforce
+		                        if(angular.isArray(params.instance)) {
+		                    		gateway.del(params.instance, function(err, res) { 
+		                            	processResponse(err, res, {}, callback);
+		                        	});
+		                    	} else {
+		                        	gateway.del(params.instance.Id, function(err, res) { 
+		                            	processResponse(err, res, {}, callback);
+		                        	});
+		                    	}
+		                    } else if(params.action === 'describe') { // get metadata of any object from salesforce
+		                        gateway.describe(function(err, res, all) {
+		                            /*if(!err) {
+		                                var fields = [];
+		                                angular.forEach(res.fields, function(field, index) {
+		                                    var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+		                                    var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired, referenceTo: field.referenceTo};
+		                                    if((field.type === 'picklist' || field.type === 'multipicklist') && field.hasOwnProperty('picklistValues')) {
+		                                        var values = [];
+		                                        angular.forEach(field.picklistValues, function(it) {
+		                                            values.push({label: it.label, value: it.value});
+		                                        });
+		                                        mdField.values = values;
+		                                    }
+		                                    fields.push(mdField);
+		                                });
+		                                callback(null, fields);
+		                            }*/
+		                            if(!err) {
+		                                var fields = [];
+		                                angular.forEach(res.fields, function(field, index) {
+		                                    var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+		                                    var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired};
+		                                    if(field.type === 'picklist' || field.type === 'multipicklist' || field.type === 'reference') {
+		                                    	if(field.picklistValues && field.picklistValues.length > 0) {
+			                                        var values = [];
+			                                        angular.forEach(field.picklistValues, function(it) {
+			                                            values.push({label: it.label, value: it.value});
+			                                        });
+			                                        mdField.values = values;
+		                                    	}
+		                                        mdField.referenceTo = field.referenceTo
+		                                    } else if(field.type === 'double' || field.type === 'percent') {
+		                                    	mdField.precision = field.precision;
+		                                    	mdField.scale = field.scale;
+		                                    }
+		                                    if(field.hasOwnProperty('inlineHelpText')) {
+		                                    	mdField.helpText = field.inlineHelpText;
+		                                    }
+		                                    fields.push(mdField);
+		                                });
+		                                callback(null, fields);
+		                            }
+		                        });
+		                    } else {
+		                        callback('-> '+action + ' :: action has not yet defined.');
+		                    }
+		                }
+		            }
+		            var arrayToObj = function(fields, objName) {
+		                var keys = {};
+		                angular.forEach(fields, function(item, index) {
+		                    keys[objName][item.name] = item;
+		                    keys[objName][item.name]['objParent'] = objName;
+		                });
+		                return keys;
+		            }
+		            var getPropertyFromObj = function(obj, prop) {
+		                if(obj && prop) {
+		                    return obj[prop];
+		                }
+		                return '';
+		            };
+		            var fieldIsValid = function(fieldName, form) {
+		                if(!fieldName || !form) {
+		                    return '';
+		                } else {
+		                    return form[fieldName].$valid ? 'has-success' : 'has-error';
+		                }
+		            };
+		            var findElementInArray = function(field, value, datasource) {
+		                var ret = {};
+		                if(field && value && datasource) {
+		                    var res = $filter('filter')(datasource, {[field]: value}, true);
+		                    if(res && res.length > 0) {
+		                        ret = res[0];
+		                    }
+		                }
+		                return ret;
+		            };
+
+		            return {
+		                processResponse: processResponse,
+		                parseDate: parseDate,
+		                parseFromDB: parseFromDB,
+		                getRemoteAction: getRemoteAction,
+		                arrayToObj: arrayToObj,
+		                getPropertyFromObj: getPropertyFromObj,
+		                createDate: createDate,
+		                fieldIsValid: fieldIsValid,
+		                findElementInArray: findElementInArray
+		            }
+		        })
+				.factory('sfUtils', function($filter, $interval) {
+					var delay = 300;
+					var describeObject = function(objName, callback) {
+						sforce.connection.describeSObject(objName, {
+							onSuccess: function(res) {
+								var fields = [];
+								angular.forEach(res.fields, function(field, index) {
+		                            var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+		                            var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired};
+		                            if(field.type === 'picklist' || field.type === 'multipicklist' || field.type === 'reference') {
+		                            	if(field.picklistValues && field.picklistValues.length > 0) {
+		                                    var values = [];
+		                                    angular.forEach(field.picklistValues, function(it) {
+		                                        values.push({label: it.label, value: it.value});
+		                                    });
+		                                    mdField.values = values;
+		                            	}
+		                                mdField.referenceTo = field.referenceTo
+		                            } else if(field.type === 'double' || field.type === 'percent') {
+		                            	mdField.precision = field.precision;
+		                            	mdField.scale = field.scale;
+		                            }
+		                            if(field.hasOwnProperty('inlineHelpText')) {
+		                            	mdField.helpText = field.inlineHelpText;
+		                            }
+		                            fields.push(mdField);
+		                        });
+		                        callback(fields);
+							}, 
+							onFailure: function(res){
+								callback(res);
+							}
+						});
+					};
+                    var retrieveObject = function(query, callback) {
+                        sforce.connection.query(query, {
+                            onSuccess : function(res) {
+                                var ql = res.queryLocator;
+                                var size = parseInt(res.size);
+                                if(size === 1) {
+                                    var temp = angular.copy(res.records);
+                                    res = [];
+                                    res.push(temp);
+                                } else if(res.records && res.records.length > 0) {
+                                    res = res.records;
+                                }
+                                if(ql && ql != null && ql.length > 0) {
+                                	queryMore(ql, function(resql) {
+                                		res = res.concat(resql);
+                                		callback(res);
+                                	});
+                                } else {
+                                    callback(res);
+                                }
+                            }, 
+                            onFailure : function(res) {
+                                callback(res);
+                            }
+                        });
+                    };
+                    var queryMore = function(queryLocator, callback, resQM) {
+                    	console.log('ejecuta queryMore...');
+                        if(queryLocator && callback) {
+                            sforce.connection.queryMore(queryLocator, {
+                                onSuccess : function(res) {
+                                    var ql = res.queryLocator;
+                                    if(res.size === '1') {
+                                        var temp = angular.copy(res.records);
+                                        res = [];
+                                        res.push(temp);
+                                    } else if(res.records && res.records.length > 0) {
+                                        res = res.records;
+                                    }
+                                    if(resQM) {
+                                    	resQM = resQM.concat(res);
+                                    } else {
+                                    	resQM = [];
+                                    	resQM = res;
+                                    }
+                                    if(ql && ql != null && ql.length > 0) {
+                                    	queryMore(ql, callback, resQM);
+                                    } else {
+                                    	callback(resQM);
+                                	}
+                                }, 
+                                onFailure : function(res) {
+                                    callback(res);
+                                }
+                            });
+                        }
+                    };
+                    var upsertObjects = function(upserts, callback) {
+                        sforce.connection.upsert('Id', upserts, {
+                            onSuccess: function(res) {
+                                callback(res);
+                            },
+                            onFailure: function(res) {
+                                callback(res);
+                            }
+                        });
+                    };
+                    var deleteObjects = function(ids, callback) {
+                        sforce.connection.deleteIds(ids, {
+                            onSuccess: function(res) {
+                                callback(res);
+                            },
+                            onFailure: function(res) {
+                                callback(res);
+                            }
+                        });
+                    };
+					var parseDate =  function(date) {
+		                return $filter('date')(date, 'dd/MM/yyyy');
+		            };
+		            var findElementInArray = function(field, value, datasource) {
+		                var ret = {};
+		                if(field && value && datasource) {
+		                    var res = $filter('filter')(datasource, {[field]: value}, true);
+		                    if(res && res.length > 0) {
+		                        ret = res[0];
+		                    }
+		                }
+		                return ret;
+		            };
+					return {
+						describe: describeObject,
+						retrieve: retrieveObject,
+						upsert: upsertObjects,
+						delete: deleteObjects,
+						parseDate: parseDate,
+						findElement: findElementInArray
+					}
+				})
+				.directive('datepicker', function() {
+		            return {
+		                restrict: 'A',
+		                require : 'ngModel',
+		                link : function (scope, element, attrs, ngModelCtrl) {
+		                    $(function(){
+		                        element.datepicker({
+		                            dateFormat:'dd/mm/yy',
+		                            onSelect:function (date) {
+		                                scope.$apply(function () {
+		                                    ngModelCtrl.$setViewValue(date);
+		                                });
+		                            }
+		                        });
+		                    });
+		                }
+		            }
+		        })
+		        .directive('sfInput', function() {
+		            return {
+		                restrict: 'E',
+		                scope: {
+		                    field: '=sfField',
+		                    instance: '=sfInstance',
+		                    form:'=sfForm',
+		                    opts: '=sfOpts',
+		                    label:'=sfLabelProp'
+		                },
+		                templateUrl: 'sf-input.html',
+		                controller: 'inputController'
+		            }
+		        })
+		        .controller('inputController', ['$scope', function($scope) {
+		            $scope.$watch('instance', function () {
+
+		            }, true);
+		            $scope.isInputText = function(field) {
+		                return field && field.type === 'string';
+		            };
+		            $scope.isSelectOption = function(field) {
+		                return field && (field.type === 'reference' || field.type === 'picklist');
+		            };
+		            $scope.isMultipleOption = function(field) {
+		                return field && field.type === 'multipicklist';
+		            };
+		            $scope.isInputDate = function(field) {
+		                return field && field.type === 'date';
+		            };
+		        }])
+		        .directive('sfSelect', function() {
+		            return {
+		                restrict: 'E',
+		                scope: {
+		                    field: '=sfField',
+		                    instance: '=sfInstance',
+		                    form:'=sfForm',
+		                    opts: '=sfOpts',
+		                    label:'=sfLabelProp',
+		                    callback: '&sfFilterMethod'
+		                },
+		                templateUrl: 'sf-select.html',
+		                controller: 'inputSelectCtrl'
+		            }
+		        })
+		        .controller('inputSelectCtrl', ['$scope', function($scope) {
+		            $scope.$watch('instance', function () {
+		            }, true);
+		        }]);
+		        $(document).ready(function() {
+		            $.datepicker.regional['es'] = {
+		                closeText: 'Cerrar',
+		                prevText: '<Ant',
+		                nextText: 'Sig>',
+		                currentText: 'Hoy',
+		                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		                monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+		                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		                dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+		                dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+		                weekHeader: 'Sm',
+		                dateFormat: 'dd/mm/yy',
+		                firstDay: 1,
+		                isRTL: false,
+		                showMonthAfterYear: false,
+		                yearSuffix: ''
+		            };
+		            $.datepicker.setDefaults($.datepicker.regional['es']);
+                    $('[data-toggle="tooltip"]').tooltip();
+		        });
+	  		})(angular);
+        </script>
+        <script type="text/ng-template" id="sf-input.html">
+	        <div class="form-group" ng-class="{'has-success': form.{{field.objParent + '_' +field.name}}.$valid, 'has-error': form.{{field.objParent + '_' +field.name}}.$invalid}">
+	            <label class="control-label col-sm-4"><span ng-bind="field.label"/> <span ng-if="field.required">*</span></label>
+	            <div class="col-sm-8">
+	                <!-- for input string -->
+	                <input ng-if="isInputText(field)" ng-required="{{field.required}}" name="{{field.objParent + '_' +field.name}}" class="form-control" ng-model="instance[field.name]" id="{{field.name}}"></input>
+
+	                <!-- for input date -->
+	                <input ng-if="isInputDate(field)" datepicker="instance[field.name]" ng-pattern="/^((\d{2})\/(\d{2})\/(\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="{{field.required}}" placeholder="dd/MM/aaaa" name="{{field.objParent + '_' +field.name}}" class="form-control" ng-model="instance[field.name]"></input>
+
+	                <!-- for input select simple -->
+	                <select ng-if="isSelectOption(field)"  name="{{field.objParent + '_' +field.name}}" ng-required="{{field.required}}" class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+	                    <option ng-if="opts.length > 0" value="" selected>-- Seleccione {{field.label}} --</option>
+	                </select>
+
+	                <!-- for input select multipe -->
+	                <select ng-if="isMultipleOption(field)"  name="{{field.objParent + '_' +field.name}}" ng-required="{{field.required}}" multiple class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+	                    <option ng-if="opts.length > 0" value="" selected>-- Seleccione {{field.label}} --</option>
+	                </select>
+
+	                <i class="help-block" ng-show="form.{{field.objParent + '_' +field.name}}.$invalid">Campo requerido</i>
+	            </div>
+	        </div>
+		</script>
+		<script type="text/ng-template" id="sf-select.html">
+			<select name="{{field.name+instance.$$hashKey}}" ng-change="callback({opts:instance.opts})" ng-required="{{field.required}}" class="form-control" ng-options="opt as opt[label] for opt in opts" ng-model="instance.opts[field.name]">
+	            <option ng-if="opts.length > 0" value="" selected>-- Ninguno --</option>
+	        </select>
+		</script>
+       	<div>
+			<h2>Becas</h2>
+            <br/><br/>
+			<ul class="nav nav-tabs">
+    			<li class="active"><a data-toggle="tab" href="#home">Comercial</a></li>
+    			<li><a data-toggle="tab" href="#calculator">Calculadora</a></li>
+                <li><a data-toggle="tab" href="#agreegament">Convenio</a></li>
+  			</ul>
+
+  			<div class="tab-content">
+				<div id="home" class="tab-pane fade in active" style="max-width: 100%;">
+                    <c:BEC_Comercial ></c:BEC_Comercial>
+    			</div>
+				<div id="calculator" class="tab-pane fade">
+                    <c:BEC_Calculadora ></c:BEC_Calculadora>
+				</div>
+                <div id="agreegament" class="tab-pane fade">
+                    <c:BEC_Convenio ></c:BEC_Convenio>
+                </div>
+            </div>
+        </div>
+        <style type="text/css">
+           .sf-autocomplete-holder {position: relative;}
+	       .sf-autocomplete-row {padding: 5px; color: #000000; margin-bottom: 4px;}
+	       .sf-autocomplete-dropdown {border-color: #ececec; border-width: 1px; border-style: solid; border-radius: 2px; width: 250px; padding: 6px; cursor: pointer; z-index: 9999; position: absolute; margin-top: -6px; background-color: #ffffff; max-height: 250px; overflow-y: scroll;}
+	       .sf-autocomplete-selected-row, .sf-autocomplete-row:hover {background-color: #2a94d6; border-color: #2585c1; color: white;}
+       	   .sf-autocomplete-search {position: absolute; right: 8px; top: 10px; color: rgba(0, 0, 0, 0.19);}
+       	   .sf-autocomplete-holder>.form-control {padding-right: 25px;}
+       	   .table-responsive {overflow-x: initial;}
+       		
+        </style>
+    </body>
+</apex:page>

@@ -1,0 +1,2491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>AddToCampaign</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CallHighlightAction</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>ChangeStatus</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Convert</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>EmailHighlightAction</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>FindDup</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>ListClean</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>LEAD_Layout</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <businessProcesses>
+        <fullName>Ventas</fullName>
+        <isActive>true</isActive>
+        <values>
+            <fullName>Contactado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Interesado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lead</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>No contactado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No interesado</fullName>
+            <default>false</default>
+        </values>
+    </businessProcesses>
+    <compactLayoutAssignment>Leads_Custom_Compact_Layout</compactLayoutAssignment>
+    <compactLayouts>
+        <fullName>Leads_Custom_Compact_Layout</fullName>
+        <fields>Name</fields>
+        <fields>Company</fields>
+        <fields>Title</fields>
+        <fields>Phone</fields>
+        <fields>MobilePhone</fields>
+        <fields>Email</fields>
+        <label>Leads Custom Compact Layout</label>
+    </compactLayouts>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <fields>
+        <fullName>Address</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>AnnualRevenue</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Antologia__c</fullName>
+        <externalId>false</externalId>
+        <label>Antología</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>ApeMaterno__c</fullName>
+        <description>Apellido Materno</description>
+        <externalId>false</externalId>
+        <label>Apellido materno</label>
+        <length>80</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>AplicaPromocionCero__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Aplica promoción cero</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>AsignacionAutomatica__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Asignación Automática del Prospecto</description>
+        <externalId>false</externalId>
+        <label>Asignación automática</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Beca__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Beca</label>
+        <referenceTo>Beca__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Candidatos</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>CP__c</fullName>
+        <externalId>false</externalId>
+        <label>Código Postal</label>
+        <length>5</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Calificacion__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(Text(Status )= &quot;Lead&quot;,IMAGE(&apos;/resource/LeadQuality/1Estrella.png&apos;,&apos;3Negativo.png&apos;), 
+IF(Text(Status )= &quot;Contactado&quot;,IMAGE(&apos;/resource/LeadQuality/2Estrellas.png&apos;,&apos;3Negativo.png&apos;), 
+IF(Text(Status )= &quot;Interesado&quot;,IMAGE(&apos;/resource/LeadQuality/3Estrellas.png&apos;,&apos;3Negativo.png&apos;),  
+IMAGE(&apos;/resource/LeadQuality/3Estrellas.png&apos;,&apos;3Negativo.png&apos;) ) ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Calificación</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Calle__c</fullName>
+        <externalId>false</externalId>
+        <label>Calle</label>
+        <length>80</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CampaignId</fullName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ColegiaturaDescuento__c</fullName>
+        <externalId>false</externalId>
+        <formula>Colegiatura__c -( Colegiatura__c *  PorcentajeBeca__c )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Colegiatura con descuento</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Colegiatura__c</fullName>
+        <externalId>false</externalId>
+        <label>Colegiatura</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Colonia__c</fullName>
+        <externalId>false</externalId>
+        <label>Colonia</label>
+        <length>80</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>ConceptoInscripcion__c</fullName>
+        <description>Concepto de Inscripción</description>
+        <externalId>false</externalId>
+        <label>Concepto inscripción</label>
+        <length>80</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Description</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>DisponiblePromocionCero__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Disponible promoción cero</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>DoNotCall</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Email</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>EstadoCivil__c</fullName>
+        <description>Estado Civil del Candidato</description>
+        <externalId>false</externalId>
+        <label>Estado civil</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Soltero</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Casado</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Divorciado</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Viudo</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>EstadoOtro__c</fullName>
+        <externalId>false</externalId>
+        <label>Estado</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Estado__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Estado</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Ubicacion__c.TipoUbicacion__c</field>
+                <operation>equals</operation>
+                <value>Estado</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Ubicacion__c</referenceTo>
+        <relationshipLabel>Candidatos (Estado)</relationshipLabel>
+        <relationshipName>Candidatos1</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ExamenAdmision__c</fullName>
+        <externalId>false</externalId>
+        <label>Examen de admisión</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Fax</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>FechaNacimiento__c</fullName>
+        <description>Fecha de Nacimiento</description>
+        <externalId>false</externalId>
+        <label>Fecha de nacimiento</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>FichaPago__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Ficha de Pago</description>
+        <externalId>false</externalId>
+        <label>Con ficha pago</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>FolioCalculadora__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF(TEXT(TipoBeca__c)= &quot;Beca Calculadora&quot;, &quot;CAL&quot; &amp; text(DAY( datevalue(CreatedDate) ))&amp;text(month( datevalue(CreatedDate) ))&amp; text(year( datevalue(CreatedDate) ))&amp;  Folio__c,&quot; &quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Folio calculadora</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Folio__c</fullName>
+        <displayFormat>C-{000000}</displayFormat>
+        <externalId>true</externalId>
+        <label>Folio</label>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <fullName>FormaPago__c</fullName>
+        <externalId>false</externalId>
+        <globalPicklist>FormaPago</globalPicklist>
+        <label>Forma de pago</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>GrupoAsignado__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Grupo al cual fue asignado el candidado</description>
+        <externalId>false</externalId>
+        <label>Grupo asignado</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Grupo__c.OfertaEducativa__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.OfertaEducativa__c</valueField>
+            </filterItems>
+            <isOptional>true</isOptional>
+        </lookupFilter>
+        <referenceTo>Grupo__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>GrupoAsingado</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>HasOptedOutOfEmail</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>HasOptedOutOfFax</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>ImporteTotal__c</fullName>
+        <externalId>false</externalId>
+        <formula>Antologia__c +  ColegiaturaDescuento__c + InscripcionDescuento__c + ExamenAdmision__c +  Propedeutico__c +  Uniforme__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Importe total</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Industry</fullName>
+        <picklist>
+            <picklistValues>
+                <fullName>Agriculture</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Apparel</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Banking</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Biotechnology</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Chemicals</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Communications</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Construction</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Consulting</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Education</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Electronics</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Energy</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Engineering</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Entertainment</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Environmental</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Finance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Food &amp; Beverage</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Government</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Healthcare</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hospitality</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Machinery</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Manufacturing</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Media</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not For Profit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Recreation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Retail</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Shipping</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Technology</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Telecommunications</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Utilities</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>InscripcionDescuento__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( AplicaPromocionCero__c , 0, Inscripcion__c -( Inscripcion__c * PorcentajeDescuento__c ))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Inscripción con descuento</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Inscripcion__c</fullName>
+        <description>Monto de la Inscripción</description>
+        <externalId>false</externalId>
+        <label>Inscripción</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Jigsaw</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>LastTransferDate</fullName>
+    </fields>
+    <fields>
+        <fullName>LeadSource</fullName>
+        <picklist>
+            <picklistValues>
+                <fullName>Marketing</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>MKT &amp; Promoción</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Promoción</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LetraBeca__c</fullName>
+        <externalId>false</externalId>
+        <globalPicklist>CategoriaLetra</globalPicklist>
+        <label>Letra de Beca</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>LlaveCandidato__c</fullName>
+        <externalId>true</externalId>
+        <label>Llave Candidato</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MedioDifusion__c</fullName>
+        <description>Medio por el cual se entero de IEU</description>
+        <externalId>false</externalId>
+        <label>Medio por el cual se entero</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Atención inmediata</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>CineCorreo electrónico</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Espectacular</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Facebook</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Fachada de Campus</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ferias y eventos</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>GoogleMensaje en el celular</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Parada de autobús</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pendones</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Periódico</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Publicidad en camionesRadio</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Recibí una visita</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Revista</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Stand en PlazaTelevisión</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Vehículos con sonido</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>MobilePhone</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>ModalidadEjecutiva__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Modalidad Ejecutiva</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ModalidadOnline__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Modalidad Online</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ModalidadPresencial__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Modalidad Presencial</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Modalidad__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Modalidad</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Catalogo__c.TipoCatalogo__c</field>
+                <operation>equals</operation>
+                <value>Modalidad</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Catalogo__c</referenceTo>
+        <relationshipLabel>Candidatos (Modalidad)</relationshipLabel>
+        <relationshipName>Candidatos</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>MotivoNoContactado__c</fullName>
+        <description>Motivo por el cual no se contacto el candidato</description>
+        <externalId>false</externalId>
+        <label>Motivo no contactado</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Temporal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Definitivo</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>MotivoNoInteresado__c</fullName>
+        <externalId>false</externalId>
+        <label>Motivo no interesado</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Cambia de residencia</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Falta de recursos</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Inscrito en otra institución</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No quiere estudiar en IEU</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Municipio__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Municipio</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Ubicacion__c.TipoUbicacion__c</field>
+                <operation>equals</operation>
+                <value>Municipio</value>
+            </filterItems>
+            <isOptional>true</isOptional>
+        </lookupFilter>
+        <referenceTo>Ubicacion__c</referenceTo>
+        <relationshipLabel>Candidatos (Municipio)</relationshipLabel>
+        <relationshipName>Candidatos2</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Name</fullName>
+        <trackFeedHistory>true</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Nivel__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Nivel</description>
+        <externalId>false</externalId>
+        <label>Nivel</label>
+        <referenceTo>Catalogo__c</referenceTo>
+        <relationshipLabel>Candidatos (Nivel)</relationshipLabel>
+        <relationshipName>Nivel</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>NombreConvenio__c</fullName>
+        <externalId>false</externalId>
+        <label>Nombre de convenio</label>
+        <length>250</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NumberOfEmployees</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>NumeroExterior__c</fullName>
+        <externalId>false</externalId>
+        <label>Número exterior</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NumeroInterior__c</fullName>
+        <externalId>false</externalId>
+        <label>Número interior</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NumeroMensualidades__c</fullName>
+        <description>Numero de Colegiaturas del programa</description>
+        <externalId>false</externalId>
+        <label>Número de colegiaturas</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Numero_Mensualidades__c</fullName>
+        <externalId>false</externalId>
+        <formula>OfertaEducativa__r.NumeroColegiaturas__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Numero Mensualidades</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>OfertaEducativa__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Búsqueda de Oferta Educativa para el Canidato</description>
+        <externalId>false</externalId>
+        <label>Oferta educativa</label>
+        <referenceTo>OfertaEducativa__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Candidatos</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>OwnerId</fullName>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Pais__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>País</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Ubicacion__c.TipoUbicacion__c</field>
+                <operation>equals</operation>
+                <value>País</value>
+            </filterItems>
+            <isOptional>true</isOptional>
+        </lookupFilter>
+        <referenceTo>Ubicacion__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Candidatos</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Periodo__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Periodo</description>
+        <externalId>false</externalId>
+        <label>Periodo</label>
+        <referenceTo>Periodo__c</referenceTo>
+        <relationshipLabel>Periodo</relationshipLabel>
+        <relationshipName>Periodo</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Phone</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Plantel__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Plantel</description>
+        <externalId>false</externalId>
+        <label>Plantel</label>
+        <referenceTo>Plantel__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Plantel</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PorcentajeBeca__c</fullName>
+        <description>Porcentaje de descuento en colegiaturas</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Porcentaje de beca en colegiatura</inlineHelpText>
+        <label>% de beca en colegiatura</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>PorcentajeDescuento__c</fullName>
+        <description>Porcentaje de descuento en inscripción</description>
+        <externalId>false</externalId>
+        <label>% de descuento en inscripción</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>PotencialFuturo__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Potencial Futuro</description>
+        <externalId>false</externalId>
+        <label>Potencial futuro</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Programa__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Programa</description>
+        <externalId>false</externalId>
+        <label>Programa</label>
+        <referenceTo>Programa__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Programa</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Promedio__c</fullName>
+        <externalId>false</externalId>
+        <globalPicklist>Promedio</globalPicklist>
+        <label>Promedio</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Promotor__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Promotor</label>
+        <referenceTo>Promotor__c</referenceTo>
+        <relationshipLabel>Candidatos</relationshipLabel>
+        <relationshipName>Candidatos</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Propedeutico__c</fullName>
+        <externalId>false</externalId>
+        <label>Propedéutico</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Rating</fullName>
+        <picklist>
+            <picklistValues>
+                <fullName>Hot</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Warm</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Cold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Sexo__c</fullName>
+        <description>Genero del Candidato</description>
+        <externalId>false</externalId>
+        <label>Sexo</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Masculino</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Femenino</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SolicitudPromocion__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Solicitud de promoción</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Status</fullName>
+        <picklist>
+            <picklistValues>
+                <fullName>Lead</fullName>
+                <default>true</default>
+                <converted>false</converted>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contactado</fullName>
+                <default>false</default>
+                <converted>false</converted>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Interesado</fullName>
+                <default>false</default>
+                <converted>true</converted>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No contactado</fullName>
+                <default>false</default>
+                <converted>false</converted>
+            </picklistValues>
+            <picklistValues>
+                <fullName>No interesado</fullName>
+                <default>false</default>
+                <converted>false</converted>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>true</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SubOrigenCandidato__c</fullName>
+        <description>Sub Origen del Canidato</description>
+        <externalId>false</externalId>
+        <label>Sub origen candidato</label>
+        <picklist>
+            <controllingField>LeadSource</controllingField>
+            <picklistValues>
+                <fullName>01800</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Atención inmediata</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Becas Maestría</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Calcula tu colegiatura</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contacto</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Correos electrónicos personalizados</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Educación para todos</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Educaedu</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ferias &amp;Eventos</fullName>
+                <default>false</default>
+                <controllingFieldValues>Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Números telefónicos locales</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OCC</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Preinscripción</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Redes sociales Varios</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Reunión informativa</fullName>
+                <default>false</default>
+                <controllingFieldValues>Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Trabajos.mx</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Tráfico de piso</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Verticales IEU (por programa)</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Vertical IEU</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Visitas de promoción</fullName>
+                <default>false</default>
+                <controllingFieldValues>Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Whatsappend</fullName>
+                <default>false</default>
+                <controllingFieldValues>MKT &amp; Promoción</controllingFieldValues>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Zopim</fullName>
+                <default>false</default>
+                <controllingFieldValues>Marketing</controllingFieldValues>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TipoBeca__c</fullName>
+        <externalId>false</externalId>
+        <globalPicklist>TipoBeca</globalPicklist>
+        <label>Tipo de Beca</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TipoDescuentoOtorgado__c</fullName>
+        <externalId>false</externalId>
+        <globalPicklist>TipoDescuento</globalPicklist>
+        <label>Tipo descuento otorgado</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Title</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Uniforme__c</fullName>
+        <externalId>false</externalId>
+        <label>Uniforme</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>VigenciaDescuento__c</fullName>
+        <externalId>false</externalId>
+        <label>Vigencia de descuento</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Website</fullName>
+        <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Fcbk_Image_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Facebook Image Url</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Fcbk_Picture__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>HYPERLINK(sf4twitter__Fcbk_Profile_Url__c,
+IF( ( NOT( ISBLANK( sf4twitter__Fcbk_Image_Url__c) )), IMAGE( sf4twitter__Fcbk_Image_Url__c  ,sf4twitter__Fcbk_Profile_Url__c, 48, 48), sf4twitter__Fcbk_Profile_Url__c )
+,&quot;&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Facebook Picture</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Fcbk_Profile_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Facebook Profile Url</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Fcbk_User_Id__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <deprecated>false</deprecated>
+        <externalId>true</externalId>
+        <label>Facebook User Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Fcbk_Username__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Facebook Username</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Follow_Status__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Click on link to change following status</description>
+        <externalId>false</externalId>
+        <formula>HYPERLINK(
+&apos;javascript:window.location=&quot;/apex/sf4twitter__TwitterFollow?lid=&apos; + Id + &apos;&quot; + ( ( (new RegExp(&quot;[\\?&amp;]isdtp=([^&amp;#]*)&quot;)).exec(window.location.href) == null )?&quot;&quot;: &quot;&amp;isdtp=vw&quot;) &apos;, 
+IF(sf4twitter__followed__c == true,&apos;Yes&apos;, &apos;No&apos; ), 
+&apos;_self&apos;  )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <inlineHelpText>Haga clic en el vínculo para cambiar el estado de seguimiento</inlineHelpText>
+        <label>Following on Twitter</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Klout_Number__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Klout Number</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Klout_Score__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF( ABS( sf4twitter__Klout_Number__c )  &gt; 0, TEXT( sf4twitter__Klout_Number__c ) + &apos;  &apos; + IMAGE($Setup.sf4twitter__Twitter_Public_Configuration__c.sf4twitter__Klout_Score_logo__c,&apos;Klout&apos;,17,90), &apos;&apos; )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Klout Score</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Origin__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Origin</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Facebook</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Twitter</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Bio__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Bio</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Creation_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Creation Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Follower_count__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Follower count</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Following_count__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Following count</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Image_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Image Url</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Last_tweet__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Last tweet</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Location__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Location</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Picture__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>HYPERLINK(
+&apos;http://twitter.com/&apos; + sf4twitter__Twitter_Username__c,
+IF( ( NOT( ISBLANK( sf4twitter__Twitter_Image_Url__c ) )), IMAGE( sf4twitter__Twitter_Image_Url__c ,&apos;http://twitter.com/&apos; + sf4twitter__Twitter_Username__c, 48, 48), 
+IF( NOT( ISBLANK( sf4twitter__Twitter_Username__c ) ), &apos;http://twitter.com/&apos; + sf4twitter__Twitter_Username__c, &apos;&apos; ) )
+,&quot;&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Twitter Picture</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Status_count__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Status count</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_User_Id__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <deprecated>false</deprecated>
+        <externalId>true</externalId>
+        <label>Twitter User Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__Twitter_Username__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Twitter Username</label>
+        <length>50</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>sf4twitter__followed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Followed</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <listViews>
+        <fullName>AllOpenLeads</fullName>
+        <columns>FULL_NAME</columns>
+        <columns>LEAD.PHONE</columns>
+        <columns>Periodo__c</columns>
+        <columns>CORE.USERS.FIRST_NAME</columns>
+        <columns>LEAD.EMAIL</columns>
+        <columns>LEAD.STATUS</columns>
+        <columns>CORE.USERS.LAST_NAME</columns>
+        <columns>LEAD.CREATED_DATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>LEAD.STATUS</field>
+            <operation>notEqual</operation>
+            <value>Contactado,No contactado,No interesado</value>
+        </filters>
+        <label>Todos los leads abiertos</label>
+    </listViews>
+    <listViews>
+        <fullName>MyUnreadLeads</fullName>
+        <columns>FULL_NAME</columns>
+        <columns>LEAD.COMPANY</columns>
+        <columns>LEAD.STATE</columns>
+        <columns>LEAD.PHONE</columns>
+        <columns>LEAD.EMAIL</columns>
+        <columns>LEAD.RATING</columns>
+        <columns>LEAD.UNREAD</columns>
+        <columns>LEAD.STATUS</columns>
+        <filterScope>Mine</filterScope>
+        <filters>
+            <field>LEAD.UNREAD</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>My Unread Leads</label>
+    </listViews>
+    <listViews>
+        <fullName>TodaysLeads</fullName>
+        <columns>FULL_NAME</columns>
+        <columns>LEAD.COMPANY</columns>
+        <columns>LEAD.STATE</columns>
+        <columns>LEAD.EMAIL</columns>
+        <columns>LEAD.STATUS</columns>
+        <columns>LEAD.CREATED_DATE</columns>
+        <columns>CORE.USERS.ALIAS</columns>
+        <columns>LEAD.UNREAD</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>LEAD.CREATED_DATE</field>
+            <operation>equals</operation>
+            <value>TODAY</value>
+        </filters>
+        <label>Today&apos;s Leads</label>
+    </listViews>
+    <recordTypeTrackFeedHistory>false</recordTypeTrackFeedHistory>
+    <recordTypes>
+        <fullName>Ventas</fullName>
+        <active>true</active>
+        <businessProcess>Ventas</businessProcess>
+        <label>Ventas</label>
+        <picklistValues>
+            <picklist>CategoriaLetra</picklist>
+            <values>
+                <fullName>A</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>B</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>C</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>D</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>F</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>G</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>H</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>EstadoCivil__c</picklist>
+            <values>
+                <fullName>Casado</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Divorciado</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Soltero</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Viudo</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>FormaPago</picklist>
+            <values>
+                <fullName>Depósito a cuenta</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ficha de depósito</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tarjeta de crédito</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Industry</picklist>
+            <values>
+                <fullName>Agriculture</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Apparel</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Banking</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Biotechnology</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Chemicals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Communications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Construction</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Consulting</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Education</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Electronics</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Energy</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Engineering</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Entertainment</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Environmental</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Finance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Food %26 Beverage</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Government</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Healthcare</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hospitality</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Insurance</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Machinery</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Manufacturing</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Media</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Not For Profit</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Other</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recreation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Retail</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Shipping</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Technology</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Telecommunications</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Transportation</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Utilities</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>LeadSource</picklist>
+            <values>
+                <fullName>MKT %26 Promoción</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Marketing</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Promoción</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>MedioDifusion__c</picklist>
+            <values>
+                <fullName>Atención inmediata</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>CineCorreo electrónico</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Espectacular</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Facebook</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Fachada de Campus</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ferias y eventos</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>GoogleMensaje en el celular</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Parada de autobús</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pendones</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Periódico</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Publicidad en camionesRadio</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Recibí una visita</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Revista</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Stand en PlazaTelevisión</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vehículos con sonido</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Modalidad</picklist>
+            <values>
+                <fullName>Ejecutiva</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Online</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Presencial</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>MotivoNoContactado__c</picklist>
+            <values>
+                <fullName>Definitivo</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Temporal</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>MotivoNoInteresado__c</picklist>
+            <values>
+                <fullName>Cambia de residencia</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>Falta de recursos</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Inscrito en otra institución</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>No quiere estudiar en IEU</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Name</picklist>
+            <values>
+                <fullName>Dr%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mr%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mrs%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ms%2E</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Prof%2E</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Promedio</picklist>
+            <values>
+                <fullName>10%2E0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>6%2E9</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>7%2E9</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>8%2E9</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E1</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E5</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E6</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E7</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E8</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>9%2E9</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Rating</picklist>
+            <values>
+                <fullName>Cold</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hot</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Warm</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Sexo__c</picklist>
+            <values>
+                <fullName>Femenino</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Masculino</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>SubOrigenCandidato__c</picklist>
+            <values>
+                <fullName>01800</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Atención inmediata</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Becas Maestría</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Calcula tu colegiatura</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Contacto</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Correos electrónicos personalizados</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Educación para todos</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Educaedu</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ferias %26Eventos</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Números telefónicos locales</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>OCC</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Preinscripción</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Redes sociales Varios</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Reunión informativa</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Trabajos%2Emx</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tráfico de piso</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vertical IEU</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Verticales IEU %28por programa%29</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Visitas de promoción</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Whatsappend</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Zopim</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>TipoBeca</picklist>
+            <values>
+                <fullName>Comercial</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Convenio</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>TipoDescuento</picklist>
+            <values>
+                <fullName>Descuento individual vigente</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Promoción 0</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Promoción Solicitada</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>sf4twitter__Origin__c</picklist>
+            <values>
+                <fullName>Facebook</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Twitter</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts>
+        <customTabListAdditionalFields>FULL_NAME</customTabListAdditionalFields>
+        <customTabListAdditionalFields>LEAD.COMPANY</customTabListAdditionalFields>
+        <customTabListAdditionalFields>LEAD.PHONE</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>FULL_NAME</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>LEAD.COMPANY</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>FULL_NAME</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>LEAD.COMPANY</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>LEAD.PHONE</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>LEAD.MOBILE_PHONE</lookupPhoneDialogsAdditionalFields>
+        <searchResultsAdditionalFields>FULL_NAME</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.TITLE</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.COMPANY</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.PHONE</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.MOBILE_PHONE</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.EMAIL</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LEAD.STATUS</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>CORE.USERS.ALIAS</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWriteTransfer</sharingModel>
+    <webLinks>
+        <fullName>FichaPago</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Generar ficha de pago</masterLabel>
+        <openType>sidebar</openType>
+        <page>FichaPago</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>GenerarFichaEspecial</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Generar ficha especial</masterLabel>
+        <openType>sidebar</openType>
+        <page>FichaPagoEspecial</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>GoogleMaps</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Google Maps</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>http://maps.google.com/maps?f=q&amp;hl=en&amp;q={!Lead_Street}+{!Lead_City}+{!Lead_State}&amp;om=1</url>
+    </webLinks>
+    <webLinks>
+        <fullName>GoogleNews</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Google News</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>http://www.google.com/news?&amp;q={!Lead_Company}&amp;btnG=Search+News</url>
+    </webLinks>
+    <webLinks>
+        <fullName>GoogleSearch</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Google Search</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>http://www.google.com/search?q={!Lead_Company}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>MODIFICAR</fullName>
+        <availability>online</availability>
+        <description>Página de LayOut Personalizada para crear/modificar un contacto</description>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>MODIFICAR</masterLabel>
+        <openType>noSidebar</openType>
+        <page>LEAD_Layout</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Get_Author_Info_Massive</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Get Author Info</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>var records = {!GETRECORDIDS( $ObjectType.Lead)}; 
+if (records.length == 0) { 
+  alert(&quot;{!$Label.sf4twitter__TWITTER_SELECT_A_RECORD}&quot;) ; 
+} 
+else if(records.length &gt; 100){ 
+  alert(&quot;{!SUBSTITUTE($Label.sf4twitter__TWITTER_SELECT_LESS_RECORD, &apos;{0}&apos;, &apos;100&apos;)}&quot;); 
+} 
+else { 
+	if(document.getElementsByName(&apos;fcf&apos;)[0] == null){ 
+	elementName = &apos;is:islv:inlineSchedulerListView:enhancedList:fcf&apos;; 
+	}else{ 
+		elementName =&apos;fcf&apos;; 
+	} 
+	var listViewFilters = document.getElementsByName(elementName)[0];
+
+	var filterId = listViewFilters.options[listViewFilters.selectedIndex].value;
+	var url = new String(window.location);
+	if (url.search(/fcf=[^&amp;]+/) &gt;= 0) {
+		url = url.replace(/fcf=[^&amp;]+/, &apos;fcf=&apos; + filterId);
+	} else {
+		if (url.indexOf(&apos;?&apos;) == -1) {
+			url += &apos;?&apos;
+		}
+		url += &apos;&amp;fcf=&apos; + filterId;
+	}
+        window.location = &apos;/apex/sf4twitter__TwitterUpdateTwitterInfo?records=&apos; + records + &apos;&amp;retURL=&apos; + encodeURIComponent(url);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Get_Klout_Score</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Get Klout Score</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>if ({!IF(ISPICKVAL(Lead.sf4twitter__Origin__c,&apos;Facebook&apos;),&apos;true&apos;,&apos;false&apos;)}) {
+alert(&apos;{!$Label.sf4twitter__FUNCTION_ONLY_FOR_TWITTER_CONVERSATION}&apos;);
+} else{
+window.location = &apos;/apex/sf4twitter__SocialKlout?lList={!Lead.Id}&amp;retURL=&apos; + encodeURIComponent(window.location);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Get_Klout_Score_Massive</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Get Klout Score</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>var records = {!GETRECORDIDS( $ObjectType.Lead )}; 
+if (records.length == 0) { 
+alert(&quot;{!$Label.sf4twitter__TWITTER_SELECT_A_RECORD}&quot;) ; 
+} 
+else if(records.length &gt; 5){ 
+alert(&quot;{!SUBSTITUTE($Label.sf4twitter__TWITTER_SELECT_LESS_RECORD, &apos;{0}&apos;, &apos;5&apos;)}&quot;); 
+} 
+else { 
+	if(document.getElementsByName(&apos;fcf&apos;)[0] == null){ 
+	elementName = &apos;is:islv:inlineSchedulerListView:enhancedList:fcf&apos;; 
+	}else{ 
+		elementName =&apos;fcf&apos;; 
+	} 
+	var listViewFilters = document.getElementsByName(elementName)[0];
+
+var filterId = listViewFilters.options[listViewFilters.selectedIndex].value; 
+var url = new String(window.location); 
+if (url.search(/fcf=[^&amp;]+/) &gt;= 0) { 
+url = url.replace(/fcf=[^&amp;]+/, &apos;fcf=&apos; + filterId); 
+} else { 
+if (url.indexOf(&apos;?&apos;) == -1) { 
+url += &apos;?&apos; 
+} 
+url += &apos;&amp;fcf=&apos; + filterId; 
+} 
+window.location = &apos;/apex/sf4twitter__SocialKlout?lList=&apos; + records + &apos;&amp;retURL=&apos; + encodeURIComponent(url); 
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Get_Twitter_Username</fullName>
+        <availability>online</availability>
+        <description>Allow a CRM users to search twitter to find the Contact&apos;s
+twitter user name.</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Get Twitter Username</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>var results = (new RegExp(&quot;[\\?&amp;]isdtp=([^&amp;#]*)&quot;)).exec(window.location.href);
+if ( results == null ){
+window.location = &apos;/apex/sf4twitter__TwitterGetUsername?lid={!Lead.Id}&amp;retURL=&apos; + encodeURIComponent(window.location);
+}else{
+window.location = &apos;/apex/sf4twitter__TwitterGetUsername?lid={!Lead.Id}&amp;isdtp=&apos;+results[1]+&apos;&amp;retURL=&apos; + encodeURIComponent(window.location);
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Search_Twitter_Username</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Search Twitter Username</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>http://twitter.com/search/users?q={!Lead.FirstName}+{!Lead.LastName}&amp;category=people&amp;source=find_on_twitter</url>
+    </webLinks>
+    <webLinks>
+        <fullName>sf4twitter__Update_Twitter_Information</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Get Author Info</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>window.location = &apos;/apex/sf4twitter__TwitterUpdateTwitterInfo?records={!Lead.Id}&amp;retURL=&apos; + encodeURIComponent(window.location);</url>
+    </webLinks>
+</CustomObject>

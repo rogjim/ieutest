@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>application/zip</contentType>
+    <description>Contiene jquery.bootstrap-duallistbox.min.js, bootstrap-duallistbox.min.css,  angujar.js, ui-bootstrap-tpls-1.3.2.min.js, jquery-2.2.2.min, jquery-ui.css y jquery-ui.min.js</description>
+</StaticResource>

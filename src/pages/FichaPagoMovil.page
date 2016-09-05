@@ -1,0 +1,76 @@
+<apex:page controller="FichaPagoMovilCtrl" language="es-es">
+    <head>
+    	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />    
+    </head>
+    <apex:form id="Datos">
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton value="Consultar programas" action="{!getPrograms}" reRender="Datos, tokenMessages" status="status"/>
+                <apex:commandButton rendered="{!consulto}" action="{!saveToken}" reRender="tokenMessages" value="Guardar" id="save"/>
+                <apex:commandButton value="Cancelar" action="{!exit}" immediate="true" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="false" title="Ficha de pago movil" >
+                <apex:pageBlockSectionItem >	
+                    <apex:outputLabel value="Numero de fichas" for="numeroFichas"/>
+                    <apex:define name="requiredInputDiv">
+                        <div class="requiredInput" >
+                            <apex:define name="requiredInputDiv">
+                                <div class="requiredBlock"/>
+                            </apex:define>
+                            <apex:inputText value="{!numeroFichas}" required="true" id="numeroFichas"></apex:inputText>
+                        </div>
+                    </apex:define>
+                </apex:pageBlockSectionItem>
+                <apex:inputField required="true" label="Importe" id="importe" value="{!ficha.Importe__c}"/>
+                <apex:inputField showDatePicker="true" required="true" label="Vigencia" id="Vigencia" value="{!ficha.Hasta__c}"/>
+                <apex:inputField required="true" label="Descuento" id="descuento" value="{!ficha.Descuento__c}"/>
+                <apex:inputField label="Campaña" id="campaña" value="{!ficha.Campana__c}"/>
+                <apex:inputField required="true" label="Plantel" id="plantel" value="{!ficha.Plantel__c}"/>
+                <apex:inputField required="true" label="Periodo" id="periodo" value="{!ficha.Periodo__c }"/>
+                <apex:inputField required="true" label="Nivel" id="nivel" value="{!ficha.Nivel__c}" />
+                <apex:repeat value="{!listPrograms}" var="oferta">
+                	<apex:inputCheckbox label="{!oferta.name}" value="{!oferta.active}"/>
+                </apex:repeat>
+                <apex:inputCheckbox rendered="{!IF(AND(listPrograms.size != null, listPrograms.size != 0), True, False)}" label="Todos" value="{!todosProgramas}"/>
+                <apex:pageMessages id="tokenMessages"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <script>
+    j$ = jQuery.noConflict();
+    	j$(document).ready(function() {
+            j$('input[id$=descuento]').on('keydown',function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                            56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                            37:true,38:true,39:true,40:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                    //event.stopPropagation();
+                }         
+            });
+            j$('input[id$=importe]').on('keydown',function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                           56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                           37:true,38:true,39:true,40:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                    //event.stopPropagation();
+                }         
+            });
+            j$('input[id$=numeroFichas]').on('keydown',function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                            56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                            37:true,38:true,39:true,40:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                    //event.stopPropagation();
+                }         
+            });
+        });
+    
+    </script>
+</apex:page>

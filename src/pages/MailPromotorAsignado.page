@@ -1,0 +1,3 @@
+<apex:page standardController="Lead" sidebar="false" showHeader="false">
+    <c:PlantillaPromotorAsignadoComponentNew ToID="{!Lead.Id}"/>
+</apex:page>

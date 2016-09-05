@@ -1,0 +1,653 @@
+<apex:page applyBodyTag="false" docType="html-5.0" showHeader="true" sidebar="false" standardStylesheets="false" controller="BATCH_IEU_ERPMasterCtrl">
+		    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+			<link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+		    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+
+		    <script src="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+		    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+		    </script>
+
+			<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+			<script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.min.js"></script>
+			<script src="/soap/ajax/13.0/connection.js"></script>
+			<script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';}</script>
+
+    		<script SRC="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/js/jquery.dataTables.js')}" />
+			<script src="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/js/dataTables.bootstrap.min.js')}"></script>
+		    <link rel="stylesheet" href="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/css/dataTables.bootstrap.min.css')}"/>
+
+		    <body ng-app="appIEU" ng-cloak="ngCloak">
+			    <div  class="container">
+			    	<div class="panel panel-default ieu-panel" id="batchERPCtrl" ng-controller="batchERPCtrl">
+						<div class="panel-heading">
+			                <h3 class="panel-title">Envío de información a ERP Master</h3>
+			            </div>
+			            <div class="panel-body">
+			            	<div class="row">
+			            		<div class="col-sm-6">
+					            	<ul class="list-group">
+					            		<li class="list-group-item">
+					            			<i class="fa fa-square fa-fw"></i>
+					            			Enviar información de leads
+					            			<a ng-if="!base.running" ng-disabled="true" ng-click="executeMethod('addCandidatoInfo')" class="ctc-btn">
+					            				<i class="fa fa-play-circle"></i>
+					            				Iniciar
+					            			</a>
+
+					            		</li>
+					            		<li class="list-group-item">
+					            			<i class="fa fa-square fa-fw"></i>
+					            			Enviar información de grupos
+					            			<a ng-if="!base.running" ng-disabled="true" ng-click="executeMethod('addGrupoInfo')" class="ctc-btn">
+					            				<i class="fa fa-play-circle"></i>
+					            				Iniciar
+					            			</a>
+					            		</li>
+					            		<li class="list-group-item">
+					            			<i class="fa fa-square fa-fw"></i>
+					            			Enviar información de becas
+					            			<a ng-if="!base.running" ng-disabled="true" ng-click="executeMethod('addBecasInfo')" class="ctc-btn">
+					            				<i class="fa fa-play-circle"></i>
+					            				Iniciar
+					            			</a>
+					            		</li>
+					            		<li class="list-group-item">
+					            			<i class="fa fa-square fa-fw"></i>
+					            			Enviar información pagos grupo
+					            			<a ng-if="!base.running" ng-disabled="true" ng-click="executeMethod('addPagosGrupoInfo')" class="ctc-btn">
+					            				<i class="fa fa-play-circle"></i>
+					            				Iniciar
+					            			</a>
+					            		</li>
+					            		<li class="list-group-item">
+					            			<i class="fa fa-square fa-fw"></i>
+					            			Enviar información pagos inscripción
+					            			<a ng-if="!base.running" ng-disabled="true" ng-click="executeMethod('addPagosInscripcionInfo')" class="ctc-btn">
+					            				<i class="fa fa-play-circle"></i>
+					            				Iniciar
+					            			</a>
+					            		</li>
+					            	</ul>
+			            		</div>
+			            		<div class="col-sm-6">
+			            			<div ng-if="base.running" class="alert alert-success"><i class="fa fa-spinner fa-pulse fa-fw"></i>Ejecutando método {{base.method}}</div>
+			            			<div class="panel panel-default" ng-if="base.objects && base.objects.length > 0">
+			            				<div class="panel-heading">Método {{base.method}}</div>
+				            			<ul class="list-group">
+				            				<li class="list-group-item" ng-repeat="task in base.objects">
+				            					<ul class="list-unstyled">
+				            						<li>Lotes totales: <span ng-bind="task.TotalJobItems"/></li>
+				            						<li>Lotes terminados: <span ng-bind="task.JobItemsProcessed"/></li>
+				            						<li>Errores: <span ng-bind="task.NumberOfErrors"/></li>
+				            						<li>Estatus: <span ng-bind="task.Status_" ng-class="statusClass(task.Status)" /></li>
+
+				            						<li>Inicio: <span ng-bind="task.CreatedDate| date: 'dd MM yyyy HH:mm ss'"/></li>
+				            						<li>Fin: <span ng-bind="task.CompletedDate| date: 'dd MM yyyy HH:mm ss'"/></li>
+				            					</ul>
+				            				</li>
+				            			</ul>
+			            			</div>
+			            		</div>
+			            	</div>
+				            <div class="table-responsive">
+					            <table class="table table-striped" id="tableBatchERP">
+					            	<thead>
+					            		<tr>
+					            			<th colspan="7" class="text-center">Histórico de envíos</th>
+					            		</tr>
+					            		<tr>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.CreatedDate.label"></th>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.CompletedDate.label"></th>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.Status.label"></th>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.TotalJobItems.label"></th>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.JobItemsProcessed.label"></th>
+					            			<th ng-bind="base.obj.AsyncApexJob.k.NumberOfErrors.label"></th>
+					            			<th>Información</th>
+					            		</tr>
+					            	</thead>
+					            	<tbody>
+					            	</tbody>
+
+					            	<tfoot>
+						                <tr>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.CreatedDate.label"></th>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.CompletedDate.label"></th>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.Status.label"></th>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.TotalJobItems.label"></th>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.JobItemsProcessed.label"></th>
+						                    <th ng-bind="base.obj.AsyncApexJob.k.NumberOfErrors.label"></th>
+						                    <th></th>
+						                </tr>
+						            </tfoot>
+					            </table>
+				            </div>
+			            </div>
+
+
+						<div class="modal fade" tabindex="-1" role="dialog" id="modalDetailBatch">
+							<div class="modal-dialog">
+							    <div class="modal-content">
+								    <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								        <h4 class="modal-title">Información del envío</h4>
+								    </div>
+								    <div class="modal-body">
+								    	<div class="alert alert-success" ng-if="loadingDetail">
+								    		<i class="fa fa-spinner fa-pulse fa-fw"></i>
+											Cargando
+										</div>
+										<div class="alert alert-info" ng-if="!loadingDetail && base.resultView <= 0">No hay información relacionada</div>
+								        <ul class="list-group" ng-if="!loadingDetail">
+				            				<li class="list-group-item" ng-repeat="task in base.resultView">
+				            					<ul class="list-unstyled">
+				            						<li>Método: <span ng-bind="task.Metodo__c"/></li>
+				            						<li>Número de registros: <span ng-bind="task.NumeroRegistros__c"/></li>
+				            						<li>Respuesta del WS: <span ng-bind="task.RespuestaWS__c"/></li>
+				            					</ul>
+				            				</li>
+				            			</ul>
+								    </div>
+								    <div class="modal-footer">
+								        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+						    	</div><!-- /.modal-content -->
+						    </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+
+
+					</div>
+
+				</div>
+
+			    <script type="text/javascript">
+		            (function(angular) {
+				  			angular.module('appIEU', ['ui.bootstrap'])
+		                    .controller('batchERPCtrl', ['$scope', '$interval', 'sfUtils', 'filterFilter', '$filter', '$compile', function($scope, $interval, sfUtils, filterFilter, $filter, $compile) {
+		                    	$scope.base = {
+		                    		describe: ['AsyncApexJob', 'LogIntegracion__c'],
+		                    		AsyncApexJob: {
+		                    			instances: [],
+		                    			get: 'SELECT Id, CreatedDate, CompletedDate,TotalJobItems, JobItemsProcessed, NumberOfErrors, ApexClass.Name, JobType, Status FROM AsyncApexJob WHERE ApexClass.Name=\'Batch_IEU_ERPMaster\' AND JobType=\'BatchApex\' ORDER BY CreatedDate DESC'
+		                    		},
+									obj: {},
+									Timer: null,
+									close: true,
+									delay: 300,
+									delayStatus: 4000,
+									running: false,
+									method: '',
+									objects: [],
+									loadingDetail: false,
+									resultView: []
+
+		                    	};
+		                    	$scope.statusClass = function(status) {
+		                    		var base = {
+		                    			Holding: 'default',
+		                    			Preparing: 'info',
+		                    			Queued: 'danger',
+		                    			Failed: 'danger',
+		                    			Completed: 'success',
+		                    			Aborted: 'warning',
+		                    			Processing: 'primary',
+		                    		}
+		                    		return 'label label-' + base[status];
+		                    	}
+
+		                    	$scope.describeObjects = function(objs) {
+									if(objs && objs !== null) {
+						            	var a = objs.length;
+						            	var b = 0;
+						            	angular.forEach(objs, function(o, i) {
+						            		$scope.base.obj[o] = {a: [], k: {}};
+						            		sfUtils.describe(o, function(res) {
+												b++;
+						            			if(res.faultcode) { delete $scope.base.obj[o]; return console.error(res); }
+												$scope.base.obj[o].a = res;
+												angular.forEach($scope.base.obj[o].a, function(f, j){$scope.base.obj[o].k[f.name] = f; });
+											});
+						            	});
+						            	$scope.Timer = $interval(function () {
+						                    if(b === a) {
+						                        $interval.cancel($scope.Timer);
+						                        $scope.listInstancesGroup();
+						                    }
+						                }, $scope.base.delay);
+						        	};
+						        };
+						        $scope.listInstancesGroup = function() {	
+						        	if($scope.base && $scope.base.AsyncApexJob && $scope.base.AsyncApexJob.get && $scope.base.AsyncApexJob.get.length > 0) {
+						        		sfUtils.retrieve($scope.base.AsyncApexJob.get, function(res) {
+						        			$scope.base.AsyncApexJob.instances = res || [];
+						        			angular.forEach($scope.base.AsyncApexJob.instances, function(v, key){
+						        				var temp = sfUtils.findElement('value', v.Status, $scope.base.obj.AsyncApexJob.k.Status.values);
+						        				if(temp && temp.value) {
+						        					v.Status_ = temp.label;
+						        				}
+						        				v.CreatedDate__l = $filter('date')(v.CreatedDate, 'yyyyMMddHHmmss');
+						        				v.CreatedDate = $filter('date')(v.CreatedDate, 'dd-MM-yyyy HH:mm ss');
+						        				v.CompletedDate__l = $filter('date')(v.CompletedDate, 'yyyyMMddHHmmss');
+						        				v.CompletedDate = $filter('date')(v.CompletedDate, 'dd-MM-yyyy HH:mm ss');
+						        			});
+						        			
+						        			$('#tableBatchERP tfoot th').each( function () {
+									            var title = $(this).text();
+									            if(title && title.length > 0) {
+									                $(this).html( '<input type="text" class="form-control input-sm" placeholder="'+title+'" />' );
+									            }
+									        });
+						        			var tableBatch = $('#tableBatchERP').DataTable({
+										        data: $scope.base.AsyncApexJob.instances,
+										        "columns": [
+									                {"data": "CreatedDate", "defaultContent": ''},
+									                {"data": "CompletedDate", "defaultContent": ''},
+									                {"data": "Status_", "defaultContent": ''},
+									                {"data": "TotalJobItems", "defaultContent": ''},
+									                {"data": "JobItemsProcessed", "defaultContent": ''},
+									                {"data": "NumberOfErrors", "defaultContent": ''}
+									            ],
+	            								"processing": true,
+									            "order": [[ 0, "desc" ]],
+									            "columnDefs": [
+										            {
+										                "render": function ( data, type, row ) {
+										                	var html = '<span class="hidden">'+row.CreatedDate__l+'</span>' + row.CreatedDate;
+										                    return html;
+									                	},
+										                "targets": 0
+										            },
+										            {
+										                "render": function ( data, type, row ) {
+										                	var html = '<span class="hidden">'+row.CompletedDate__l+'</span>' + row.CompletedDate;
+										                    return html;
+									                	},
+										                "targets": 1
+										            },
+									            	{
+										                "render": function ( data, type, row ) {
+										                	var html = '<a class="btn btn-primary" onclick="viewDetail(\'' + row.Id + '\')"><i class="fa fa-info"/></a>';
+										                    return html;
+									                	},
+										                "targets": 6
+										            },
+										            {
+								                        "targets": [6],//id,dir,tel
+								                        "searchable": true
+								                    }
+										        ],
+									            "language": {
+									                "lengthMenu": "Mostrar _MENU_ registros por p&aacute;gina",
+									                "zeroRecords": "No se encontraron resultados",
+									                "info": "P&aacute;gina _PAGE_ de _PAGES_",
+									                "infoEmpty": "Sin registros que mostrar",
+									                "infoFiltered": "(_TOTAL_ filtrados de un total de _MAX_ registros)",
+									                "processing": "Cargando información...",
+									                "search": "Buscar:",
+									                searchPlaceholder: "Buscar",
+									                "paginate": {
+									                    "first": "Primero",
+									                    "last": "&Uacute;ltimo",
+									                    "next": "Sig",
+									                    "previous": "Ant"
+									                }
+									            }
+										    });
+
+										    tableBatch.columns().every( function () {
+								            var that = this;
+								            $( 'input', this.footer()).on( 'keyup change', function () {
+								                if ( that.search() !== this.value ) {
+								                    that
+								                        .search(this.value)
+								                        .draw();
+								                }
+								            } );
+								        } );
+
+						        		});
+						        	}
+						        };
+
+						        $scope.executeMethod = function(method) {
+						        	if(method && method.length > 0) {
+						        		$scope.base.method = method;
+						        		$scope.base.running = true;
+						        		$scope.base.objects = [];
+							        	BATCH_IEU_ERPMasterCtrl.executeMethod(method, function(res) {
+
+							        		if(res && res.length >0) {
+						        				$scope.base.objects = res;
+							        			var completed = 0;
+							        			var size = res.length;
+							        			var ids = [];
+							        			angular.forEach(res, function(v, key) {
+							        				ids.push(v.Id);
+										        	if(v.Status == 'Completed') {
+										        		completed++;
+										        	}
+										        });
+										        if(completed == size) {
+										        	$scope.base.objects = res;
+						        					$scope.base.running = false;
+										        } else {
+										        	angular.forEach($scope.base.objects, function(v, key) {
+										        		var temp = sfUtils.findElement('value', v.Status, $scope.base.obj.AsyncApexJob.k.Status.values);
+								        				if(temp && temp.value) {
+								        					v.Status_ = temp.label;
+								        				}
+										        	});
+
+										        	var sizeRequest = 0;
+										        	$scope.Timer = $interval(function () {
+										        		if( sizeRequest > 30) {
+										        			$interval.cancel($scope.Timer);
+										        		} else {
+										        			$scope.getStatusTask(ids, function(result) {
+										        				$scope.base.objects = result;
+										        				sizeRequest++;
+														        //console.log('\n\n response executeMethod: ' + sizeRequest);
+														        //console.log(result);
+
+														        if(result && result.length > 0) {
+														        	completed = 0;
+														        	size = result.length;
+
+															        angular.forEach(result, function(v, key){
+															        	if(v.Status == 'Completed') {
+															        		completed++;
+															        	}
+															        });
+
+															        if(completed == size) {
+															        	var t = $('#tableBatchERP').DataTable();
+															        	angular.forEach($scope.base.objects, function(v, key) {
+															        		var temp = sfUtils.findElement('value', v.Status, $scope.base.obj.AsyncApexJob.k.Status.values);
+													        				if(temp && temp.value) {
+													        					v.Status_ = temp.label;
+													        				}
+													        				v.CreatedDate = $filter('date')(v.CreatedDate, 'dd MM yyyy HH:mm ss');
+													        				v.CompletedDate = $filter('date')(v.CompletedDate, 'dd MM yyyy HH:mm ss');
+															        	 	t.row.add(v).draw(false);
+															        	});
+															        	//console.log('is all completed');
+															        	$interval.cancel($scope.Timer);
+							        									$scope.base.running = false;
+															        } else {
+															        	angular.forEach($scope.base.objects, function(v, key) {
+															        		var temp = sfUtils.findElement('value', v.Status, $scope.base.obj.AsyncApexJob.k.Status.values);
+													        				if(temp && temp.value) {
+													        					v.Status_ = temp.label;
+													        				}
+															        	});
+															        }
+														        } else {
+														        	//console.log(result);
+						        									$scope.base.running = false;
+														        }
+					        									$scope.$apply();
+										        			});
+										        		}
+									                }, $scope.base.delayStatus);
+										        }
+									        	$scope.$apply();
+
+							        		}
+							        		/*
+									        console.log('\n\n response executeMethod: ');
+									        console.log(res);
+									        if(res.indexOf('ERROR') !== -1) {
+									        	console.log(res);
+						        				$scope.base.running = false;
+	        									$scope.$apply();
+									        } else {
+								        		var sizeRequest = 0;
+									        	$scope.Timer = $interval(function () {
+									        		if( sizeRequest > 30) {
+									        			$interval.cancel($scope.Timer);
+									        		} else {
+									        			$scope.getStatusTask(res, function(result) {
+									        				$scope.base.objects = result;
+									        				sizeRequest++;
+													        console.log('\n\n response executeMethod: ' + sizeRequest);
+													        console.log(result);
+
+													        if(result && result.length > 0) {
+													        	var completed = 0;
+													        	var size = result.length;
+
+														        angular.forEach(result, function(v, key){
+														        	if(v.Status == 'Completed') {
+														        		completed++;
+														        	}
+														        });
+
+														        if(completed == size) {
+														        	console.log('is all completed');
+														        	$interval.cancel($scope.Timer);
+						        									$scope.base.running = false;
+														        }
+													        } else {
+													        	console.log(result);
+					        									$scope.base.running = false;
+													        }
+				        									$scope.$apply();
+									        			});
+									        		}
+								                }, $scope.base.delayStatus);
+									        }*/
+									    });
+							        }
+						        };
+						        $scope.getStatusTask = function(ids, callback) {
+						        	if(ids && ids.length > 0) {
+						        		BATCH_IEU_ERPMasterCtrl.getStatusTask(ids, function(res) {
+									        callback(res);
+									    });
+						        	}
+						        };
+						        $scope.viewDetail = function(id) {
+						        	$scope.loadingDetail = true;
+						        	$scope.base.resultView = [];
+						        	//console.log('in viewDetail' + id);
+						        	var query = 'SELECT Id, Name, Metodo__c, NumeroRegistros__c, RespuestaWS__c FROM LogIntegracion__c WHERE ApexJobId__c=\'' + id + '\'';
+						        	sfUtils.retrieve(query, function(res) {
+						        		$scope.loadingDetail = false;
+						        		if(res.size == '0') {
+
+						        		} else {
+						        			$scope.base.resultView = res;
+						        			angular.forEach($scope.base.resultView, function(v, i) {
+						        				if(v.NumeroRegistros__c && v.NumeroRegistros__c.length > 0) {
+						        					v.NumeroRegistros__c = parseInt(v.NumeroRegistros__c);
+						        				}
+						        			});
+						        		}
+
+						        		$scope.$apply();
+						        		//console.log('\n\nresponse view Detail');
+						        		//console.log(res);
+						        	});
+
+						        };
+
+						        $scope.describeObjects($scope.base.describe);
+
+		                    }])
+				  			.factory('sfUtils', function($filter, $interval) {
+				  				var delay = 300;
+								var describeObject = function(objName, callback) {
+									sforce.connection.describeSObject(objName, {
+										onSuccess: function(res) {
+											var fields = [];
+											angular.forEach(res.fields, function(field, index) {
+					                            var isRequired = (field.createable && !field.nillable && !field.defaultedOnCreate) || !field.custom;
+					                            var mdField = {name: field.name, label: field.label, type: field.type, length: field.length, required: isRequired};
+					                            if(field.type === 'picklist' || field.type === 'multipicklist' || field.type === 'reference') {
+					                            	if(field.picklistValues && field.picklistValues.length > 0) {
+					                                    var values = [];
+					                                    angular.forEach(field.picklistValues, function(it) {
+					                                        values.push({label: it.label, value: it.value});
+					                                    });
+					                                    mdField.values = values;
+					                            	}
+					                                mdField.referenceTo = field.referenceTo
+					                            } else if(field.type === 'double' || field.type === 'percent') {
+					                            	mdField.precision = field.precision;
+					                            	mdField.scale = field.scale;
+					                            }
+					                            if(field.hasOwnProperty('inlineHelpText')) {
+					                            	mdField.helpText = field.inlineHelpText;
+					                            }
+					                            fields.push(mdField);
+					                        });
+					                        callback(fields);
+										}, 
+										onFailure: function(res){
+											callback(res);
+										}
+									});
+								};
+								var retrieveObject = function(query, callback) {
+									sforce.connection.query(query, {
+										onSuccess : function(res) {
+											//console.log('\n\n response retrieveObject...');
+					        				//console.log(res);
+					        				var ql = res.queryLocator;
+					        				var size = parseInt(res.size);
+											if(size === 1) {
+												var temp = angular.copy(res.records);
+												res = [];
+					            				res.push(temp);
+					            			} else if(res.records && res.records.length > 0) {
+					            				res = res.records;
+					            			}
+
+					            			if(ql && ql != null && ql.length > 0) {
+					            				ql = ql.substr(0, ql.indexOf('-'));
+					            				var count = parseInt(size / 2000);
+					            				var completed = 0;
+					            				if(count > 5) {count = 5; }
+					            				for(var i = 1; i < (count + 1); i++) {
+						            				queryMore(ql +'-' +(i * 2000), function(resql) {
+						            					completed++;
+						            					res = res.concat(resql);
+						            				});
+					            				}
+					            				var Timer = $interval(function () {
+								                    if(completed === count) {
+								                        $interval.cancel(Timer);
+								                        callback(res);
+								                    }
+								                }, delay);
+
+					            			} else {
+					            				callback(res);
+					            			}
+										}, 
+										onFailure : function(res) {
+											callback(res);
+										}
+									});
+								};
+								var queryMore = function(queryLocator, callback) {
+									if(queryLocator && callback) {
+										sforce.connection.queryMore(queryLocator, {
+											onSuccess : function(res) {
+												queryLocator = res.queryLocator;
+												if(res.size === '1') {
+													var temp = angular.copy(res.records);
+													res = [];
+						            				res.push(temp);
+						            			} else if(res.records && res.records.length > 0) {
+						            				res = res.records;
+						            			}
+						            			callback(res);
+											}, 
+											onFailure : function(res) {
+												callback(res);
+											}
+										});
+									}
+								};
+								var upsertObjects = function(upserts, callback) {
+									sforce.connection.upsert('Id', upserts, {
+										onSuccess: function(res) {
+											callback(res);
+										},
+										onFailure: function(res) {
+											callback(res);
+										}
+									});
+								};
+								var deleteObjects = function(ids, callback) {
+									sforce.connection.deleteIds(ids, {
+										onSuccess: function(res) {
+											callback(res);
+										},
+										onFailure: function(res) {
+											callback(res);
+										}
+									});
+								};
+								var parseDate =  function(date) {
+					                return $filter('date')(date, 'dd/MM/yyyy');
+					            };
+					            var findElementInArray = function(field, value, datasource) {
+					                var ret = {};
+					                if(field && value && datasource) {
+					                    var res = $filter('filter')(datasource, {[field]: value}, true);
+					                    if(res && res.length > 0) {
+					                        ret = res[0];
+					                    }
+					                }
+					                return ret;
+					            };
+					            var fieldIsValid = function(fieldName, form) {
+					                if(!fieldName || !form) {
+					                    return '';
+					                } else {
+					                    return form[fieldName].$valid ? 'has-success' : 'has-error';
+					                }
+					            };
+					            var createDate = function(strDate) {
+					                var date = null;
+					                strDate = strDate || '';
+					                strDate = strDate.split('/');
+					                if(strDate.length > 2) {
+					                    date = new Date();
+					                    date.setDate(strDate[0]);
+					                    date.setMonth(strDate[1]  - 1);
+					                    date.setFullYear(strDate[2]);
+					                }
+					                return date;
+					            };
+								return {
+									describe: describeObject,
+									retrieve: retrieveObject,
+									upsert: upsertObjects,
+									delete: deleteObjects,
+									parseDate: parseDate,
+									findElement: findElementInArray,
+									fieldIsValid: fieldIsValid,
+									createDate: createDate
+								}
+							})
+				  			$(document).ready(function() {
+					            $('[data-toggle="tooltip"]').tooltip();
+					        });
+				  		})(angular);
+				  		function viewDetail(id) {
+				  			//console.log('in viewDetail... ' + id);
+				        	angular.element($('#batchERPCtrl')).scope().viewDetail(id);
+				        	$('#modalDetailBatch').modal('show');
+				  		}
+			    </script>
+			    <style type="text/css">
+			   		@media (min-width: 1300px) {.container {width: 1250px; } } @media (min-width: 1600px) {.container {width: 1500px; } } @media (min-width: 1900px) {.container {width: 1800px; } }
+			        @media (min-width: 1300px) {.modal-lg {width: 1250px; } } @media (min-width: 1600px) {.modal-lg {width: 1500px; } } @media (min-width: 1900px) {.modal-lg {width: 1800px; } }
+		            .ieu-panel>.panel-heading{background-color: #2a94d6;border-color: #2585c1; color: white;}
+		            .ctc-btn {cursor: pointer;}
+		            .ctc-btn:hover, .ctc-btn:active, .ctc-btn:focus {text-decoration: none;}
+			   	</style>
+			</body>
+		</apex:page>

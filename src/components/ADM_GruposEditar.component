@@ -1,0 +1,364 @@
+<apex:component >
+<div class="modal fade" tabindex="-1" role="dialog" id="admGroupEditCtrl" data-backdrop="static" data-keyboard="false" ng-controller="admGroupEditCtrl">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title text-center">
+			    <span class="fa fa-users fa-fw"></span>
+			    <span ng-bind="base.group.message"/>
+			</h4>
+		</div>
+		<form class="form-horizontal" name="formEditGroup" novalidate="" ng-submit="saveGroup()">
+		  	<div class="modal-body">
+		      	<div class="row">
+			        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+			            <ctc-label ctc-field="base.obj.Grupo__c.k.Activo__c" ctc-value="base.group.editing.Activo__c" ctc-col-class="[4,8]"></ctc-label>
+			        </div>
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k && base.catalog.Aula__c.instances.length>0">
+		        	<ctc-form-group ctc-form="formEditGroup" ctc-field="base.obj.Grupo__c.k.AulaAsignada__c" ctc-instance="base.group.editing" ctc-opts="base.catalog.Aula__c.instances" ctc-label="'Name'"></ctc-form-group>
+		        </div>
+		      </div>
+
+		      <div class="row">
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		            <ctc-form-group ctc-field="base.obj.Grupo__c.k.Turno__c" ctc-opts="base.obj.Grupo__c.k.Turno__c.values" ctc-label="'label'" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		            <ctc-form-group ctc-field="base.obj.Grupo__c.k.HoraEntrada__c" ctc-opts="base.obj.Grupo__c.k.HoraEntrada__c.values" ctc-label="'label'" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		      </div>
+
+		      <div class="row">
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		            <div class="form-group" ng-class="isValid()">
+		                <label class="control-label col-sm-4">{{base.obj.Grupo__c.k.Dia__c.label}} *</label>
+		                <div class="col-sm-8">
+		                    <ul class="list-inline">
+		                        <li ng-repeat="day in base.obj.Grupo__c.k.Dia__c.values">
+		                            <div class="checkbox"> 
+		                                <label>
+		                                    <input type="checkbox" ng-model="day.isCheck" ng-change="hasDays()" name="{{base.obj.Grupo__c.k.Dia__c.name+'CH'}}" ng-required="!base.group.hasDays"></input> {{day.label}}
+		                                </label>
+		                            </div>
+		                        </li>
+		                    </ul>	
+		                    <i class="help-block ctc-days" ng-show="formEditGroup.{{base.obj.Grupo__c.k.Dia__c.name+'CH'}}.$invalid">Campo requerido</i>
+		                </div>
+		            </div>
+		        </div>
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		              <ctc-form-group ctc-field="base.obj.Grupo__c.k.HoraSalida__c" ctc-opts="base.obj.Grupo__c.k.HoraSalida__c.values" ctc-label="'label'" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		      </div>
+		      <div class="row">
+		          <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		              <ctc-form-group ctc-field="base.obj.Grupo__c.k.FechaApertura__c" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		          </div>
+		          <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		              <ctc-form-group ctc-field="base.obj.Grupo__c.k.CondicionanteGrupo__c" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		          </div>
+		      </div>
+		      <div class="row">
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		            <ctc-form-group ctc-field="base.obj.Grupo__c.k.FechaInicioClases__c" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		          <ctc-form-group ctc-field="base.obj.Grupo__c.k.Cupo__c" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		      </div>
+
+		      <div class="row">
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		          <ctc-form-group ctc-field="base.obj.Grupo__c.k.Sede__c" ctc-opts="base.catalog.Sede__c.instances" ctc-label="'Name'" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		        <div class="col-sm-6" ng-if="base.obj.Grupo__c.k">
+		          <ctc-form-group ctc-field="base.obj.Grupo__c.k.Periodicidad__c" ctc-opts="base.catalog.Periodicity__c.instances" ctc-label="'Name'" ctc-instance="base.group.editing" ctc-form="formEditGroup"></ctc-form-group>
+		        </div>
+		      </div>
+
+		      <div class="row" >
+                    <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="base.errors.length>0">
+                        <div class="alert alert-danger alert-dismissible fade in">
+                        	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							    <span aria-hidden="true">&times;</span>
+							</button>
+                            <ul class="list-unstyled">
+                                 <li ng-repeat="err in base.errors"><span ng-bind="err"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="base.success.length>0">
+                     	<div class="alert alert-success alert-dismissible fade in">
+                        	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							    <span aria-hidden="true">&times;</span>
+							</button>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="msg in base.success"><span ng-bind="msg"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+		  </div>
+		  <div class="modal-footer">
+		    <button ng-disabled="formEditGroup.$invalid || base.group.saving" type="submit" class="btn btn-success">
+		        <span class="fa fa-spinner fa-pulse" ng-if="base.group.saving"></span>
+		        <span class="fa fa-save fa-fw"></span>Guardar
+		    </button>
+		    <button ng-click="base.group.duplicate = true" ng-disabled="formEditGroup.$invalid || base.group.saving" type="submit" class="btn btn-primary">
+		        <span class="fa fa-spinner fa-pulse" ng-if="base.group.saving"></span>
+		        <span class="fa fa-save fa-fw"></span>Guardar y duplicar
+		    </button>
+		    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+		  </div>
+		</form>
+		</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<script type="text/javascript">
+		var app = angular.module('appIEU');
+		app.controller('admGroupEditCtrl', ['$scope', '$interval', 'sfUtils', function($scope, $interval, sfUtils) {
+			$scope.sfUtils = sfUtils;
+			$scope.base = {
+				describe: ['Aula__c', 'Sede__c'],
+				obj: {},
+				group: {
+					editing: {},
+					hasDays: false,
+					saving: false,
+					duplicate: false,
+					get: 'SELECT Id,Name FROM Grupo__c WHERE OfertaEducativa__c',
+					groups: []
+				},
+				message: '',
+				catalog: {
+					Sede__c: {
+						get: 'SELECT Id, Name, Clave__c, Nomenclatura__c FROM Sede__c ORDER BY Name ASC',
+						instances: []
+					},
+					Aula__c: {
+						get: 'SELECT Id, Name FROM Aula__c ORDER BY Name ASC',
+						instances: []
+					},
+					Periodicity__c : {
+						get: 'SELECT Id, Name FROM Catalogo__c WHERE TipoCatalogo__c =\'Periodicidad\' ORDER BY Name ASC',
+						instances: []
+					}
+				},
+				delay: 300,
+				errors: [],
+				success:[],
+				delayClose: 8000,
+				close: true
+			};
+			$scope.describeObjects = function(objs) {
+				if(objs && objs !== null) {
+	            	var a = objs.length;
+	            	var b = 0;
+	            	angular.forEach(objs, function(o, i) {
+	            		$scope.base.obj[o] = {a: [], k: {}};
+	            		sfUtils.describe(o, function(res) {
+							b++;
+	            			if(res.faultcode) { delete $scope.base.obj[o]; return console.error(res); }
+							$scope.base.obj[o].a = res;
+							angular.forEach($scope.base.obj[o].a, function(f, j){$scope.base.obj[o].k[f.name] = f; });
+						});
+	            	});
+	            	$scope.Timer = $interval(function () {
+	                    if(b === a) {
+	                        $interval.cancel($scope.Timer);
+	                        $scope.listCatalogs();
+	                    }
+	                }, $scope.base.delay);
+	        	}
+	        };
+	        $scope.listCatalogs = function() {
+	        	angular.forEach(Object.keys($scope.base.catalog), function(k, index) {
+		        	sfUtils.retrieve($scope.base.catalog[k].get, function(res) {
+		        		$scope.base.catalog[k].instances = res || [];
+		        	});
+	        	});
+	        };
+
+	        $scope.describeObjects($scope.base.describe);
+
+			$scope.saveGroup = function() {
+				$scope.base.group.saving = true;
+				console.log('\n\n in saveGroup...');
+			    console.log($scope.base.group.editing);
+			    var payload = angular.copy($scope.base.group.editing);
+			    var obj = new sforce.SObject('Grupo__c');
+			    if(payload.Id) {obj.Id = payload.Id; }
+			    if(payload.AulaAsignada__c__o && payload.AulaAsignada__c__o.Id) {obj.AulaAsignada__c = payload.AulaAsignada__c__o.Id; }
+			    if(payload.Turno__c__o && payload.Turno__c__o.value) {obj.Turno__c = payload.Turno__c__o.value; }
+			    if(payload.HoraEntrada__c__o && payload.HoraEntrada__c__o.value) {obj.HoraEntrada__c = payload.HoraEntrada__c__o.value; }
+			    if(payload.HoraSalida__c__o && payload.HoraSalida__c__o.value) {obj.HoraSalida__c = payload.HoraSalida__c__o.value; }
+			    if(payload.Sede__c__o && payload.Sede__c__o.Id) {obj.Sede__c = payload.Sede__c__o.Id; }
+			    if(payload.Periodicidad__c__o && payload.Periodicidad__c__o.Id) {obj.Periodicidad__c = payload.Periodicidad__c__o.Id; }
+
+              	obj.FechaApertura__c = sfUtils.createDate(payload.FechaInicioClases__c); 
+              	obj.FechaInicioClases__c = sfUtils.createDate(payload.FechaInicioClases__c);
+              	obj.CondicionanteGrupo__c = payload.CondicionanteGrupo__c;
+              	obj.Cupo__c = payload.Cupo__c;
+				obj.OfertaEducativa__c = payload.OfertaEducativa__c;
+				obj.Grupo__c = payload.OfertaEducativa__c;
+				obj.Estatus__c = payload.Estatus__c;
+              	obj.Dia__c = '';
+
+              	angular.forEach($scope.base.obj.Grupo__c.k.Dia__c.values, function(item, key){if(item.isCheck) {if(obj.Dia__c.length>0){obj.Dia__c +=';';} obj.Dia__c += item.value; }});
+			    console.log(obj);
+			    if($scope.base.group.duplicate && !payload.Id) {
+			    	sfUtils.retrieve($scope.base.group.get + '=\''+payload.OfertaEducativa__c+'\' ORDER BY CreatedDate DESC LIMIT 1', function(res) {
+			    		console.log('\n\n response retrieve groups by OfertaEducativa__c...');
+	        			console.log(res);
+	        			if(res.faultcode) {
+	        				$scope.base.group.saving = false;
+	        				$scope.base.errors.push("Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : ''));
+	        			} else {
+	        				var name = '';
+	        				console.log(res[0].Name);
+	        				var temp = res[0];
+	        				//temp.Name = '';
+	        				if(temp && temp.Name && temp.Name.indexOf('-') !== -1) {
+	        					name = temp.Name.substring(temp.Name.indexOf('-') + 1, temp.Name.length);
+	        					if(isNaN(parseInt(name))) {
+	        						name = 2;
+	        					} else {
+	        						name = (parseInt(name) + 1);
+	        					}
+	        				} else {
+	        					name = 2;
+	        				}
+	        				name = temp.Name.substring(0, temp.Name.indexOf('-')) + '-' + name;
+	        				console.log('the new name : ' + name);
+	        				//$scope.base.group.editing.Name = name;
+	        				obj.Name = name;
+	        				$scope.base.group.duplicate = false;
+			    			$scope.upsertGroup(obj, obj.Name, true);
+	        			}
+			    	});
+			    } else {
+			    	$scope.upsertGroup(obj, payload.Name);
+				}
+			};
+			$scope.upsertGroup = function(obj, name, add) {
+				if($scope.base.Timer) {
+					$interval.cancel($scope.base.Timer);
+				}
+				$scope.base.errors = [];
+				$scope.base.success = [];
+				sfUtils.upsert([obj], function(res) {
+        			console.log('\n\n response saveChanges...');
+        			console.log(res);
+        			$scope.base.group.saving = false;
+        			if(res.faultcode) {
+        				$scope.base.errors.push("Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : ''));
+        			} else {
+        				$scope.base.success.push("Grupo "+name+" actualizado correctamente");
+        				var temp = res[0];
+        				$scope.base.group.editing.Id = temp.id;
+        				$scope.base.group.editing.Name = name;
+        				if(add) {
+        					$scope.base.group.editing.Oportunidades__r = [];
+        					$scope.base.group.editing.GrupoAsingado__r = [];
+        					$scope.base.group.groups.push($scope.base.group.editing);
+        				}
+
+						$scope.base.group.message = 'Editar grupo ' + name;
+	        			//verify if duplicate group
+	        			if($scope.base.group.duplicate) {
+							$scope.base.group.message = 'Duplicar grupo ';
+							delete $scope.base.group.editing.Id;
+	        			}
+        			}
+
+                    $scope.base.Timer = $interval(function () {
+                        if($scope.base.close) {
+            				$scope.base.errors = [];
+            				$scope.base.success = [];
+            			}
+                        $interval.cancel($scope.base.Timer);
+                    }, $scope.base.delayClose);
+	        		$scope.$apply();
+        		});
+			};
+
+
+			$scope.hasDays = function() {
+                var hasDays = false;
+                angular.forEach($scope.base.obj.Grupo__c.k.Dia__c.values, function(item, index){
+                    if(item.isCheck && !hasDays) {
+                        hasDays = true;
+                    }
+                });
+                $scope.base.group.hasDays = hasDays;
+          	};
+          	$scope.isValid = function() {
+                return sfUtils.fieldIsValid($scope.base.obj.Grupo__c.k.Dia__c.name+'CH', $scope.formEditGroup);
+            };
+			$scope.$watch('sfUtils.group', function () {
+				console.log('in watch sfUtils.group...');
+				console.log($scope.sfUtils.group);
+				$scope.base.errors = [];
+				$scope.base.success = [];
+				$scope.base.group.duplicate = false;
+				$scope.base.group.saving = false;
+				if($scope.sfUtils && $scope.sfUtils.group && $scope.sfUtils.group.Id) {
+					$scope.base.group.groups = $scope.sfUtils.groups;
+					$scope.base.obj.Grupo__c = $scope.sfUtils.obj.Grupo__c;
+					$scope.base.group.editing = angular.copy($scope.sfUtils.group);
+					//$scope.base.group.editing = $scope.sfUtils.group;
+					$scope.base.group.message = 'Editar grupo ' + $scope.base.group.editing.Name;
+
+            		if($scope.base.group.editing.AulaAsignada__c && $scope.base.group.editing.AulaAsignada__c.length > 0) {
+            			var AulaAsignada__c = sfUtils.findElement('Id', $scope.base.group.editing.AulaAsignada__c, $scope.base.catalog.Aula__c.instances);
+            			if(AulaAsignada__c && AulaAsignada__c.Id) {
+            				$scope.base.group.editing.AulaAsignada__c__o = AulaAsignada__c;
+            			}
+            		}
+            		if($scope.base.group.editing.Sede__c && $scope.base.group.editing.Sede__c.length > 0) {
+            			var Sede__c = sfUtils.findElement('Id', $scope.base.group.editing.Sede__c, $scope.base.catalog.Sede__c.instances);
+            			if(Sede__c && Sede__c.Id) {
+            				$scope.base.group.editing.Sede__c__o = Sede__c;
+            			}
+            		}
+            		if($scope.base.group.editing.Periodicidad__c && $scope.base.group.editing.Periodicidad__c.length > 0) {
+            			var Periodicidad__c = sfUtils.findElement('Id', $scope.base.group.editing.Periodicidad__c, $scope.base.catalog.Periodicity__c.instances);
+            			if(Periodicidad__c && Periodicidad__c.Id) {
+            				$scope.base.group.editing.Periodicidad__c__o = Periodicidad__c;
+            			}
+            		}
+            		var dayStr = $scope.base.group.editing.Dia__c;
+                    if(dayStr && dayStr.length > 0) {
+                        var length = $scope.base.obj.Grupo__c.k.Dia__c.values.length;
+                        angular.forEach($scope.base.obj.Grupo__c.k.Dia__c.values, function(value, key){
+                            if(dayStr.indexOf(value.value) !== -1) {
+                                value.isCheck = true;
+                            } else {
+                            	delete value.isCheck;
+                            }
+                            if(key === (length - 1)) {
+                                $scope.hasDays();
+                            }
+                        });
+                    }
+
+            		if($scope.base.group.editing.HoraEntrada__c && $scope.base.group.editing.HoraEntrada__c.length > 0) {
+            			var HoraEntrada__c = sfUtils.findElement('value', $scope.base.group.editing.HoraEntrada__c, $scope.base.obj.Grupo__c.k.HoraEntrada__c.values);
+            			if(HoraEntrada__c && HoraEntrada__c.value) {
+            				$scope.base.group.editing.HoraEntrada__c__o = HoraEntrada__c;
+            			}
+            		}
+            		if($scope.base.group.editing.HoraSalida__c && $scope.base.group.editing.HoraSalida__c.length > 0) {
+            			var HoraSalida__c = sfUtils.findElement('value', $scope.base.group.editing.HoraSalida__c, $scope.base.obj.Grupo__c.k.HoraSalida__c.values);
+            			if(HoraSalida__c && HoraSalida__c.value) {
+            				$scope.base.group.editing.HoraSalida__c__o = HoraSalida__c;
+            			}
+            		}
+				}
+				//console.log($scope.base);
+			}, true);
+		}]);
+	</script>
+</apex:component>

@@ -1,0 +1,119 @@
+<apex:page renderAs="PDF" controller="BarCodeLeadCtrl">
+    <body>
+        <table style="font-size:12px; border-collapse: collapse; border: 1px solid black;">
+            <tr>
+                <td colspan="2"  style="border: 1px solid black;">  
+                 <apex:image value="{!URLFOR($Resource[encabezado])}" width="98%"/>                    
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                    Recibimos de:  <b>{!recibimosde} </b><br/>
+                    Folio: <b>{!folio}</b><br/>
+                    <br/>
+                    Total a pagar: ${!pago}  <br/>
+                    Hasta el día: {!hasta}<br/>
+                    <br/>
+                    <b>{!concept} </b><br/>
+                    <b>Nota:</b> {!nota1}<br/>
+                    {!nota2}
+                </td>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                    PAGAR EN HSBC:
+                    <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/>
+                    <br/>
+                    <a style="color:#000; font-size:12px">No. Serv: 1308 Referencia: {!HSBCRef} </a><br/>
+                    <br/>
+                    PAGAR EN OXXO:
+                    <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                    <br/>
+                    <center>
+                    	<img src="https://www.barcodesinc.com/generator/image.php?code={!cadenaCodigo}&style=196&type=C128C&width=400&height=80&xres=1&font=2"/>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                    COPIA PARA EL BANCO
+                </td>
+            </tr>
+        </table>
+        <br/><br/>
+        <table style="font-size:12px; border-collapse: collapse; border: 1px solid black;">
+            <tr>
+                <td colspan="2"  style="border: 1px solid black;">
+                     <apex:image value="{!URLFOR($Resource[encabezado])}" width="98%"/>   
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                    Recibimos de:  <b>{!recibimosde} </b><br/>
+                    Folio: <b>{!folio}</b><br/>
+                    <br/>
+                    Total a pagar: ${!pago}  <br/>
+                    Hasta el día: {!hasta}<br/>
+                    <br/>
+                    <b>{!concept} </b><br/>
+                    <b>Nota:</b> {!nota1}<br/>
+                    {!nota2}
+                </td>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                    PAGAR EN HSBC
+                    <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/>
+                    <br/>
+                    <a style="color:#000; font-size:12px">No. Serv: 1308Referencia: {!HSBCRef} </a><br/>
+                    <br/>
+                    PAGAR EN OXXO:
+                    <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                    <br/>
+                    <center>
+                    	<img src="https://www.barcodesinc.com/generator/image.php?code={!cadenaCodigo}&style=196&type=C128C&width=400&height=80&xres=1&font=2"/>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                    COPIA PARA LA INSTITUCION
+                </td>
+            </tr>
+        </table>
+        <br/><br/>
+        <table style="font-size:12px; border-collapse: collapse; border: 1px solid black;">
+            <tr>
+                <td colspan="2"  style="border: 1px solid black;">
+                     <apex:image value="{!URLFOR($Resource[encabezado])}" width="98%"/>   
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="font-size:13px; vertical-align:top; border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="40%">
+                    Recibimos de:  <b>{!recibimosde} </b><br/>
+                    Folio: <b>{!folio}</b><br/>
+                    <br/>
+                    Total a pagar: ${!pago}  <br/>
+                    Hasta el día: {!hasta}<br/>
+                    <br/>
+                    <b>{!concept} </b><br/>
+                    <b>Notas:</b> {!nota1}<br/>
+                    {!nota2}
+                </td>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886" width="58%">
+                    PAGAR EN HSBC:
+                    <apex:image url="{!$Resource.Hsbc}" width="55" height="10"/><br/>
+                    <a style="color:#000; font-size:12px">No. Serv: 1308 Referencia: {!HSBCRef} </a><br/>
+                    <br/>
+                    PAGAR EN OXXO:
+                    <apex:image url="{!$Resource.Oxxo}" width="35" height="15"/>
+                    <br/>
+                    <center>
+                    	<img src="https://www.barcodesinc.com/generator/image.php?code={!cadenaCodigo}&style=196&type=C128C&width=400&height=80&xres=1&font=2"/>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 10px 10px 10px 10px; color:#0A8886">
+                    COPIA PARA EL ALUMNO
+                </td>
+            </tr>
+        </table>
+    </body>
+</apex:page>

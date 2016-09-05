@@ -1,0 +1,248 @@
+<apex:component >
+    <div class="bs">
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalPagos" ng-controller="pagosCtrl">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title text-center">
+                            <span class="fa fa-usd fa-fw"></span>
+                            Configurar pagos de la oferta educativa: <strong>{{offer.Name}}</strong> 
+                        </h4>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="row form-group"  ng-repeat="payment in mapPaymentsArr" >
+                            <div class="col-md-1">
+                                <input type="checkbox" class="" ng-model="payment.ValuePayment.Activo__c" />
+                            </div>
+                            
+                            <div class="col-md-11" ng-class="setClassValid(payment)" >
+                                <label class="col-md-4 control-label" for="amount">{{payment.NameCatalog}}</label>
+                                <div  class="col-md-7">
+                                    <span ng-show="payment.ConceptoFijo__c" ng-bind="payment.MontoCostoFijo__c"></span>
+                                    <input ng-show="!payment.ConceptoFijo__c" id="amount" type="number" min="0.00" max="9999999999999999.99" step="0.1" class="form-control" maxlength="19" 
+                                           ng-model="payment.ValuePayment.Monto__c" ng-disabled="payment.ValuePayment.Activo__c==false" ng-required="payment.ValuePayment.Activo__c==true" ng-change="deleteSuccess()" />
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center form-input messagesGroup" >
+                            <p ng-show="error!=''" class="bg-danger messagesOutput" >{{error}}</p>
+                            <p ng-show="success!=''" class="bg-success messagesOutput" >{{success}}</p>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" ng-click="savePayment(mapPaymentsArr)" >
+                            <span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+                            <span class="fa fa-save fa-fw"></span>
+                            Guardar
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="fa fa-mail-reply fa-fw"></span>
+                            Cancelar
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
+    
+    <script type="text/javascript">
+    var app = angular.module('appIEU');
+    
+    app.controller('pagosCtrl', ['$scope', 'sfService','sfDB', function($scope, sfService,sfDB) {
+        var catalogPaymentsGW = new sfService.gateway.catalog();
+        var paymentGW = new sfService.gateway.payments();
+        
+        $scope.sfService = sfService;
+        $scope.offer = $scope.sfService.offer;
+        
+        $scope.catalogPayment = [];
+        $scope.catalogPaymentsField = [];
+        $scope.payments = [];
+        $scope.paymentsFields = [];
+        $scope.catalogPaymentsField = [];
+        $scope.saving = false;
+        
+        /* obtains metadata to get fields from object Catalogo__c  and search all the records with TipoCatalogo__c='Concepto Pagos' */
+        sfDB.getRemoteAction({action: 'describe'}, catalogPaymentsGW, function(err, res) {
+            $scope.fieldsCR = res || [];
+        });
+        $scope.getCatalogPayments = function() {
+            var criteria = { where:{ TipoCatalogo__c:{eq:'Concepto Pagos'} } };
+            sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, catalogPaymentsGW, function(err, res) {
+                sfDB.parseFromDB(res, $scope.fieldsCR, function(err, data) {
+                    if(!err && data && data.length > 0) {
+                        $scope.catalogPayment = data;
+                        $scope.$apply();
+                    }
+                });
+            });
+        };
+        // 
+        var updateInstancesSforce = function(instances, callback) {
+            sforce.connection.update(instances, callback);
+        };
+        $scope.updateCofigurePayment = function(status, offer) {
+            var toUpdate = new sforce.SObject("OfertaEducativa__c");
+            toUpdate.Id = offer.Id;
+            toUpdate.PagoConfigurado__c = status;
+            updateInstancesSforce([toUpdate], function(err, res) {
+                console.log('in updateCofigurePayment');
+                console.log(err);
+                console.log(res);
+            });
+        };
+        // Puts an error if the amount is invalid. This is shown and prevents save.
+        $scope.setClassValid = function(payment) {
+            var amount = payment.ValuePayment.Monto__c;
+            if( payment.ValuePayment.Activo__c==true &&(amount === undefined || amount <= 0) ){
+                retClass ='has-error';
+                $scope.errors[payment.NameCatalog] = payment.NameCatalog;
+            }else{
+                retClass ='has-sucess';
+                $scope.errors[payment.NameCatalog] = undefined;
+            }
+            setError();
+            return retClass;
+        };
+        var setError = function(){
+            $scope.error='';
+            var arr= $scope.mapPaymentsArr;
+            var errorVar='';
+            for(var i=0;i<arr.length;i++){
+                if($scope.errors[arr[i].NameCatalog]!= undefined){
+                    errorVar+=' | '+$scope.errors[$scope.mapPaymentsArr[i].NameCatalog]+' | ';
+                }
+            }
+            if(errorVar!=''){
+                $scope.error='El importe capturado no es válido para:'+errorVar;
+            }
+        }
+        
+        /* get metadata and records from OfertaConceptoPagos__c object associated with the current offer. 
+         * After, associated the retrieved records with the catalog across the map mapPayments.
+         * The map mapPayments is created so you can reference keys, the arrangement mapPaymentsArr is 
+         * used to iterate over its elements with AngularJS
+        */
+        sfDB.getRemoteAction({action: 'describe'}, paymentGW, function(err, res) {
+            $scope.paymentsFields = res || [];
+        });
+        $scope.getPayments = function() {
+            var criteria = { where:{ OfertaEducativa__c:{eq: $scope.offer.Id} } };
+            sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, paymentGW, function(err, res) {
+                sfDB.parseFromDB(res, $scope.paymentsFields, function(err, data) {
+                    if(!err) {
+                        $scope.payments = data;
+                        
+                        // to create map and array
+                        for(i=0; i<$scope.catalogPayment.length; i++){
+                            for(j=0; j<$scope.payments.length; j++){
+                                if($scope.mapPayments[$scope.catalogPayment[i].Name]===undefined){
+                                    if( ($scope.catalogPayment[i].Id===$scope.payments[j].ConceptoPago__c)){
+                                        
+                                        setPayment={};
+                                        setPayment.NameCatalog=$scope.catalogPayment[i].Name;
+                                        setPayment.ConceptoFijo__c=$scope.catalogPayment[i].ConceptoFijo__c;
+                                        setPayment.MontoCostoFijo__c=$scope.catalogPayment[i].MontoCostoFijo__c;
+                                        setPayment.ValuePayment=$scope.payments[j];
+                                        setPayment.ValuePayment.Monto__c=setPayment.ConceptoFijo__c?setPayment.MontoCostoFijo__c:$scope.payments[j].Monto__c;
+                                        
+                                        $scope.mapPayments[$scope.catalogPayment[i].Name]=setPayment;
+                                        $scope.mapPaymentsArr.push(setPayment);
+                                    }
+                                }
+                            }
+                            if($scope.mapPayments[$scope.catalogPayment[i].Name]===undefined){
+                                var newPayment = {};
+                                newPayment.NameCatalog=$scope.catalogPayment[i].Name;
+                                newPayment.ConceptoFijo__c=$scope.catalogPayment[i].ConceptoFijo__c;
+                                newPayment.MontoCostoFijo__c=$scope.catalogPayment[i].MontoCostoFijo__c;
+                                newPayment.ValuePayment={};
+                                newPayment.ValuePayment.OfertaEducativa__c=$scope.offer.Id;
+                                newPayment.ValuePayment.ConceptoPago__c=$scope.catalogPayment[i].Id;
+                                newPayment.ValuePayment.Activo__c=false;
+                                newPayment.ValuePayment.Monto__c=newPayment.ConceptoFijo__c?newPayment.MontoCostoFijo__c:0;
+                                
+                                $scope.mapPayments[$scope.catalogPayment[i].Name]=newPayment;
+                                $scope.mapPaymentsArr.push(newPayment);
+                            }
+                        }
+                        $scope.$apply();
+                        console.log($scope.mapPayments);
+                    }
+                });
+            });
+        };
+        
+        
+        // if record already exist, non-editable fields are removed (in this case Name and CreatedDate) and the update is done.
+        $scope.savePayment = function(toStoreArr) {
+            if($scope.error==''){
+                var hasPayments = false;
+                toStoreArr.forEach(function(toStore, index){
+                    if(toStore.ValuePayment.Activo__c===true){
+                        hasPayments = true;
+                    }
+                    if(toStore.ValuePayment.hasOwnProperty('Id')) {//update payment
+                        delete toStore.ValuePayment['Name'];
+                        delete toStore.ValuePayment['CreatedDate'];
+                        console.log('update payment');
+                        //console.log(toStore.ValuePayment);
+                        sfDB.getRemoteAction({action: 'update'}, new sfService.gateway.payments(toStore.ValuePayment), function(err, res, all) {
+                            $scope.processResult(err, res, 'update');
+                        });
+                    }else{// create payment
+                        if(toStore.ValuePayment.Activo__c===true){
+                            console.log('create payment');
+                            sfDB.getRemoteAction({instance: toStore.ValuePayment, action: 'create'}, paymentGW, function(err, res) {
+                                console.log(err);
+                                //console.log(res);
+                                $scope.processResult(err, res, 'create');
+                                if(!err){
+                                    toStore.ValuePayment.Id=res[0];
+                                }
+                            });
+                        }
+                    }
+                });
+                $scope.updateCofigurePayment(hasPayments,$scope.offer);
+                $scope.success='Se han actualizado los pagos de la oferta existosamente';
+            }
+        }
+        $scope.deleteSuccess= function(){
+            $scope.success='';
+        }
+        $scope.processResult = function(err, res, action) {
+            if(err){
+                $scope.errors = err;
+            }
+            $scope.saving = false;
+            $scope.$apply();
+        };
+        $scope.$watch('sfService.offer', function () {
+            $scope.offer = $scope.sfService.offer;
+            if($scope.offer && $scope.offer.hasOwnProperty('Id')) {
+                $scope.mapPayments={};
+        		$scope.mapPaymentsArr=[];
+                $scope.getCatalogPayments();
+                $scope.getPayments();
+                $scope.success='';
+                $scope.errors={};
+                $scope.error='';
+            }
+        }, true);
+        
+    }]);
+    
+    </script>
+    
+    <style type="text/css">
+       .messagesGroup {color:#333; margin-top:1.5em;}
+       .messagesOutput{padding:1em;}
+   </style>
+    
+</apex:component>

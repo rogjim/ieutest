@@ -1,0 +1,96 @@
+<apex:page standardStylesheets="false" sidebar="false" controller="DocumentadorController" action="{!actualizarDocumentador}" >
+    
+    <script type="text/javascript">     	
+    function metodo(){
+        var myListC = document.getElementsByName('Editable');
+        for(i = 0; i<myListC.length; i++){
+            myListC[i].innerHTML = "Editar";  
+        }  
+    }        
+    setTimeout(function(){
+        metodo();
+    },1000);
+    </script>
+    <script type="text/javascript" src="https://use.fontawesome.com/dfb082da08.js" >
+    
+    
+    </script>
+    
+    <style type="text/css">
+        
+        .myclass {
+        <i class="fa fa-camera-retro fa-lg"></i>
+        
+        
+        }
+        
+    </style>
+    
+    
+    
+    
+    
+    <div style="position:absolute;top:20px;left: 50%;     background-position: 0 -2841px;"> 
+        <apex:actionStatus id="refreshContent" > 
+            <apex:facet name="start" > 
+                <i class="fa fa-refresh fa-spin fa-5x fa-fw"></i> 
+                <span class="sr-only">Loading...</span>
+                
+                <!-- <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+<span class="sr-only">Loading...</span>-->
+                <!--  <apex:image url="{!$Resource.EncabezadoMail}" />--> 
+            </apex:facet> 
+        </apex:actionStatus> 
+    </div>
+    
+    
+    
+    <apex:form >
+        <apex:pageBlock >
+            Filtro: 
+            <apex:selectList value="{!filtroTipo}" size="1">
+                <apex:actionSupport event="onchange" action="{!filterType}" reRender="listaDocumentos" status="refreshContent" oncomplete="metodo()"  />
+                <apex:selectOptions value="{!items}"/>                
+            </apex:selectList>
+            
+        </apex:pageBlock> 
+    </apex:form> 
+    <apex:pageBlock >
+        <apex:outputPanel id="myPanel">
+            <apex:pageMessages id="theMessages" />
+            <apex:pageBlockTable value="{!documentadorAux}"  var="doc" id="listaDocumentos">
+                <div id="idDiv" >                
+                    <apex:column headerValue="Nombre">
+                        <apex:outputLink value="{!$Site.Prefix}/{!doc.IdComponente__c}">{!doc.Name}</apex:outputLink>
+                        
+                    </apex:column>
+                    <apex:column value="{!doc.Tipo__c}" />                
+                    <apex:column value="{!doc.FechaInicio__c}" />
+                    <apex:column value="{!doc.FechaModif__c}" />
+                    <apex:column value="{!doc.Observacion__c}" />   
+                    <apex:facet name="footer">Mostrando Página {!pageNumber} de {!totalPages}</apex:facet>
+                </div>  
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    <apex:pageBlock >
+          
+
+        <apex:pageBlockButtons location="bottom"  style="text-align:left"  >
+            
+                <apex:form > 
+                    
+                    <div class="myclass"><apex:commandButton style="padding: 10px;" action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/></div>
+                    <apex:commandButton style="padding: 10px;" action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+                    <apex:commandButton style="padding: 10px;" action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+                    {!pageNumber}
+                    <apex:commandButton style="padding: 10px;" action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+                    <apex:commandButton style="padding: 10px;" action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/>        
+                </apex:form>
+                <apex:facet name="footer">Mostrando Página {!pageNumber} de {!totalPages}</apex:facet>
+            
+        </apex:pageBlockButtons>
+    
+
+        </apex:pageBlock>
+</apex:page>

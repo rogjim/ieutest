@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <description>Objeto para determinar los objetos a los cuales se les necesita dar un rastreo en el cambio de de sus campos, en los procesos Batch</description>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>Campo__c</fullName>
+        <description>Nombre API del campo</description>
+        <externalId>false</externalId>
+        <label>Campo</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Objeto__c</fullName>
+        <description>Nombre API del Objeto</description>
+        <externalId>false</externalId>
+        <label>Objeto</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Configuración objeto cambio</label>
+    <visibility>Public</visibility>
+</CustomObject>

@@ -1,0 +1,122 @@
+<apex:component >
+    <div class="bs">
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalPagos" ng-controller="pagosCtrl">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title text-center">
+                            <span class="fa fa-usd fa-fw"></span>
+                            Configurar pagos de la oferta educativa: <strong>{{offer.Name}}</strong> 
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div class="row"  ng-repeat-start="pago in catalogPayment">
+                            <div class="col-md-1">
+                                <input type="checkbox" class="" />
+                            </div>
+                            <div class="col-md-11">
+                                <label for="ins" class=" col-md-4" >{{pago.Name}}</label>
+                                
+                                <input id="ins" type="text" class="col-md-7 form-control-static" />
+                                
+                                <!-- 
+                                <div ng-repeat="payment in payments | filter:{ConceptoPago__c: pago.Id }">
+                                    <input id="ins" type="text" class="col-md-7 form-control" ng-model="payment.Monto__c" />
+                                </div>
+                                -->
+                            </div>
+                        </div >
+                        <br ng-repeat-end="ng-repeat-end" />
+                        <!--
+						{{catalogPayment}}
+                        {{payments}}
+                        {{mapPayments}}
+                        -->
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
+    
+    <script type="text/javascript">
+    var app = angular.module('appIEU');
+    
+    app.controller('pagosCtrl', ['$scope', 'sfService','sfDB', function($scope, sfService,sfDB) {
+        var catalogPaymentsGW = new sfService.gateway.catalogo();
+        var paymentGW = new sfService.gateway.pagos();
+        
+        $scope.sfService = sfService;
+        $scope.offer = $scope.sfService.offer;
+        $scope.catalogPayment = [];
+        $scope.catalogPaymentsField = [];
+        $scope.payments = [];
+        $scope.paymentsFields = [];
+        $scope.catalogPaymentsField = [];
+        $scope.mapPayments={};
+        
+        sfDB.getRemoteAction({action: 'describe'}, catalogPaymentsGW, function(err, res) {
+            $scope.fieldsCR = res || [];
+        });
+        $scope.getCatalogPayments = function() {
+            var criteria = { where:{ TipoCatalogo__c:{eq:'Concepto Pagos'} } };
+            sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, catalogPaymentsGW, function(err, res) {
+                sfDB.parseFromDB(res, $scope.fieldsCR, function(err, data) {
+                    if(!err && data && data.length > 0) {
+                        $scope.catalogPayment = data;
+                        $scope.$apply();
+                    }
+                });
+            });
+        };
+        $scope.getCatalogPayments();
+        
+        sfDB.getRemoteAction({action: 'describe'}, paymentGW, function(err, res) {
+            $scope.paymentsFields = res || [];
+        });
+        $scope.getPayments = function() {
+            var criteria = { where:{ OfertaEducativa__c:{eq: $scope.offer.Id} } };
+            sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, paymentGW, function(err, res) {
+                sfDB.parseFromDB(res, $scope.paymentsFields, function(err, data) {
+                    if(!err) {
+                        $scope.payments = data;
+                        $scope.$apply();
+                    }
+                });
+            });
+            /*
+            for(i=0; i<$scope.catalogPayment.lenth; i++){
+            	for(j=0; j<$scope.payments.lenth; j++){
+                    if($scope.catalogPayment[i].ConceptoPago__c===$scope.payments[j].Id ){
+                        $scope.mapPayments[$scope.catalogPayment[i].Name]=$scope.payments[j];
+                        console.log('Crea instancia');
+                        $scope.mapPayments[$scope.catalogPayment[i].Name]='nuevo valor';
+                    }else{
+                        console.log('Crea instancia');
+                        $scope.mapPayments[$scope.catalogPayment[i].Name]='nuevo valor';
+                    }
+                }
+            }
+            */
+        };
+        
+        
+        
+        
+        $scope.$watch('sfService.offer', function () {
+            $scope.offer = $scope.sfService.offer;
+            if($scope.offer && $scope.offer.hasOwnProperty('Id')) {
+                $scope.getPayments();
+            }
+        }, true);
+        
+    }]);
+    
+    </script>
+</apex:component>

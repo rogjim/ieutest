@@ -1,0 +1,31 @@
+<apex:page controller="OFE_TestCalendarioCtrl" showHeader="false" sidebar="false" standardStylesheets="false" action="{!obtenerSesion}">
+	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+	<script src="../../soap/ajax/36.0/connection.js"/>
+	<script>
+		$(document).ready(function() {
+        //console.log('sessionID : {!sessionID}');
+        	try{
+			//var result = sforce.connection.login("ieu@ctconsulting.com.mx.sandbox","ctconsulting2016IAXPEMQ84uEjBFjWFbSEdfbp");
+                sforce.connection.sessionId='';
+            }catch(error){
+                alert(error);
+            }
+            
+            users = sforce.connection.query("Select Name,Id from User");
+            var event1 = new sforce.SObject("Event");
+            event1.subject = 'meeting';
+            event1.ActivityDate = new Date();
+            event1.ActivityDateTime = new Date();
+            event1.EndDateTime  = new Date();
+            event1.StartDateTime = new Date();
+            event1.Description = "Prueba de inserción";
+            var result = sforce.connection.create([event1]);
+            console.log(event1);
+            if (result[0].getBoolean("success")) {
+                console.log("new account created with id " + result[0].id);
+            } else {
+                console.log("failed to create account " + result[0]);
+            }
+        });
+	</script>
+</apex:page>

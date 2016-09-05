@@ -1,0 +1,617 @@
+<apex:page cache="false" controller="UtilsExternal" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false">
+    <head>
+     <!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>-->
+      <!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        <!--  <link rel="stylesheet" href="{!URLFOR($Resource.VerticalEstilos, 'estilo.css')}"/>-->
+        <script src="/soap/ajax/13.0/connection.js"></script>
+        <script type="text/javascript"> var sessionId = '{!GETSESSIONID()}';</script>
+        <meta http-equiv="Cache-control" content="no-cache"/>
+        
+        
+        
+   
+        <link rel="stylesheet" href="{!URLFOR($Resource.Vertical , '/VerticalFinal/css/newStyle.css')}"/>
+         <link rel="stylesheet" href="{!URLFOR($Resource.Vertical , '/VerticalFinal/css/estilos.css')}"/> 
+        
+        
+    </head>
+    <body>
+        <apex:remoteObjects >
+            <apex:remoteObjectModel name="Lead" jsShorthand="LeadGateway" fields="LastName,Phone,Email,Nivel__c,Modalidad__c,Programa__c,Plantel__c,LeadSource,SubOrigenCandidato__c,AsignacionAutomatica__c,PorcentajeDescuento__c,PorcentajeBeca__c,Periodo__c,GrupoAsignado__c,Inscripcion__c,ExamenAdmision__c,Colegiatura__c,Antologia__c,Propedeutico__c,Uniforme__c,WebSite,ModalidadPresencial__c,ModalidadOnline__c,ModalidadEjecutiva__c,OfertaEducativa__c,Status,Promotor__c"/>
+            <apex:remoteObjectModel name="Catalogo__c" jsShorthand="ModalidadGateway" fields="Id,Name,TipoCatalogo__c"/>
+            <apex:remoteObjectModel name="OfertaEducativa__c" jsShorthand="OfertaGateway" fields="Id,Modalidad__c,Programa__c,Periodo__c"/>
+        </apex:remoteObjects>
+        
+        <!--04/0/2016^-->
+        <apex:includeScript value="{!URLFOR($Resource.Mustache)}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChained)}" />
+        <script id="templateOptions" type="x-tmpl-mustache">
+        <option value="">-Seleccione {{titulo}}-</option>
+        {{#items}}
+        <option value="{{dataId}}" class="{{parent}}"> {{name}} </option>
+        {{/items}}
+        </script> 
+        
+        <!--04/0/2016|-->
+        
+        
+        <div id="main-wrapper" class="main-wrapper">
+            
+            <!-- Header section-->
+            <div id="header-section">
+                <!-- <img src="Images/logo.png" alt="log">-->
+                <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/logo.png')}" alt="log"/> 
+            </div>
+            
+            <!-- Container section -->
+            <div id="content-container">
+                <!-- Left side -->
+                <div id="left-content-div">
+                    <!-- <img src="Images/Modalidades.png" alt="Subs image">-->
+                    <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/Modalidades.png')}" alt="Subs image"/> 
+                </div>
+                
+                <!-- Right side Start -->
+                <div id="right-content-div">
+                    
+                    <!-- Header section -->
+                    <div id="right-content-header">
+                        <!-- <img src="Images/titulo_3.png">-->
+                        <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/titulo_3.png')}"  /> 
+                    </div>
+                    <!-- Info  section -->
+                    <div id="right-content-text">
+                        <div id="texto">
+                            <p> Contamos con tres modalidades de estudio que se adaptan a tu estilo de vida: <strong>PRESENCIAL, ONLINE Y EJECUTIVA.</strong></p><br>
+                            
+                            <ul>
+                                <li><p>Todos nuestros programas cuentan con RVOE que otorga la <strong>Secretaría de Educación Pública (SEP).</strong></p></li>
+                                
+                                <li><p>Universidad IEU cuenta con la <strong>Acreditación Lisa y Llana</strong> que otorga<strong>FIMPES</strong>, grado máximo de acreditación que garantiza la excelencia académica y la calidad de los programas educativos.</p></li>
+                                
+                                <li><p>Tenemos atractivas becas y apoyos que se adaptan a tus posibilidades y necesidades para que estudies lo que siempre has querido</p></li>
+                            </ul>   </br>     
+                        
+                        <p><strong>Así que, ¿qué esperas? Elige hoy</strong></p>
+                    </div>
+                </div>
+                
+                <!-- Form  section -->
+                <div id="right-form-section">
+                    
+                    
+                    <!--   </div> -->
+                    
+                    
+                    <form name="inbox" id="form" action="" method="post" accept-charset="UTF-8" onSubmit="return validar()">                    
+                        <div id="formulario">
+                            <div class="row">
+                                
+                                <select id="modalidad-remote" name="modalidad" style="width:320px;" class="modalidad-remote" >
+                                    <option value="0">-Seleccione Modalidad-</option>
+                                </select>
+                                
+                            </div>
+                            
+                            <div class="row">
+                                
+                                <div id="divnivel">
+                                    <select id="nivel-remote" name="nivel" style="width:320px;" class="nivel-remote">
+                                        <!--option value="0">-Seleccione Grado-</option-->
+                                    </select>
+                                    
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                
+                                <div id="divplantel">
+                                    <select id="plantel-remote" name="plantel" style="width:320px;" class="plantel-remote">
+                                        <!--option value="0">-Seleccione Campus-</option-->
+                                    </select>
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="row">
+                                
+                                <div id="divprograma">
+                                    <select id="programa-remote" name="ofe" style="width:320px;" class="ofe-remote">
+                                        <!--option value="0">-Seleccione Programa-</option-->
+                                    </select>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="row">
+                                
+                                <div id="divnombre">
+                                    <input  type="text" style="width:320px" maxlength="80"  name="nombre" id="nombre" placeholder="Nombre" />
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="row">
+                                
+                                <div id="divtelefono">
+                                    <input  type="text" style="width:320px" maxlength="10" name="telefono" id="telefono" placeholder="Teléfono"/>	
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="row">
+                                
+                                <div id="divmail">
+                                    <input  type="text" style="width:320px" maxlength="30" name="mail" id="mail" placeholder="E-mail" />
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="row">
+                               
+                                    <div id="cargando-datos" class="hidden">
+                                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                                        <span class="sr-only">Enviando...</span>
+                                   
+                                </div>
+                            </div>
+                            
+                            
+                            
+                            <div class="row" style="postion:absolute;">
+                                
+                               
+   <div class="col-sm-12 col-md-4 col-md-offset-7 col-lg-4" align="center" style="margin-top:7px; font-size:18px">
+                               
+                                    <button type="button" style="width:320px; height: 36px; border: 2px solid white; font-size: 1em; background: #ff4801;"  value="Inicia tu proceso aquí" id="enviar" onclick="save()">Inicia tu proceso aquí</button>                    
+                               </div>
+                            </div>
+                        </div>  
+                    </form>   
+                </div>
+            </div>
+            <!-- Right side End -->
+            
+        </div>
+        
+        <footer class="footer-class">
+            <div id="footer-rights">
+                <p> Copyright © 2016 Instituto de Estudios Universitarios </p>
+            </div>
+            
+            <div id="footer-lada">
+                
+                <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/tel.png')}" alt="lada image"/> 
+                <span> Lada sin costo 01 800 00 00 438 </span> 
+            </div>
+            
+            <div id="footer-sponsor">
+                
+                <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/adsd.png')}" alt="sponsor"/> 
+            </div>
+        </footer>  
+        
+        
+        
+        
+        <style type="text/css">
+        	.inputColor{
+            	background-color:#06a1ab; 
+            	padding:2px;
+            }
+            .hidden{
+            	display: none!important;
+            }
+            button {
+                background-color: #ff7500;
+            	border-style: solid;
+                border-color: #ff7500;
+            	border-width: 2px;
+                color: #FFFFFF;
+                cursor: pointer;
+                text-align: center;
+                transition: all 06;
+                transition: all 0.4s ease-in;
+                font-family: 'afta_sansregular', sans-serif;
+                border-radius: 8px;
+                z-index: 3;
+            }
+            button:hover {
+                background-color: #6ec4ca;
+                border-color: #6ec4ca;
+            	border-width: 2px;
+                color: #005361;
+                cursor: pointer;
+                text-align: center;
+                transition: all 06;
+                transition: all 0.4s ease-in;
+                font-family: 'afta_sansregular', sans-serif;
+                border-radius: 8px;
+                z-index: 3;
+            }
+            
+            @font-face {
+            font-family: 'ProximaNovaA-Regular';
+            /*src: url("{!URLFOR($Resource.Fonts, '3130A0_6_0.eot')}"); */
+            src: url("{!URLFOR($Resource.Fonts, 'ProximaNovaA.otf')}");
+            src: url("{!URLFOR($Resource.Fonts, '3130A0_6_0.eot?#iefix')}") 
+            format("embedded-opentype"), url("{!URLFOR($Resource.Fonts, '3130A0_6_0.woff2')}") 
+            format("woff2"), url("{!URLFOR($Resource.Fonts, '3130A0_6_0.woff')}") 
+            format("woff"), url("{!URLFOR($Resource.Fonts, '3130A0_6_0.ttf')}") 
+            format("truetype");
+            }
+            
+            .ProximaNovaA-Regular {
+            font-family: ProximaNovaA-Regular;
+            font-weight: normal;
+            font-style: normal;
+            }
+            
+            
+            
+        </style>
+        
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</body>
+<script>
+var clientId;
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-79829568-1', 'auto');
+ga('send', 'pageview');
+ga(function(tracker) {
+    clientId = tracker.get('clientId');
+});
+</script>
+<script>    
+j$ = jQuery.noConflict();
+
+(function (){
+    j$('#enviar').prop('disabled', false);
+    j$('#modalidad-remote option:eq(0)').prop('selected', true)
+    //j$('#nivel-remote option:eq(0)').prop('selected', true)
+    //j$('#plantel-remote option:eq(0)').prop('selected', true)
+    //j$('#programa-remote option:eq(0)').prop('selected', true)
+    j$('input').each(function(a,b){
+        j$('input[type="text"]').each(function(a,b){
+            j$(b).val('');
+        });	
+    });
+})();    
+
+var modalidades = {};
+var ofertaEducativa = {};
+var templateX = j$('#templateOptions').html();
+j$(document).ready(function() {    
+    /****04/06/2016****/
+    var template = j$('#templateOptions').html();
+    
+    Mustache.parse(template); 
+    
+    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UtilsExternal.getExternalOfertaAcademica}', 
+                                              function(result, event){
+                                                  if (event.status) {
+                                                      console.log(result);
+                                                      
+                                                      var renderedModalidades = Mustache.render(template,result.modalidad);
+                                                      j$('#modalidad-remote').html(renderedModalidades);
+                                                      
+                                                      var renderedNiveles = Mustache.render(template,result.nivel );
+                                                      j$('#nivel-remote').html(renderedNiveles);
+                                                      
+                                                      var renderedPlanteles = Mustache.render(template,result.plantel);
+                                                      j$('#plantel-remote').html(renderedPlanteles);
+                                                      
+                                                      var renderedProgramas = Mustache.render(template,result.programa);
+                                                      j$('#programa-remote').html(renderedProgramas);
+                                                      
+                                                      j$("#nivel-remote").chained("#modalidad-remote");
+                                                      j$("#plantel-remote").chained("#nivel-remote");
+                                                      j$("#programa-remote").chained("#plantel-remote");
+                                                      
+                                                  } else if (event.type === 'exception') {
+                                                      document.getElementById("responseErrors").innerHTML = 
+                                                          event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                                                  } else {
+                                                      document.getElementById("responseErrors").innerHTML = event.message;
+                                                  }
+                                              }, 
+                                              {escape: true}
+                                             );
+    /******************/
+    //-----------Modalidad--------------
+    modalidades = {'Online': '', 'Presencial': '', 'Ejecutiva': ''};  
+    var nombreMod;
+    new SObjectModel.ModalidadGateway().retrieve({where: { TipoCatalogo__c : {eq: 'Modalidad'}}}, function(err, records, event){          
+        if(err) {
+            alert(err.message);
+        }
+        else {
+            records.forEach(function(record) {                   
+                modalidades[record.get("Name")] = record.get("Id");
+            });
+        }
+    });
+    j$('input[type="text"]').keyup(function(){
+        if(j$(this)!=""){
+            j$(this).css("background-color", "#C0FFFF");
+            j$('#error').text('');
+            j$('#error').removeClass("alert alert-danger");
+        }
+    });
+    
+    j$("#telefono").on('keydown',function(event){
+        var code = event.keyCode;
+        var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                    56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                    37:true,38:true,39:true,40:true,96:true,97:true,98:true,99:true,100:true,
+                           101:true,102:true,103:true,104:true,105:true};
+        if(!keys[code]){
+            event.preventDefault();
+        }         
+    });
+    
+    j$("select").click(function(){
+        if(j$(this)!=""){
+            j$(this).css("background-color", "#C0FFFF");
+            j$('#error').text('');
+            j$('#error').removeClass("alert alert-danger");
+        }
+    }); 
+    
+    j$('#programa-remote').on('change',function(){
+        //var ofertValue = j$('#programa-remote').val();
+        var ofertValueArr = j$('#programa-remote').val();
+        var ofertValueSplit = ofertValueArr.split('-');
+        var ofertValue = ofertValueSplit[0];
+        if(ofertValue != '' && ofertValue != 0){
+            var leadGT = new SObjectModel.OfertaGateway();
+            leadGT.retrieve({where: {Id : {eq: ofertValue }}}, function(err,res,event) {
+                if(err) {
+                    alert(err.message);
+                }
+                else {
+                    res.forEach(function(record) {
+                        ofertaEducativa['Periodo'] = record.get('Periodo__c');
+                        ofertaEducativa['Programa'] = record.get('Programa__c');
+                        console.log(ofertaEducativa)
+                    });
+                }
+            }); 
+        }
+    });
+}); 
+
+function validar(){
+    if(j$('#modalidad-remote option:selected').val() == ''){
+        j$('#modalidad-remote').css("background-color", "#f2dede");
+        j$('#error').text('Seleccione una modalidad');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    if(j$('#nivel-remote option:selected').val() == ''){
+        j$('#nivel-remote').css("background-color", "#f2dede");
+        j$('#error').text('Seleccione un nivel');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    if(j$('#plantel-remote option:selected').val() == ''){
+        j$('#plantel-remote').css("background-color", "#f2dede");
+        j$('#error').text('Seleccione un campus');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    if(j$('#programa-remote option:selected').val() == ''){
+        j$('#programa-remote').css("background-color", "#f2dede");
+        j$('#error').text('Seleccione un programa');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    if(j$('#nombre').val() == ""){
+        j$('#nombre').css("background-color", "#f2dede");
+        j$('#error').text('Ingrese su nombre');
+        j$('#error').addClass("alert alert-danger");
+        return false; 
+    }
+    if(j$('#telefono').val() == "" || j$('#telefono').val().length < 6){
+        j$('#telefono').css("background-color", "#f2dede");
+        j$('#error').text('Ingrese su número teléfonico, debe contener al menos 7 digitos');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    
+    if(j$('#mail').val() == "" ){
+        j$('#mail').css("background-color", "#f2dede");
+        j$('#error').text('Ingrese su correo electrónico');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    else if(j$('#mail').val().indexOf('@', 0) == -1 || j$("#mail").val().indexOf('.', 0) == -1){
+        j$('#mail').css("background-color", "#f2dede");
+        j$('#error').text('Formato invalido para correo');
+        j$('#error').addClass("alert alert-danger");
+        return false;
+    }
+    //addLead();
+    return true;
+}
+
+
+function save(){
+    if(validar()){
+        addLead();
+    }else{
+    }
+}
+
+var addLead = function() {
+    j$('#cargando-datos').removeClass('hidden'); 
+    j$('#enviar').prop('disabled', true);
+    j$('#enviar').css({'background-color' : 'gray','border-color' : 'gray'});
+    var lead = {};
+    lead.LastName = j$('#nombre').val(); 
+    lead.Status = 'Lead';
+    lead.Phone = j$('#telefono').val();
+    lead.Email = j$('#mail').val();
+    lead.Modalidad__c = j$('#modalidad-remote option:selected').val();
+    /********04/07/2016*********/
+    var nivel = j$('#nivel-remote option:selected').val();
+    var nivelSplit = nivel.split('-');
+    lead.Nivel__c = nivelSplit[0];
+    
+    var plantel = j$('#plantel-remote option:selected').val();
+    var plantelSplit = plantel.split('-');
+    lead.Plantel__c = plantelSplit[0];
+    /**************************/
+    
+    if(j$('#modalidad-remote option:selected').val()== modalidades.Presencial){
+        lead.ModalidadPresencial__c = true;
+    }else if(j$('#modalidad-remote option:selected').val()== modalidades.Online){
+        lead.ModalidadOnline__c = true;
+    }else if(j$('#modalidad-remote option:selected').val()==modalidades.Ejecutiva){
+        lead.ModalidadEjecutiva__c = true;
+    }
+    
+    lead.LeadSource = 'Marketing';					
+    lead.SubOrigenCandidato__c = 'Vertical IEU';		
+    lead.AsignacionAutomatica__c = true;			
+    lead.PorcentajeDescuento__c = 0;				
+    lead.PorcentajeBeca__c = 0;			
+    lead.Website = 'https://' + window.location.hostname + '/Calculadora'; 
+    lead.Periodo__c = ofertaEducativa['Periodo'];
+    lead.Programa__c = ofertaEducativa['Programa'];
+    console.log(lead);
+    //Se agrega el id de googleAnalitycs
+    lead.GACID__c = clientId;
+    var leadInsert = new SObjectModel.LeadGateway();
+    
+    var nombreLead = j$('#nombre').val();
+    var emailLead = j$('#mail').val();
+    var modalidadLead = j$('#modalidad-remote option:selected').val();
+    var nivelLead = nivelSplit[0];
+    var plantelLead = plantelSplit[0];
+    var programaLead = ofertaEducativa['Programa'];
+    
+    leadInsert.create(lead,function(err,res,evt){
+        if(err){
+            var idLead='', idPromotor='';
+            console.log('No inserto ' + err);
+            if(err == 'Error: Ya ha registrado el correo, para la modalidad y carrera seleccionada.'){
+                leadAsignado(nombreLead, emailLead, modalidadLead, nivelLead, plantelLead, programaLead);
+                timefunction();
+            }
+            else{
+                j$('#error').text(err);
+                j$('#error').addClass("alert alert-danger");
+                j$('#cargando-datos').addClass('hidden'); 
+                j$('#enviar').prop('disabled', false);
+                j$('#enviar').css({'background-color' : '','border-color' : ''});
+            }
+        }            
+        else{
+            var form = document.createElement("form");
+            with(form) {
+                setAttribute("name", "formM"); 
+                setAttribute("action", 'https://' + window.location.hostname + '/VerticalGracias'); 
+                setAttribute("method", "post"); 
+            }
+            
+            var input = document.createElement("input"); 
+            with(input) {
+                setAttribute("name", "mail");
+                setAttribute("class", "hidden"); 
+                setAttribute("type", "text"); 
+                setAttribute("value", j$('#mail').val()); 
+            }
+            
+            form.appendChild(input); 
+            document.getElementsByTagName("body")[0].appendChild(form);
+            
+            form.submit();
+        }
+    }); 
+}
+
+var myVar;
+var flag=0;
+function timefunction() {
+    myVar = setInterval(checkId, 1000);
+}
+
+function checkId() {
+    if(flag>0){
+        clearInterval(myVar);
+        var linkCita = 'https://' + window.location.hostname +'/apex/OFE_CalendarioPromotor?idPromotor='+idPromotor+'&folio='+idLead;
+        var content = j$('<a href='+linkCita+' target="_blank" id="linkCita">aquí</a>');                       
+        j$('#error').text(err);
+        j$('#error').append(content);
+        j$('#error').addClass("alert alert-danger");
+        j$('#cargando-datos').addClass('hidden'); 
+        j$('#enviar').prop('disabled', false);
+        j$('#enviar').css({'background-color' : '','border-color' : ''});
+    }
+}
+
+function leadAsignado(nombreLead, emailLead, modalidadLead, nivelLead, plantelLead, programaLead){
+    err = 'Los datos proporcionados ya han sido registrados. Si desea agendar una cita da clic ';
+    var tamRes;
+    var leadExistente = new SObjectModel.LeadGateway();
+    leadExistente.retrieve({where: {
+        LastName : {eq: nombreLead},
+        Email : {eq: emailLead},
+        Modalidad__c : {eq: modalidadLead},
+        Nivel__c : {eq: nivelLead}, 
+        Plantel__c : {eq: plantelLead},
+        Programa__c : {eq : programaLead}							                        
+    }}, function(err,res,event) {
+        if(err) {
+            console.log(err.message);
+        }
+        else {
+            tamRes = (res.length)-1;
+            idLead = res[tamRes].get('Id') ;
+            idPromotor = res[tamRes].get('Promotor__c');
+            flag++;               
+        }
+    }); 
+}
+
+function failed(error) {
+    console.log("Ha ocurrido un error " + error);
+}
+
+</script>
+</apex:page>

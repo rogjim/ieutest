@@ -1,0 +1,1926 @@
+<apex:component >
+                    <div ng-controller="ofertaEducativaCtrl" id="ofertaEducativaCtrl" class="">
+                        <div class="">
+                        <h2 class="page-header">Oferta educativa    </h2>
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-4 text-center">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4">Periodo</label>
+                                        <div class="col-sm-8">
+                                            <select ng-change="setSelectedPeriod(periodSelected)" class="form-control" ng-options="o.Name for o in periods" ng-model="periodSelected"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" ng-if="!isEditingC">
+                            <div class="col-sm-12 text-left">
+                                <a class="btn btn-default" ng-click="editPeriod({})"><span class="fa fa-plus fa-fw"></span>Nuevo periodo</a>
+
+                                <a class="btn btn-success" ng-click="editPeriod(periodSelected)"><span class="fa fa-edit fa-fw"></span>Modificar periodo</a>
+
+                                <a class="btn btn-primary" ng-click="editPeriod(periodSelected, true)"><span class="fa fa-clone fa-fw"></span>Duplicar periodo</a>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div  class="panel panel-default ieu-panel"><!-- periodo -->
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            Modalidad activa por periodo
+                                        </h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item" ng-if="activePeriods.presential.Id">
+                                                <span class="fa fa-check-square fa-fw"></span>
+                                                <span ng-bind="fieldsK.period.ActivoPresencial__c.label"></span>
+
+                                                <a data-toggle="tooltip" title="Ver periodo" ng-show="activePeriods.presential.Id !== currentPeriod.Id" class="ieu-href" ng-click="setSelectedPeriod(activePeriods.presential, true)">
+                                                    <span ng-bind="activePeriods.presential.Name"></span>
+                                                </a>
+                                                <span ng-if="activePeriods.presential.Id === currentPeriod.Id" ng-bind="activePeriods.presential.Name"></span>
+
+                                            </li>
+                                            <li class="list-group-item" ng-if="activePeriods.online.Id">
+                                                <span class="fa fa-check-square fa-fw"></span>
+                                                <span ng-bind="fieldsK.period.ActivoOnline__c.label"></span>
+                                                <a data-toggle="tooltip" title="Ver periodo" ng-show="activePeriods.online.Id !== currentPeriod.Id" class="ieu-href" ng-click="setSelectedPeriod(activePeriods.online, true)">
+                                                    <span ng-bind="activePeriods.online.Name"></span>
+                                                </a>
+                                                <span ng-if="activePeriods.online.Id === currentPeriod.Id" ng-bind="activePeriods.presential.Name"></span>
+                                            </li>
+
+                                            <li class="list-group-item" ng-if="activePeriods.hybrid.Id">
+                                                <span class="fa fa-check-square fa-fw"></span>
+                                                <span ng-bind="fieldsK.period.ActivoEjecutiva__c.label"></span>
+                                                <a data-toggle="tooltip" title="Ver periodo" ng-show="activePeriods.hybrid.Id !== currentPeriod.Id" class="ieu-href" ng-click="setSelectedPeriod(activePeriods.hybrid, true)">
+                                                    <span ng-bind="activePeriods.hybrid.Name"></span>
+                                                </a>
+                                                <span ng-if="activePeriods.hybrid.Id === currentPeriod.Id" ng-bind="activePeriods.hybrid.Name"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="panel panel-default ieu-panel"><!-- periodo -->
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" ng-bind="title">
+                                        </h3>
+                                    </div>
+                                    <form class="form-horizontal" name="formOFE">
+                                        <div class="panel-body">
+                                        <div ng-if="!isEditingC">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <sf-label sf-field="fieldsK.period.FechaInicio__c" sf-value="currentPeriod.FechaInicio__c" sf-col-class="[6,6]"></sf-label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <sf-label sf-field="fieldsK.period.FechaFin__c" sf-value="currentPeriod.FechaFin__c" sf-col-class="[6,6]"></sf-label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <sf-label sf-field="fieldsK.period.FechaInicioReal__c" sf-value="currentPeriod.FechaInicioReal__c" sf-col-class="[6,6]"></sf-label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <sf-label sf-field="fieldsK.period.FechaFinReal__c" sf-value="currentPeriod.FechaFinReal__c" sf-col-class="[6,6]"></sf-label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <sf-label sf-field="fieldsK.period.Descripcion__c" sf-value="currentPeriod.Descripcion__c" sf-col-class="[6,6]"></sf-label>
+                                                    <sf-label sf-field="fieldsK.period.Activo__c" sf-value="currentPeriod.Activo__c" sf-col-class="[6,6]"></sf-label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-sm-6"></label>
+                                                        <div class="col-sm-6">
+                                                            <ul class="list-inline">
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('presential')" type="checkbox" ng-model="currentPeriod.ActivoPresencial__c"></input><span ng-bind="fieldsK.period.ActivoPresencial__c.label"/></label></div></li>
+
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('online')" type="checkbox" ng-model="currentPeriod.ActivoOnline__c"></input><span ng-bind="fieldsK.period.ActivoOnline__c.label"/></label></div></li>
+
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('hybrid')" type="checkbox" ng-model="currentPeriod.ActivoEjecutiva__c"></input><span ng-bind="fieldsK.period.ActivoEjecutiva__c.label"/></label> </div></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div> 
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div ng-if="isEditingC">
+
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <sf-input sf-field="fieldsK.period.Name" sf-col-class="[6,6]" sf-instance="currentPeriod" sf-form="formOFE"></sf-input>
+                                                </div>
+                                                <div class="col-sm-6" ng-if="currentPeriod">
+                                                    <sf-input sf-field="fieldsK.period.FechaInicio__c" sf-col-class="[6,6]" sf-instance="currentPeriod" sf-form="formOFE" sf-disabled="!isEditingC"></sf-input>
+                                                </div>
+                                                </div>
+                                                <div class="row">
+                                                <div class="col-sm-6" ng-if="currentPeriod">
+                                                    <sf-input sf-field="fieldsK.period.FechaFin__c"  sf-col-class="[6,6]" sf-instance="currentPeriod" sf-form="formOFE" sf-disabled="!isEditingC"></sf-input>
+                                                </div>
+                                                <div class="col-sm-6" ng-if="currentPeriod">
+                                                    <sf-input sf-field="fieldsK.period.FechaInicioReal__c"  sf-col-class="[6,6]" sf-instance="currentPeriod" sf-form="formOFE" sf-disabled="!isEditingC"></sf-input>
+                                                </div>
+                                                </div>
+                                                <div class="row">
+                                                <div class="col-sm-6" ng-if="currentPeriod">
+                                                    <sf-input sf-field="fieldsK.period.FechaFinReal__c"  sf-col-class="[6,6]" sf-instance="currentPeriod" sf-form="formOFE" sf-disabled="!isEditingC"></sf-input>
+
+                                                    <div class="form-group" ng-if="isEditingC">
+                                                        <label class="control-label col-sm-6">Descripción</label>
+                                                        <div class="col-sm-6">
+                                                            <textarea rows="4" class="form-control" ng-model="currentPeriod.Descripcion__c" ng-disabled="!isEditingC"></textarea>
+                                                        </div>
+                                                    </div>  
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group" ng-if="haveAccess">
+                                                        <label class="control-label col-sm-6"></label>
+                                                        <div class="col-sm-6">
+                                                            <ul class="list-inline">
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('presential')" type="checkbox" ng-model="currentPeriod.ActivoPresencial__c"></input><span ng-bind="fieldsK.period.ActivoPresencial__c.label"/></label></div></li>
+
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('online')" type="checkbox" ng-model="currentPeriod.ActivoOnline__c"></input><span ng-bind="fieldsK.period.ActivoOnline__c.label"/></label></div></li>
+
+                                                                <li> <div class="checkbox"> <label> <input ng-disabled="isDisabledModality('hybrid')" type="checkbox" ng-model="currentPeriod.ActivoEjecutiva__c"></input><span ng-bind="fieldsK.period.ActivoEjecutiva__c.label"/></label> </div></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>  
+
+                                                    <!--sf-input sf-field="fieldsK.period.Activo__c" sf-col-class="[6,6]" sf-instance="currentPeriod" sf-opts="fieldsK.period.Activo__c.values" sf-label-prop="'value'" sf-form="formOFE"></sf-input-->
+
+                                                    <div class="form-group" ng-if="currentPeriod.Activo__c === 'Activo'">
+                                                        <label class="control-label col-sm-6" ng-bind="fieldsK.period.Autorizado__c.label"/>
+                                                        <div class="col-sm-6">
+                                                            <input type="checkbox" ng-model="currentPeriod.Autorizado__c"/>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>  
+                                            <div class="row" ng-if="errors.length>0 && !isEditingOA">
+                                                <div class="col-sm-6 col-sm-offset-6 text-right">
+                                                    <div class="alert alert-danger">
+                                                        <ul class="list-unstyled">
+                                                            <li ng-repeat="err in errors"><span ng-bind="err"/></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="panel-footer" ng-if="isEditingC">
+                                            <div class="row">
+                                                <div class="col-sm-12 text-right">
+                                                    <button ng-disabled="saving || formOFE.$invalid" ng-click="savePeriod()" class="btn btn-success">
+                                                        <span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+                                                        <span class="fa fa-save fa-fw"></span>
+                                                        Guardar
+                                                    </button>
+                                                    <button ng-disabled="saving || formOFE.$invalid" ng-click="savePeriod(true)" class="btn btn-primary">
+                                                        <span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+                                                        <span class="fa fa-save fa-fw"></span>
+                                                        Guardar y nuevo
+                                                    </button>
+                                                    <a ng-disabled="saving" ng-click="cancelEditPeriod()" class="btn btn-default">
+                                                        <span class="fa fa-mail-reply fa-fw"></span>
+                                                        Cancelar
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div><!-- end periodo -->
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default ieu-panel"><!-- oferta académica -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <h3 class="panel-title" ng-bind="titleOFE"></h3>
+                                    </div>
+                                    <div class="col-sm-3 text-right">
+                                        <label class="label label-primary" ng-bind="offerBase.instances.length + ' oferta(s)'"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body" ng-visible="currentPeriod.Id">
+                                <div class="row" ng-if="errors.length>0 && isEditingOA">
+                                    <div class="col-sm-6 col-sm-offset-6 text-right">
+                                        <div class="alert alert-danger">
+                                            <ul class="list-unstyled">
+                                                <li ng-repeat="err in errors"><span ng-bind="err"/></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3" ng-if="!isEditingOA && !isEditingC && currentPeriod.Id">
+                                        <a ng-disabled="isEditingC || actions.savingOFE" ng-click="editOfferByPeriod()" class="btn btn-success"><span class="fa fa-edit fa-fw"></span>Modificar oferta académica</a>
+                                    </div>
+                                    <div class="col-sm-6 text-center" ng-if="isEditingOA">
+                                        <button ng-disabled="formOfertaA.$invalid || actions.savingOFE || offerBase.hasDuplicated" ng-click="saveOffer()" class="btn btn-success">
+                                            <span ng-if="actions.savingOFE" class="fa fa-spinner fa-pulse fa-fw"></span>
+                                            <span ng-if="actions.savingOFE">Guardando</span>
+                                            <span class="fa fa-save fa-fw"></span>
+                                            <span ng-if="offerBase.hasDuplicated" class="label label-danger">Ofertas duplicadas</span>
+                                            Guardar
+                                        </button>
+                                        <a ng-click="cancelEditOffer()" class="btn btn-default"><span class="fa fa-mail-reply fa-fw"></span>Cancelar</a>
+                                        <button ng-disabled="actions.savingOFE" ng-if="pagination.filtered.length>0 && btns.sizeSelect>0" ng-click="copyOffer()" class="btn btn-primary"><span class="fa fa-clone fa-fw"></span>Copiar <span ng-bind="btns.sizeSelect"/> fila(s)</button>
+
+                                        <button ng-disabled="actions.savingOFE" ng-if="btns.sizeSelect>0" data-toggle="modal" data-target="#removeOffers" class="btn btn-danger"><span class="fa fa-trash fa-fw"></span>Eliminar <span ng-bind="btns.sizeSelect"/></button>
+                                    </div> 
+                                    <div class="col-sm-2 text-right">
+                                      <div class="input-group">
+                                            <span class="input-group-addon">Buscar</span>
+                                            <input type="text" class="form-control" ng-model="pagination.search" />
+                                            <span class="input-group-addon" ng-if="pagination.filtered.length > 0 && pagination.search.length > 0"><span class="text-success" ng-bind="'Resultados: ' + pagination.filtered.length"> </span></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 form-horizontal">
+                                      <div class="form-group">
+                                        <label class="control-label col-sm-8">Elementos por página</label>
+                                        <div class="col-sm-4">
+                                          <select class="form-control" ng-options="opt as opt for opt in pagination.pageSize" ng-model="pagination.itemsPerPage">
+                                                        <option value="" selected="true">-- Ninguno --</option>
+                                                  </select>
+                                        </div>
+                                      </div>
+                                    </div>         
+                                </div>
+
+                                <div class="table-responsive table-offer" ng-if="!isEditingOA">
+                                    <!-- INIT with sforce -->
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <th ng-repeat="foffer in fieldsS.offer" ng-class="{'ctc-min-head': foffer === 'NumeroColegiaturas__c' || foffer === 'NumeroInscripciones__c'}">
+                                                <a class="ctc-btn" ng-click="setFieldSort(foffer)" uib-tooltip="{{fieldsK.offer[foffer].helpText}}">
+                                                    <span ng-class="iconSort(foffer)"/>
+                                                    <span ng-bind="fieldsK.offer[foffer].label" ng-if="foffer !== 'Modalidad__c'"/>
+                                                    <span ng-bind="fieldsK.offer[foffer].label|limitTo:1" ng-if="foffer === 'Modalidad__c'" uib-toolttip="{{fieldsK.offer[foffer].label}}"/>
+                                                </a>
+                                            </th>
+                                            <th ng-repeat="field in offerBase.fieldsPay">
+                                                <a class="ctc-btn" ng-click="setFieldSort(field.Id)">
+                                                    <span ng-class="iconSort(field.Id)"/>
+                                                    <span ng-bind="field.Name"/>
+                                                </a>
+                                            </th>   
+
+                                            <th><span uib-tooltip="Configurar pagos">$</span></th>
+                                            <th>Grupos</th>
+                                            <th><span uib-tooltip="Configurar grupos">G</span></th>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="instance in pagination.filtered|orderBy:pagination.sortField:pagination.reverse | filter:search | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage as offerFiltered">
+                                                <td> <span ng-bind="instance.Estatus__c"></span> </td>
+                                                <td> <span ng-bind="instance.Modalidad__c|limitTo: 1" uib-tooltip="{{instance.Modalidad__c}}"></span> </td>
+                                                <td> <span ng-bind="instance.Plantel__c__Abr || instance.Plantel__c|limitTo:offerBase.limit" uib-tooltip="{{instance.Plantel__c}}"></span> </td>
+                                                <td> <span ng-bind="instance.Nivel__c|limitTo: 1" uib-tooltip="{{instance.Nivel__c}}"></span> </td>
+                                                <td> <span ng-bind="instance.AbreviaturaPrograma__c || instance.Programa__c|limitTo:offerBase.limit" uib-tooltip="{{instance.Programa__c}}"></span> </td>
+                                                <td> <span ng-bind="instance.DuracionPrograma__c|limitTo:offerBase.limit" uib-tooltip="{{instance.DuracionPrograma__c}}"></span> </td>
+                                                <td> <span ng-bind="instance.NumeroColegiaturas__c"></span> </td>
+                                                <td> <span ng-bind="instance.NumeroInscripciones__c"></span> </td>
+                                                <td ng-repeat="field in offerBase.fieldsPay" ng-bind="instance[field.Id] | currency: '$'"/>
+                                                <td>
+                                                    <a uib-tooltip="Configurar" ng-if="instance.Id" class="btn btn-success" ng-click="editPay(instance)" data-toggle="modal" data-target="#modalPagos">
+                                                        <span class="fa fa-usd fa-fw"></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <ul class="list-unstyled" ng-if="instance.Grupos__r && instance.Grupos__r.length > 0">
+                                                        <li ng-repeat="group in instance.Grupos__r">
+                                                            <span ng-bind="group.Name"/>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td>
+                                                    <a uib-tooltip="Configurar" ng-if="instance.Id" class="btn btn-primary" ng-click="editPay(instance)" data-toggle="modal" data-target="#modalGrupos">
+                                                    <span class="fa fa-users fa-fw"></span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                <!-- END with sforce -->
+                                </div>
+
+                                <div class="table-responsive table-offer">
+                                    <form name="formOfertaA" novalidate="true">
+                                    <table class="table table-hover" ng-if="isEditingOA">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                          <input type="checkbox" ng-model="btns.selectAll" ng-change="selectAllOffer()"></input> Todos
+                                                        </label>
+                                                    </div>
+                                                </th>
+                                                <th ng-repeat="foffer in fieldsS.offer" ng-class="{'ctc-min-head': foffer === 'NumeroColegiaturas__c' || foffer === 'NumeroInscripciones__c'}">
+                                                    <a class="ctc-btn" ng-click="setFieldSort(foffer)" uib-tooltip="{{fieldsK.offer[foffer].helpText}}">
+                                                        <span ng-class="iconSort(foffer)"/>
+                                                        <span ng-bind="fieldsK.offer[foffer].label" ng-if="foffer !== 'Modalidad__c'"/>
+                                                        <span ng-bind="fieldsK.offer[foffer].label|limitTo:1" ng-if="foffer === 'Modalidad__c'" uib-toolttip="{{fieldsK.offer[foffer].label}}"/>
+
+                                                    </a>
+                                                </th>
+                                                <th><a class="ctc-btn" ng-click="setFieldSort('P_Name')"> <span ng-class="iconSort('P_Name')"></span><span ng-bind="fieldsK.period.Name.label"/></a> </th>
+
+                                            <th><span uib-tooltip="Configurar pagos">$</span></th>
+                                            <th><span uib-tooltip="Configurar grupos">G</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="offer in pagination.filtered|orderBy:pagination.sortField:pagination.reverse | filter:search | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage as offerFiltered">
+                                                <td>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                          <input ng-change="offerIsCheck(offer)" type="checkbox" ng-model="offer.isChecked"></input> Seleccionar
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.Estatus__c, offer)">
+                                                    <sf-select sf-field="fieldsK.offer.Estatus__c" sf-opts="fieldsK.offer.Estatus__c.values" sf-label-prop="'label'" sf-instance="offer" sf-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"></sf-select>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.Modalidad__c, offer)">
+
+                                                    <sf-select sf-filter-method="listCampusByModality(offer, 'Plantel')" 
+                                                    sf-field="fieldsK.offer.Modalidad__c" 
+                                                    sf-opts="modalitys" 
+                                                    sf-label-prop="'Name'" 
+                                                    sf-validate="true" 
+                                                    sf-fields-validate="['Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c']" 
+                                                    sf-validate-registered="offerBase.instances" 
+                                                    sf-instance="offer" 
+                                                    sf-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"
+                                                    ></sf-select>
+
+                                                    <label class="label label-danger" ng-if="formOfertaA['Modalidad__c'+offer.$$hashKey].$error.offerValid"> Oferta duplicada</label>
+                                                    <label class="label label-danger" ng-if="formOfertaA['Modalidad__c'+offer.$$hashKey].$error.required"> Requerido</label>
+
+                                                </td>
+                                                
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.Plantel__c, offer)">
+                                                    <sf-auto-complete sf-service="services.campus" sf-fields="campusFields" sf-term="offer.opts.TermCampus" sf-selected="offer.opts.Plantel__c" sf-results="offer.results" sf-find-fields="['Name']"
+                                                    sf-disabled="!offer.opts.Modalidad__c"
+                                                    sf-action-select="selectedAutocomplete(offer)"
+                                                    sf-opts="offerBase.opts[offer.Id].Plantel__c"
+                                                    sf-auto-registered="offerBase.instances"
+                                                    sf-auto-fields="['Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c']"
+                                                    sf-auto-instance="offer"
+                                                    sf-auto-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"
+                                                    ></sf-auto-complete>
+                                                    <sf-select ng-hide="true" sf-field="fieldsK.offer.Plantel__c" 
+                                                    sf-opts="offerBase.opts[offer.Id].Plantel__c" sf-label-prop="'Name'" 
+                                                    sf-validate="true" sf-fields-validate="['Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c']" sf-validate-registered="offerBase.instances" sf-instance="offer" sf-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"></sf-select>
+                                                    <label class="label label-danger" ng-if="formOfertaA['Plantel__c'+offer.$$hashKey].$error.offerValid"> Oferta duplicada</label>
+                                                    <label class="label label-danger" ng-if="formOfertaA['Plantel__c'+offer.$$hashKey].$error.required"> Requerido</label>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.Nivel__c, offer)">
+                                                    <sf-select 
+                                                    sf-filter-method="listCampusByModality(offer, 'Programa')" sf-field="fieldsK.offer.Nivel__c"  
+                                                    sf-opts="offerBase.opts[offer.Id].Nivel__c" 
+                                                    sf-label-prop="'Name'" 
+                                                    sf-disabled="!offer.opts.Plantel__c"
+                                                    sf-validate="true" 
+                                                    sf-fields-validate="['Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c']" 
+                                                    sf-validate-registered="offerBase.instances" 
+                                                    sf-instance="offer" 
+                                                    sf-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"
+                                                    ></sf-select>
+                                                    <label class="label label-danger" ng-if="formOfertaA['Nivel__c'+offer.$$hashKey].$error.offerValid"> Oferta duplicada</label><label class="label label-danger" ng-if="formOfertaA['Nivel__c'+offer.$$hashKey].$error.required"> Requerido</label>
+                                                </td>
+
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.Programa__c, offer)">
+
+                                                    <sf-select 
+                                                    sf-filter-method="listRvoeByProgram(offer, 'Programa')"
+                                                    sf-field="fieldsK.offer.Programa__c" 
+                                                    sf-opts="offerBase.opts[offer.Id].Programa__c" 
+                                                    sf-label-prop="'Name'"  
+
+                                                    sf-disabled="!offer.opts.Nivel__c"
+                                                    sf-validate="true" 
+                                                    sf-fields-validate="['Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c']" 
+                                                    sf-validate-registered="offerBase.instances" 
+                                                    sf-instance="offer" 
+                                                    sf-form="formOfertaA"
+                                                    sf-is-valid="offerBase.hasDuplicated"
+                                                    ></sf-select>
+                                                    
+                                                    <label class="label label-danger" ng-if="formOfertaA['Programa__c'+offer.$$hashKey].$error.offerValid"> Oferta duplicada</label><label class="label label-danger" ng-if="formOfertaA['Programa__c'+offer.$$hashKey].$error.required"> Requerido</label>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.RvoeVigente__c, offer)">
+                                                    <sf-select ng-if="offerBase.opts[offer.Id].Programa__c_rvoe__o.length > 1"
+                                                    sf-field="fieldsK.offer.RvoeVigente__c" 
+                                                    sf-opts="offerBase.opts[offer.Id].Programa__c_rvoe__o" 
+                                                    sf-label-prop="'Name'"  
+                                                    sf-label-prop-two="'DuracionPrograma__c'"
+                                                    sf-instance="offer" 
+                                                    sf-form="formOfertaA"
+                                                    >
+                                                    </sf-select>
+                                                    <span ng-if="offer.opts.RvoeVigente__c && offerBase.opts[offer.Id].Programa__c_rvoe__o.length < 2" ng-bind="offer.opts.RvoeVigente__c.Name + ' ' + offer.opts.RvoeVigente__c.DuracionPrograma__c"></span>
+
+                                                    <label class="label label-danger" ng-if="formOfertaA['RvoeVigente__c'+offer.$$hashKey].$error.required"> Requerido</label>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.NumeroColegiaturas__c, offer)">
+                                                    <input name="NumeroColegiaturas__c{{offer.$$hashKey}}" type="text" class="form-control ctc-input-number" ng-model="offer.NumeroColegiaturas__c"
+                                                    ng-maxlength="fieldsK.offer.NumeroColegiaturas__c.precision"
+                                                    numbers-only="true" ></input>
+
+                                                    <label class="label label-danger" ng-if="formOfertaA['NumeroColegiaturas__c'+offer.$$hashKey].$error.maxlength"> Máximo excedido</label>
+                                                </td>
+                                                <td ng-class="setClassValid(formOfertaA, fieldsK.offer.NumeroInscripciones__c, offer)">
+                                                    <input name="NumeroInscripciones__c{{offer.$$hashKey}}" type="text" class="form-control ctc-input-number" ng-model="offer.NumeroInscripciones__c"
+                                                    ng-maxlength="fieldsK.offer.NumeroInscripciones__c.precision"
+                                                     numbers-only="true"></input>
+
+                                                    <label class="label label-danger" ng-if="formOfertaA['NumeroInscripciones__c'+offer.$$hashKey].$error.maxlength"> Máximo excedido</label>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" ng-options="o.Name for o in periods" ng-model="offer.opts.Periodo__c"></select>
+                                                </td>
+                                                <td>
+                                                    <a uib-tooltip="Configurar" ng-if="offer.Id" class="btn btn-success" ng-click="editPay(offer)" data-toggle="modal" data-target="#modalPagos">
+                                                        <span class="fa fa-usd fa-fw"></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a uib-tooltip="Configurar" ng-if="offer.Id" class="btn btn-primary" ng-click="editPay(offer)" data-toggle="modal" data-target="#modalGrupos">
+                                                    <span class="fa fa-users fa-fw"></span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="11" class="text-left">
+                                                    <a uib-tooltip="Agregar" ng-click="addOffer()" class="btn btn-primary">
+                                                        <span class="fa fa-plus fa-fw"></span>
+                                                        Agregar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </form>
+                                </div>
+
+                                <uib-pagination ng-if="pagination.filtered.length > pagination.itemsPerPage"
+                                  items-per-page="pagination.itemsPerPage" 
+                                  total-items="pagination.totalItems" 
+                                  ng-model="pagination.currentPage" 
+                                  max-size="pagination.maxPages" 
+                                  boundary-links="true" 
+                                  force-ellipses="true" 
+                                  first-text="{{pagination.first}}" 
+                                  previous-text="{{pagination.previous}}" 
+                                  next-text="{{pagination.next}}" 
+                                  last-text="{{pagination.last}}"
+                                  ></uib-pagination>
+
+                            </div>
+                            <div class="panel-footer">
+                            </div>
+                        </div><!-- offer académica -->
+                        </div><!-- end container-->
+
+
+                   <div class="modal fade" tabindex="-1" id="removeOffers"><!-- modal remove -->
+                      <div class="modal-dialog ieu-modal-danger">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Eliminar los elementos seleccionados?</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p>Elementos a eliminar: <span ng-bind="btns.sizeSelect"/></p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                <span class="fa fa-mail-reply fa-fw"></span>
+                                Cancelar
+                            </button>
+                            <button ng-disabled="actions.deletingOFE" ng-click="removeOffer()" type="button" class="btn btn-danger">
+                                <span ng-if="actions.deletingOFE" class="fa fa-spinner fa-pulse fa-fw"></span>
+                                <span ng-if="actions.deletingOFE">Eliminando</span>
+                                <span class="fa fa-exclamation-triangle fa-fw"></span>
+                                Confirmar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- end modal remove -->
+
+                    </div><!-- end controller -->
+                   <script type="text/javascript">
+                        var app = angular.module('appIEU');
+                        app.controller('ofertaEducativaCtrl', ['$scope', '$timeout', '$filter', '$interval', 'sfService', 'sfDB', 'sfUtils', 'filterFilter', function($scope, $timeout, $filter, $interval, sfService, sfDB, sfUtils, filterFilter) {
+
+                            $scope.validateStr = {opts: {}};
+                            $scope.sfService = sfService;
+                            $scope.sortField = '';
+                            $scope.title = 'Información';
+                            $scope.class = {valid: 'has-success', invalid: 'has-error'};
+
+                            $scope.haveAccess = {!$Setup.Negocio__c.PermitirEditarModalidad__c};
+
+                            $scope.titleOFE = 'Información de la oferta académica';
+
+                            var periodGW = new sfService.gateway.period();
+                            var offerGW = new sfService.gateway.offer();
+                            var catalogGW = new sfService.gateway.catalog();
+                            var programGW = new sfService.gateway.program();
+                            var campusGW = new sfService.gateway.campus();
+                            var paymentGW = new sfService.gateway.payments();
+                            var groupGW = new sfService.gateway.group();
+
+                            $scope.services = {campus: new sfService.gateway.campus()};
+
+                            $scope.opts = {selected: {}, values: [{id: 1, title: 'uno', description: 'dos'}, {id: 2, title: 'tres', description: 'cuatro'}, {id: 3, title: 'uno', description: 'seis'}], results: []};
+
+                            $scope.periodFields = [];
+                            $scope.offerFields = [];
+                            $scope.catalogFields = [];
+                            $scope.levelFields = [];
+                            $scope.programFields = [];
+                            $scope.campusFields = [];
+                            $scope.paymentsFields = [];
+                            $scope.groupFields = [];
+                            $scope.errors = [];
+                            $scope.limit = 20;
+                            $scope.offset = 0;
+
+                            $scope.periods = [];
+                            $scope.offers  = [];
+                            $scope.periodSelected = {};
+                            $scope.currentPeriod  = false;
+                            $scope.isEditingC     = false;
+                            $scope.saving = false;
+                            $scope.duplicate      = false;
+                            $scope.errors = [];
+                            $scope.notifications = [];
+
+                            $scope.catalogK = {};
+                            $scope.programK = {};
+                            $scope.campusK = {};
+                            $scope.fields = {};
+
+
+                            $scope.catalog = [];
+                            $scope.program = [];
+                            $scope.campus  = [];
+                            $scope.isEditingOA = false;
+                            $scope.modalitys = [];
+                            $scope.levels = [];
+                            $scope.conceptPay = [];
+                            $scope.periodicity = [];
+                            $scope.duration = [];
+                            $scope.periodOpts = {Activo__c: []};
+                            $scope.delay = 500;
+                            $scope.Timer = null;
+                            $scope.actions = {savingOFE: false, deletingOFE: false};
+                            $scope.activePeriods = {presential: {}, online: {}, hybrid: {}};
+
+                            $scope.btns = {selectAll: false, keysSelect: {}, sizeSelect: 0};
+
+                            $scope.fieldsK = {period: {}, offer: {}, catalog: {}, program: {}, campus: {}, payment: {}, group: {}, ppayment: {}};  
+                            //$scope.fieldsS = {offer: ['Estatus__c', 'Modalidad__c__Id', 'Plantel__c__Id', 'Nivel__c__Id', 'Programa__c__Id', 'NumeroColegiaturas__c', 'NumeroInscripciones__c', 'Periodicidad__c', 'DuracionPrograma__c'], payment: []}; 
+                            $scope.fieldsS = {offer: ['Estatus__c', 'Modalidad__c', 'Plantel__c__Abr', 'Nivel__c', 'AbreviaturaPrograma__c', 'DuracionPrograma__c', 'NumeroColegiaturas__c', 'NumeroInscripciones__c'], payment: []};
+
+                            $scope.offerBase = {
+                                keys: {}, 
+                                listFields: [], 
+                                get: 'SELECT Id, CreatedDate, Estatus__c, Periodo__c, Modalidad__r.Id, Modalidad__r.Name, Modalidad__r.Abreviatura__c, Plantel__r.Id, Plantel__r.Name, Plantel__r.Abreviatura__c, Nivel__r.Id, Nivel__r.Name, Nivel__r.Abreviatura__c, Programa__r.Id, Programa__r.Name, Programa__r.AbreviaturaPrograma__c, NumeroColegiaturas__c, NumeroInscripciones__c, Periodicidad__c, DuracionPrograma__c, (SELECT Id, Activo__c, Cantidad__c, ConceptoPago__r.Id, ConceptoPago__r.Name, ConceptoFijo__c, Monto__c FROM OfertasConceptoPagos__r WHERE Activo__c=true), (SELECT Id,Name,Grupo__c FROM Grupos__r),RvoeVigente__r.Id, RvoeVigente__r.Name FROM OfertaEducativa__c WHERE Periodo__c',
+                                instances: [],
+                                master: [],
+                                listUnique: {},
+                                pays: [],
+                                fieldsPay: [],
+                                keysPay: {},
+                                opts: {},
+                                duplicated: {},
+                                hasDuplicated: false,
+                                limit: 5
+                            };
+
+                            $scope.pagination = {
+                                  itemsPerPage: 10,  
+                                  maxPages: 5, 
+                                  totalItems: 0, 
+                                  currentPage: 0,
+                                  totalPages: 0,
+                                  first: 'Primero',
+                                  previous: 'Ant',
+                                  next: 'Sig',
+                                  last: 'Último',
+                                  filtered: [],
+                                  pageSize : [5, 10, 15, 20, 25, 50, 100],
+                                  sortField: 'CreatedDate',
+                                  reverse: true,
+                                  search: '',
+                                  visibles: {}
+                                };
+
+
+                            //Periods
+                            $scope.getPeriods = function() {
+                                var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: parseInt($scope.limit)};
+                                if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+                                sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, periodGW, function(err, res) {
+                                    sfDB.parseFromDB(res, $scope.periodFields, function(err, data) {
+                                        if(!err) {
+                                            $scope.periods = data;
+                                            $scope.setSelectedPeriod();
+                                        }
+                                    });
+                                });
+                            };
+                            $scope.setSelectedPeriod = function(period, findId) {
+                                if(findId) {
+                                    var res = $filter('filter')($scope.periods, {Id: period.Id});
+                                    if(res && res.length > 0) {
+                                        period = res[0];
+                                    }
+                                }
+                                $scope.periodSelected = period || $scope.periods[0];
+                                $scope.isEditingC     = false;
+                                $scope.isEditingOA = false;
+                                if($scope.periodSelected !== 'udefined') {
+                                    $scope.currentPeriod = angular.copy($scope.periodSelected);
+                                    $scope.title = 'Información del periodo: ' + $scope.currentPeriod.Name;
+                                    angular.forEach($scope.conceptPay, function(value, key){value.isChecked = false; });
+                                    //Funcional 22 $scope.getOffertByPeriod($scope.currentPeriod);
+                                    listOfferByPeriod($scope.currentPeriod);
+                                }
+                            };
+                            $scope.editPeriod = function(period, duplicate) {
+                                $scope.isEditingC = true;
+                                $scope.isEditingOA = false;
+                                $scope.errors = [];
+                                $scope.currentPeriod = angular.copy(period);
+                                if($scope.currentPeriod.hasOwnProperty('Id')) {
+                                    $scope.title = 'Editar periodo .: ' + $scope.currentPeriod.Name + ' :.';
+                                } else {
+                                    $scope.title = 'Agregar periodo';
+                                    $scope.offers = [];
+                                }
+                                if(duplicate) {
+                                    $scope.duplicate = true;
+                                    $scope.title = 'Duplicar periodo .: ' + $scope.currentPeriod.Name + ' :.';
+                                    delete $scope.currentPeriod.ActivoPresencial__c;
+                                    delete $scope.currentPeriod.ActivoOnline__c;
+                                    delete $scope.currentPeriod.ActivoEjecutiva__c;
+                                }
+                                if(!$scope.currentPeriod.hasOwnProperty('opts')) {
+                                    $scope.currentPeriod.opts = {};
+                                }
+                                //var activo = $filter('filter')($scope.fieldsK.period.Activo__c.values, {value: $scope.currentPeriod.Activo__c});
+                                //if($scope.currentPeriod.Activo__c && $scope.currentPeriod.Activo__c.length > 0 && activo && activo.length > 0) {$scope.currentPeriod.opts.Activo__c = activo[0];}
+
+                                $timeout(function() {$('#Name').focus();}, 400);
+                            };
+                            $scope.savePeriod = function(addOther) {
+                                $scope.saving = true;
+                                //$scope.currentPeriod.Activo__c = 'Inactivo';
+                                //if($scope.currentPeriod.opts.Activo__c) {
+                                    //$scope.currentPeriod.Activo__c = $scope.currentPeriod.opts.Activo__c.value 
+                                //}
+                                var toStore = angular.copy($scope.currentPeriod);
+
+                                toStore.FechaInicio__c = sfDB.createDate(toStore.FechaInicio__c);
+                                toStore.FechaFin__c = sfDB.createDate(toStore.FechaFin__c);
+
+                                toStore.FechaInicioReal__c = sfDB.createDate(toStore.FechaInicioReal__c);
+                                toStore.FechaFinReal__c = sfDB.createDate(toStore.FechaFinReal__c);
+
+                                delete toStore.CreatedDate;
+                                delete toStore.opts;
+                                if(!$scope.haveAccess) {
+                                    delete toStore.ActivoPresencial__c;
+                                    delete toStore.ActivoOnline__c;
+                                    delete toStore.ActivoEjecutiva__c;
+                                }
+                                if(toStore.hasOwnProperty('Id') && !$scope.duplicate) {//update instance
+                                    sfDB.getRemoteAction({action: 'update'}, new sfService.gateway.period(toStore), function(err, res) {
+                                        $scope.processResult(err, res, 'update');
+                                        if(!err) {
+                                            for(key in $scope.currentPeriod) {
+                                                $scope.periodSelected[key] = $scope.currentPeriod[key];
+                                            }
+                                            $scope.getPeriodCurrents();
+                                            $scope.$apply();
+                                            $scope.cancelEditPeriod();
+                                            if(addOther) {
+                                                $scope.editPeriod({});
+                                            }
+                                        }
+                                    });
+                                } else {//create instance
+                                    delete toStore.Id;
+                                    toStore.Activo__c = 'Inactivo';
+
+                                    sfDB.getRemoteAction({instance: toStore, action: 'create'}, periodGW, function(err, res) {
+                                        $scope.processResult(err, res, 'create');
+                                        if(!err){
+                                            $scope.currentPeriod.Id = res[0];
+                                            if($scope.duplicate) {
+
+
+
+                                                /*angular.forEach($scope.offerBase.instances, function(item, index) {
+                                                    item.Periodo__c = $scope.currentPeriod.Id;
+                                                    delete item.Id;
+                                                });
+                                                $scope.saveOffer();*/
+
+                                                var copy = {offer: [], payment: []};
+                                                var fields = {
+                                                    offer: ['Estatus__c', 'Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c', 'RvoeVigente__c', 'NumeroColegiaturas__c', 'NumeroInscripciones__c', 'Periodo__c'],
+                                                    payment: ['Activo__c', 'Cantidad__c', 'Monto__c', 'OfertaEducativa__c', 'ConceptoPago__c']
+                                                };
+                                                angular.forEach($scope.offerBase.instances, function(item, index) {
+                                                    var obj = new sforce.SObject('OfertaEducativa__c');
+                                                    angular.forEach(fields.offer, function(f, key){
+                                                        obj[f] = item[f];
+                                                    });
+                                                    obj.Modalidad__c = item.Modalidad__c__Id;
+                                                    obj.Plantel__c = item.Plantel__c__Id;
+                                                    obj.Nivel__c = item.Nivel__c__Id;
+                                                    obj.Programa__c = item.Programa__c__Id;
+                                                    obj.Periodo__c = res[0];
+                                                    obj.RvoeVigente__c = item.RvoeVigente__c__Id;
+
+                                                    if(item.OfertasConceptoPagos__r) {
+                                                        angular.forEach(item.OfertasConceptoPagos__r, function(e, key){
+                                                            var p = new sforce.SObject('OfertaConceptoPagos__c');
+                                                            p.Activo__c = e.Activo__c;
+                                                            p.Cantidad__c = e.Cantidad__c;
+                                                            p.ConceptoFijo__c = e.ConceptoFijo__c;
+                                                            p.ConceptoPago__c = e.ConceptoPago__r.Id;
+                                                            p.Monto__c = e.Monto__c;
+                                                            p.OfertaEducativa__c = item.Id;
+                                                            copy.payment.push(p);
+                                                        });
+                                                    }
+                                                    copy.offer.push(obj);
+                                                });
+                                                console.log('\n\n copy upserts: ' + res[0]);
+                                                console.log(copy);
+                                                $scope.pagination.filtered = [];
+                                                $scope.periods.unshift($scope.currentPeriod);
+                                                $scope.periodSelected = $scope.currentPeriod;
+                                                
+                                                sfUtils.upsert(copy.offer, function(res) {
+                                                    console.log('\n\nresponse upserts offer: ');
+                                                    console.log(res);
+                                                    $scope.cancelEditPeriod(true);
+                                                });
+                                                sfUtils.upsert(copy.payment, function(res) {
+                                                    console.log('\n\nresponse upserts payment: ');
+                                                    console.log(res);
+                                                });
+                                            } else {
+                                                //$scope.offerBase.instances = [];
+                                                //$scope.pagination.filtered = [];
+                                                $scope.periods.unshift($scope.currentPeriod);
+                                                $scope.periodSelected = $scope.currentPeriod;
+                                                $scope.cancelEditPeriod(true);
+                                                if(addOther) {
+                                                    $scope.editPeriod({});
+                                                }
+                                            } 
+                                        }
+                                    });
+                                }
+                            };
+                            $scope.cancelEditPeriod = function(useApply) {
+                                $scope.errors = [];
+                                $scope.isEditingC = false;
+                                $scope.isEditingOA = false;
+                                $scope.duplicate = false;
+                                $scope.saving = false;
+                                $scope.setSelectedPeriod($scope.periodSelected);
+                                if(useApply) {
+                                    $scope.$apply();
+                                }
+                            };
+                            $scope.getPeriodCurrents = function() {
+                                $scope.activePeriods = {presential: {}, online: {}, hybrid: {}};
+                                var criteria = {where: {or: {or: {ActivoEjecutiva__c: {eq: true }, ActivoPresencial__c: {eq: true } }, ActivoOnline__c: {eq:true}}}};
+                                sfDB.getRemoteAction({criteria:criteria, action: 'retrieve'}, periodGW, function(err, res) {
+                                    sfDB.parseFromDB(res, $scope.periodFields, function(err, data) {
+                                        angular.forEach(data, function(value, key){
+                                            if(value.ActivoPresencial__c && !$scope.activePeriods.presential.hasOwnProperty('Id')) {
+                                                $scope.activePeriods.presential = angular.copy(value);
+                                            }
+                                            if(value.ActivoOnline__c && !$scope.activePeriods.online.hasOwnProperty('Id')) {
+                                                $scope.activePeriods.online = angular.copy(value);
+                                            }
+                                            if(value.ActivoEjecutiva__c && !$scope.activePeriods.hybrid.hasOwnProperty('Id')) {
+                                                $scope.activePeriods.hybrid = angular.copy(value);
+                                            }
+                                        });
+                                        $scope.$apply();
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    });
+                                });
+                            }; 
+
+
+
+                            //Offers    
+                            var listOfferByPeriod = function(period) {
+                                if(period && period.Id && $scope.offerBase && $scope.offerBase.get) {
+                                    var query = $scope.offerBase.get + '=\''+period.Id+'\'  ORDER BY CreatedDate DESC'
+                                    listInstancesSforce(query, function(res) {
+                                        $scope.offerBase.instances = [];
+                                        $scope.offerBase.keysPay = {};
+                                        if(res.size === '1') {
+                                            var temp = angular.copy(res.records);
+                                            $scope.offerBase.instances.push(temp);
+                                        } else if(res.records && res.records.length > 1) {
+                                            $scope.offerBase.instances = angular.copy(res.records);
+                                        }
+                                        $scope.viewPagination($scope.pagination.search, 1);
+                                        console.time('instances.list');
+                                        var offerUpdate = [];
+                                        angular.forEach($scope.offerBase.instances, function(offer, key) {
+
+                                            if(offer.NumeroColegiaturas__c) {
+                                                offer.NumeroColegiaturas__c = parseInt(offer.NumeroColegiaturas__c);
+                                            }
+                                            if(offer.NumeroInscripciones__c) {
+                                                offer.NumeroInscripciones__c = parseInt(offer.NumeroInscripciones__c);
+                                            }
+                                            if(offer.Modalidad__r) {
+                                                offer.Modalidad__c = offer.Modalidad__r.Abreviatura__c ? offer.Modalidad__r.Abreviatura__c :  offer.Modalidad__r.Name;
+                                                offer.Modalidad__c__Id = offer.Modalidad__r.Id;
+                                                delete offer.Modalidad__r;
+                                            }
+                                            if(offer.Plantel__r) {
+                                                //offer.Plantel__c = offer.Plantel__r.Abreviatura__c ? offer.Plantel__r.Abreviatura__c : offer.Plantel__r.Name;
+                                                offer.Plantel__c = offer.Plantel__r.Name;
+                                                offer.Plantel__c__Id = offer.Plantel__r.Id;
+                                                offer.Plantel__c__Abr = offer.Plantel__r.Abreviatura__c;
+                                                delete offer.Plantel__r;
+                                            }
+                                            if(offer.Nivel__r) {
+                                                offer.Nivel__c = offer.Nivel__r.Abreviatura__c ? offer.Nivel__r.Abreviatura__c : offer.Nivel__r.Name;
+                                                offer.Nivel__c__Id = offer.Nivel__r.Id;
+                                                delete offer.Nivel__r;
+                                            }
+                                            if(offer.Programa__r) {
+                                                offer.Programa__c = offer.Programa__r.Name;
+                                                offer.AbreviaturaPrograma__c = offer.Programa__r.AbreviaturaPrograma__c;
+                                                offer.Programa__c__Id = offer.Programa__r.Id;
+                                                delete offer.Programa__r;
+                                            }
+                                            if(offer.RvoeVigente__r) {
+                                                offer.RvoeVigente__c = offer.RvoeVigente__r.Name;
+                                                offer.RvoeVigente__c__Id = offer.RvoeVigente__r.Id;
+                                                //offer.DuracionPrograma__c = 
+                                                delete offer.RvoeVigente__r;
+                                            }
+                                            if(offer.OfertasConceptoPagos__r && offer.OfertasConceptoPagos__r.records) {
+                                                //override offer payment
+                                                //offer.OfertasConceptoPagos__r = angular.copy(offer.OfertasConceptoPagos__r.records);
+                                                //console.log(offer.OfertasConceptoPagos__r);
+                                                if(offer.OfertasConceptoPagos__r && offer.OfertasConceptoPagos__r.size === '1') {
+                                                    var temp = angular.copy(offer.OfertasConceptoPagos__r.records);
+                                                    offer.OfertasConceptoPagos__r = [];
+                                                    offer.OfertasConceptoPagos__r.push(temp);
+                                                } else if(offer.OfertasConceptoPagos__r && offer.OfertasConceptoPagos__r.records && offer.OfertasConceptoPagos__r.records.length > 1) {
+                                                    offer.OfertasConceptoPagos__r = angular.copy(offer.OfertasConceptoPagos__r.records);
+                                                }
+
+                                                
+                                                angular.forEach(offer.OfertasConceptoPagos__r, function(payment, key) {
+                                                    //console.log(payment);
+                                                    offer[payment.ConceptoPago__r.Id] = payment.Monto__c;
+                                                    if(!$scope.offerBase.keysPay.hasOwnProperty(payment.ConceptoPago__r.Id)) {
+                                                        $scope.offerBase.keysPay[payment.ConceptoPago__r.Id] = true;
+                                                    }
+                                                });
+                                            }
+                                            //override groups
+                                            if(offer.Grupos__r && offer.Grupos__r.size === '1') {
+                                                var temp = angular.copy(offer.Grupos__r.records);
+                                                offer.Grupos__r = [];
+                                                offer.Grupos__r.push(temp);
+                                            } else if(offer.Grupos__r && offer.Grupos__r.records && offer.Grupos__r.records.length > 0) {
+                                                offer.Grupos__r = angular.copy(offer.Grupos__r.records);
+                                            }
+
+                                            //verify if offer has groups or payment
+                                            var offerTemp = new sforce.SObject("OfertaEducativa__c");
+                                            offerTemp.Id = offer.Id;
+                                            offerTemp.GrupoConfigurado__c = (offer.Grupos__r !== null && offer.Grupos__r.length > 0);
+                                            offerTemp.PagoConfigurado__c = (offer.OfertasConceptoPagos__r !== null && offer.OfertasConceptoPagos__r.length > 0);
+                                            offerUpdate.push(offerTemp);
+
+                                        });
+                                        $scope.offerBase.fieldsPay = [];
+                                        $scope.conceptPay = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Concepto Pagos'}, true);
+                                        angular.forEach($scope.conceptPay, function(concept, key) {
+                                            if($scope.offerBase.keysPay.hasOwnProperty(concept.Id)) {
+                                                $scope.offerBase.fieldsPay.push(concept);
+                                            }
+                                        });
+                                        //Funcional updateInstancesSforce(offerUpdate, function(err, res) {
+                                            //console.log('in offerUpdate----' + new Date());
+                                        //});
+
+                                        $scope.$apply();
+
+                                        console.timeEnd('instances.list');
+                                    });
+                                }
+                            };
+                            $scope.addOffer = function() {
+                                var instance = {opts:{Periodo__c: $scope.periodSelected}};
+                                if($scope.pagination.filtered && $scope.pagination.filtered.length >0) {
+                                    instance = angular.copy($scope.pagination.filtered[0]);
+                                    var delKeys = ['Id', 'Estatus__c', 'NumeroColegiaturas__c', 'NumeroInscripciones__c', 'Periodicidad__c', 'DuracionPrograma__c', 'OfertasConceptoPagos__r', 'Grupos__r', 'Modalidad__c', 'Modalidad__c__Id', 'Plantel__c', 'Plantel__c__Id', 'Nivel__c', 'Nivel__c__Id', 'Programa__c', 'Programa__c__Id', 'opts'];
+                                    angular.forEach(delKeys, function(value, key){
+                                        delete instance[value];
+                                    });
+                                    instance.Id = new Date().getTime();
+                                    instance['opts'] = {Periodo__c: $scope.periodSelected, Estatus__c: $scope.fieldsK.offer.Estatus__c.values[0]};
+                                }
+                                $scope.offerBase.instances.push(instance);
+                                $scope.viewPagination($scope.pagination.search, 1);
+                            };
+                            $scope.copyOffer = function() {
+                                //angular.forEach($scope.pagination.filtered, function(item, index) {
+                                $scope.clones = [];
+                                angular.forEach($scope.offerBase.instances, function(item, index) {
+                                    if(item.isChecked) {
+                                        var clone = angular.copy(item);
+                                        if(clone.opts.Modalidad__c) {
+                                            clone.Modalidad__c__Id = clone.opts.Modalidad__c.Id;
+                                        }
+                                        if(clone.opts.Plantel__c){
+                                            clone.Plantel__c__Id = clone.opts.Plantel__c.Id;
+                                        }
+                                        if(clone.opts.Nivel__c) {
+                                            clone.Nivel__c__Id = clone.opts.Nivel__c.Id;
+                                        }
+                                        if(clone.opts.Programa__c) {
+                                            clone.Programa__c__Id = clone.opts.Programa__c.Id;
+                                        }
+
+                                        delete clone.opts;
+                                        delete clone.Id;
+                                        delete clone.isChecked;
+                                        //clone.CreatedDate = new Date();
+                                        //console.log('\n base to clone');
+                                        //console.log(item);
+                                        //console.log(clone);
+                                        clone.Id = new Date().getTime();
+
+                                        $scope.detailsOffer(clone);
+
+                                        $scope.clones.push(clone);
+                                        $scope.offerBase.instances.push(clone);
+                                    }
+                                });
+                                $scope.viewPagination($scope.pagination.search, 1);
+                            };
+                            $scope.editOfferByPeriod = function() {
+                                //console.log('in editOfferByPeriod...');
+                                $scope.modalitys = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Modalidad'}, true);
+                                $scope.isEditingOA = true;
+                                $scope.actions.savingOFE = false;
+                                $scope.actions.deletingOFE = false;
+                                $scope.btns = {selectAll: false, keysSelect: {}, sizeSelect: 0};
+                                $scope.fieldsK.offer.Estatus__c.required = true;
+                                $scope.offerBase.duplicated = {};
+                                if($scope.offerBase.instances && $scope.offerBase.instances.length > 0) {
+                                    //console.time('instances.edit');
+                                    $scope.offerBase.master = angular.copy($scope.offerFiltered);
+                                    $scope.offerBase.listUnique = {};
+                                    //get offer duplicate
+                                    angular.forEach($scope.pagination.filtered, function(offer, key) {
+                                        $scope.detailsOffer(offer);
+                                    });
+                                    angular.forEach($scope.offerBase.listUnique, function(unique, key) {
+                                        if(unique && unique.length > 1) {
+                                            angular.forEach(unique, function(duplicated, key){
+                                                $scope.offerBase.duplicated[duplicated] = true;
+                                            });
+                                        }
+                                    });
+                                    $scope.offerBase.hasDuplicated = Object.keys($scope.offerBase.duplicated).length > 0;
+                                    //console.timeEnd('instances.edit');
+                                }
+                            };
+                            $scope.detailsOffer = function(offer) {
+                                var key = offer.Modalidad__c__Id+'|'+offer.Plantel__c__Id+'|'+offer.Nivel__c__Id+'|'+offer.Programa__c__Id;
+                                var value = '';
+                                if(!$scope.offerBase.listUnique[key]) {
+                                    $scope.offerBase.listUnique[key] = [];
+                                }
+                                $scope.offerBase.listUnique[key].push(offer.Id);
+
+                                offer.opts = {Periodo__c: $scope.periodSelected};
+                                var estatus = $filter('filter')($scope.fieldsK.offer.Estatus__c.values, {value: offer.Estatus__c}, true);
+                                var periodicity = $filter('filter')($scope.periodicity, {value: offer.Periodicidad__c}, true);
+                                //var duration = $filter('filter')($scope.duration, {value: offer.DuracionPrograma__c}, true);
+                                if(estatus && estatus.length > 0) {offer.opts.Estatus__c = estatus[0];}
+                                if(periodicity && periodicity.length > 0) {offer.opts.Periodicidad__c = periodicity[0]; }
+                                //if(duration && duration.length > 0) {offer.opts.DuracionPrograma__c = duration[0]; }
+                                
+                                
+                                if(offer.Modalidad__c__Id) {
+                                    var modality = $filter('filter')($scope.modalitys, {Id: offer.Modalidad__c__Id});
+                                    if(modality && modality.length > 0) {
+                                        offer.opts.Modalidad__c = modality[0];
+                                        $scope.listCampusByModality(offer, 'Plantel', true);
+                                    }
+                                }
+                            };
+                            $scope.cancelEditOffer = function() {
+                                $scope.isEditingOA = false;
+                                $scope.errors = [];
+                                //Funcional 22 $scope.getOffertByPeriod($scope.currentPeriod);
+                                $scope.setSelectedPeriod($scope.periodSelected);
+                            };
+                            $scope.saveOffer = function() {
+                                //console.log('in save offer: ' + $scope.pagination.filtered.length);
+                                //var length = $scope.offerBase.instances.length;
+                                var length = $scope.pagination.filtered.length;
+                                var sizeSaved = 0;
+                                $scope.actions.savingOFE = true;
+                                $scope.errors = [];
+                                if(length > 0) {
+                                    //angular.forEach($scope.offerBase.instances, function(item, index) {
+                                    angular.forEach($scope.pagination.filtered, function(item, index) {
+                                        var payments = [];
+                                        var toStore = {
+                                            Estatus__c: item.opts && item.opts.Estatus__c ? item.opts.Estatus__c.value : item.Estatus__c,
+                                            Modalidad__c: item.opts && item.opts.Modalidad__c ? item.opts.Modalidad__c.Id : item.Modalidad__c__Id,
+                                            Plantel__c: item.opts && item.opts.Plantel__c ? item.opts.Plantel__c.Id : item.Plantel__c__Id,
+                                            Nivel__c: item.opts && item.opts.Nivel__c ? item.opts.Nivel__c.Id : item.Nivel__c__Id,
+                                            Programa__c: item.opts && item.opts.Programa__c ? item.opts.Programa__c.Id : item.Programa__c__Id,
+                                            NumeroColegiaturas__c: item.NumeroColegiaturas__c,
+                                            NumeroInscripciones__c: item.NumeroInscripciones__c,
+                                            Periodo__c: item.opts && item.opts.Periodo__c ? item.opts.Periodo__c.Id : item.Periodo__c
+                                        };
+                                        //Set DuracionPrograma__c
+                                        //if(item.opts && item.opts.Programa__c && item.opts.Programa__c.DuracionPrograma__c) {
+                                          //  toStore.DuracionPrograma__c = item.opts.Programa__c.DuracionPrograma__c;
+                                        //}
+                                        if(item.opts && item.opts.RvoeVigente__c) {
+                                            toStore.RvoeVigente__c = item.opts.RvoeVigente__c.Id;
+                                        } else if(item.RvoeVigente__c__Id) {
+                                            toStore.RvoeVigente__c = item.RvoeVigente__c__Id;
+                                        }
+
+                                        //console.log('toStore');
+                                        //console.log(toStore);
+                                        if(item.hasOwnProperty('Id') || $scope.duplicate) {
+                                            if(item.Id && item.Id.toString().indexOf('a0B') !== -1) {
+                                                toStore.Id = item.Id;
+                                            } else {
+                                                angular.forEach(item.OfertasConceptoPagos__r, function(payment, key) {
+                                                    var payload = new sforce.SObject("OfertaConceptoPagos__c");
+                                                        payload.Activo__c = payment.Activo__c;
+                                                        payload.Cantidad__c = payment.Cantidad__c;
+                                                        payload.ConceptoPago__c = payment.ConceptoPago__r.Id; 
+                                                        payload.ConceptoFijo__c = toStore.ConceptoFijo__c;
+                                                        payload.Monto__c = payment.Monto__c;
+                                                        payments.push(payload);
+                                                });
+                                            }
+                                        }
+                                        if(toStore.hasOwnProperty('Id')) {//update offer
+                                            sfDB.getRemoteAction({action: 'update'}, new sfService.gateway.offer(toStore), function(err, res, all) {
+                                                $scope.processResult(err, res, 'update');
+                                                sizeSaved++;
+                                                if(!err) {
+                                                    for(key in toStore) {
+                                                        if(item.hasOwnProperty(key)) {
+                                                            item[key] = toStore[key];
+                                                        }
+                                                    }
+                                                }
+                                                if(index === (length - 1)) {
+                                                    if(!err) {
+                                                    }
+                                                }
+                                            });
+                                        } else { //create offer
+                                            sfDB.getRemoteAction({instance: toStore, action: 'create'}, offerGW, function(err, res) {
+                                                //console.log('\n\nfinish save: ');
+                                                //console.log(err);
+                                                //console.log(res);
+                                                $scope.processResult(err, res, 'create');
+                                                if(!err) {
+                                                    angular.forEach(payments, function(payment, key){
+                                                        payment.OfertaEducativa__c = res[0];
+                                                    });
+                                                    //console.log(payments);
+                                                    saveInstancesSforce(payments, function(res) {
+                                                        //console.log('aggregate payments...');
+                                                    });
+                                                }
+                                                sizeSaved++;
+                                                if(index === (length - 1)) {
+                                                    if(!err) {
+                                                        item.Id = res[0];
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    $scope.Timer = $interval(function () {
+                                        if(sizeSaved === length) {
+                                            $interval.cancel($scope.Timer);
+                                            $scope.actions.savingOFE = false;
+                                            if($scope.errors.length < 1) {
+                                                $scope.cancelEditPeriod();
+                                            }
+                                        }
+                                    }, $scope.delay);
+
+                                } else {
+                                    $scope.cancelEditPeriod();
+                                }
+                            };
+                            $scope.removeOffer = function() {
+                                var sizeDeleted = 0;
+                                var offerDeleted = [];
+                                $scope.actions.deletingOFE = true;
+                                $scope.errors = [];
+
+                                //angular.forEach($scope.offers, function(item, index) {
+                                angular.forEach($scope.offerBase.instances, function(item, index) {
+                                    if(item.isChecked && item.hasOwnProperty('Id') && item.Id.length>14 && item.Id.toString().indexOf('a0B') !== -1) {
+                                        sfDB.getRemoteAction({instance: item, action: 'del'}, offerGW, function(err, res) {
+                                            $scope.processResult(err, res, 'update');
+                                            $('#removeOffers').modal('hide');
+                                            sizeDeleted++;
+                                            if(!err) {
+                                                offerDeleted.push(item);
+                                            }
+                                        });
+                                    } else if(item.isChecked) {
+                                        sizeDeleted++;
+                                        offerDeleted.push(item);
+                                    }
+                                });
+                                $scope.Timer = $interval(function () {
+                                    if(sizeDeleted === $scope.btns.sizeSelect) {
+                                        $interval.cancel($scope.Timer);
+                                        $scope.actions.deletingOFE = false;
+                                        angular.forEach(offerDeleted, function(item) {
+
+                                            item.isChecked = false;
+                                            $scope.offerIsCheck(item);
+
+                                           // var index = $scope.offers.indexOf(item);
+                                            var index = $scope.offerBase.instances.indexOf(item);
+                                            //$scope.offers.splice(index, 1);
+                                            $scope.offerBase.instances.splice(index, 1);
+                                            $('#removeOffers').modal('hide');
+                                        });
+                                        $scope.viewPagination($scope.pagination.search, 1);
+                                    }
+                                }, $scope.delay);
+                            };
+                            $scope.selectAllOffer = function() {
+                                var isChecked = $scope.btns.selectAll;
+                                angular.forEach($scope.pagination.filtered, function(item, index) {
+                                    item.isChecked = isChecked;
+                                    $scope.offerIsCheck(item);
+                                });
+                            };
+                            $scope.offerIsCheck = function(offert) {
+                                if(offert.isChecked) {
+                                    if(offert.Id) {
+                                        $scope.btns.keysSelect[offert.Id] = true;
+                                    } else {
+                                        $scope.btns.keysSelect[offert.$$hashKey] = true;
+                                    }
+                                } else {
+                                    if(offert.Id) {
+                                        delete $scope.btns.keysSelect[offert.Id];
+                                    } else {
+                                        delete $scope.btns.keysSelect[offert.$$hashKey];
+                                    }
+                                }
+                                $scope.sizeToRemoveOffer();
+                            };
+                            $scope.sizeToRemoveOffer = function() {
+                                $scope.btns.sizeSelect = Object.keys($scope.btns.keysSelect).length;
+                                $scope.btns.selectAll = $scope.btns.sizeSelect === $scope.pagination.filtered.length;
+                            };
+                            $scope.selectedAutocomplete = function(offer) {
+                                $scope.listCampusByModality(offer, 'Nivel');
+                            };
+                            $scope.listCampusByModality = function(offer, filter, initial) {
+                                //console.log('in listCampusByModality hashKey: ' + offer.Id);
+                                var fields = ['Plantel__c', 'Nivel__c', 'Programa__c', 'TermCampus'];
+                                if($scope.instances.rvoe) {
+                                    var unique = {};
+                                    var result = [];
+                                    var filtered = [];
+                                    var objFilter = {};
+                                    var parentValue = 'Modalidad';
+                                    //console.log('\n\nfilter: ' + filter);
+                                    //console.log(offer);
+                                    if($scope.offerBase.opts && $scope.offerBase.opts[offer.Id] && $scope.offerBase.opts[offer.Id].Programa__c_rvoe) {
+                                        delete $scope.offerBase.opts[offer.Id].Programa__c_rvoe;
+                                        delete $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o;
+                                    }
+                                    delete offer.opts.RvoeVigente__c;
+                                    var removeAttr = false;
+                                    //if(offer.opts.Modalidad__c && offer.opts.Modalidad__c.Id) {
+                                    if(offer.opts.Modalidad__c && offer.opts.Modalidad__c.Id) {
+                                        if(filter === 'Plantel') {
+                                            filtered = $filter('filter')($scope.instances.rvoe, {Modalidad__c: offer.opts.Modalidad__c.Id});
+                                            if(filtered && filtered.length > 0) {
+                                                angular.forEach(filtered, function(value, key) {
+                                                    if(!unique.hasOwnProperty(value[filter+'__c'])) {
+                                                        unique[value[filter+'__c']] = true;
+                                                        result.push({Id: value[filter+'__c'], Name: value[filter+'__r'].Name});
+                                                    }
+                                                });
+                                                //offer.opts[filter+'__cOPTS'] = result;
+                                                //$scope.offerBase.opts[offer.Id] = {Plantel__c: [], Nivel__c: [], Programa__c: []};
+                                                $scope.offerBase.opts[offer.Id] = {Plantel__c: [], Nivel__c: [], Programa__c: []};
+                                                //$scope.offerBase.opts[offer.Id].Plantel__c = result;
+                                                $scope.offerBase.opts[offer.Id].Plantel__c = result;
+                                                var valueFilter = (initial ? (offer[filter+'__c__Id']) : (offer.opts.Plantel__c ? offer.opts.Plantel__c.Id : ''));
+                                                if(valueFilter && valueFilter.length > 0) {
+                                                    var instance = $filter('filter')($scope.offerBase.opts[offer.Id].Plantel__c, {Id: valueFilter})[0];
+                                                    //console.log('result instance: ' + valueFilter);
+                                                    //console.log(instance);
+                                                    if(instance && instance.Id) {
+                                                        offer.opts.TermCampus = '';
+                                                        offer.opts.TermCampus = instance.Name;
+                                                        offer.opts.Plantel__c = instance;
+                                                        $scope.listCampusByModality(offer, 'Nivel', initial);
+                                                    } else {
+                                                        removeAttr = true;
+                                                    }
+                                                }
+                                            } else {
+                                                removeAttr = true;
+                                            }
+                                            if(removeAttr) {
+                                                delete offer.opts.TermCampus;
+                                                delete offer.opts.Programa__c;
+
+                                                delete offer.opts.Programa__cOPTS;
+                                                delete offer.opts.Nivel__c;
+                                                delete offer.opts.Nivel__cOPTS;
+                                            }
+                                        }  else if(filter === 'Nivel') {
+                                            if(offer.opts.Plantel__c && offer.opts.Plantel__c.Id) {
+                                                filtered = $filter('filter')($scope.instances.rvoe, {Modalidad__c: offer.opts.Modalidad__c.Id, Plantel__c: offer.opts.Plantel__c.Id});
+                                                if(filtered && filtered.length > 0) {
+                                                    angular.forEach(filtered, function(value, key) {
+                                                        if(!unique.hasOwnProperty(value[filter+'__c'])) {
+                                                            unique[value[filter+'__c']] = true;
+                                                            result.push({Id: value[filter+'__c'], Name: value[filter+'__r'].Name});
+                                                        }
+                                                    });
+                                                    //$scope.offerBase.opts[offer.Id].Nivel__c = result;
+                                                    $scope.offerBase.opts[offer.Id].Nivel__c = result;
+                                                    var valueFilter = (initial ? (offer[filter+'__c__Id']) : (offer.opts.Nivel__c ? offer.opts.Nivel__c.Id : ''));
+                                                    if(valueFilter && valueFilter.length > 0) {
+                                                        //var instance = $filter('filter')($scope.offerBase.opts[offer.Id].Nivel__c, {Id: valueFilter})[0];
+                                                        var instance = $filter('filter')($scope.offerBase.opts[offer.Id].Nivel__c, {Id: valueFilter})[0];
+                                                        if(instance && instance.Id) {
+                                                            offer.opts.Nivel__c = instance;
+                                                            $scope.listCampusByModality(offer, 'Programa', initial);
+                                                        } else {
+                                                            removeAttr = true;
+                                                        }
+                                                    }
+                                                } else {
+                                                    removeAttr = true;
+                                                }
+                                                if(removeAttr) {
+                                                    delete offer.opts.Programa__c;
+                                                    delete offer.opts.Programa__cOPTS;
+                                                }
+                                            } else {
+                                                delete offer.opts.Nivel__c;
+                                                delete offer.opts.Nivel__cOPTS;
+                                                delete offer.opts.Programa__c;
+                                                delete offer.opts.Programa__cOPTS;
+                                            }
+                                        } else if(filter === 'Programa') {
+                                            if(offer.opts.Nivel__c && offer.opts.Nivel__c.Id) {
+                                                filtered = $filter('filter')($scope.instances.rvoe, {Modalidad__c: offer.opts.Modalidad__c.Id, Plantel__c: offer.opts.Plantel__c.Id, Nivel__c: offer.opts.Nivel__c.Id});
+                                                if(filtered && filtered.length > 0) {
+                                                    //console.log('\n\n\nencuentra programa: ');
+                                                    $scope.offerBase.opts[offer.Id].Programa__c_rvoe = [];
+                                                    angular.forEach(filtered, function(value, key) {
+
+                                                        //Validar los distintos rvoes posibles
+                                                        $scope.offerBase.opts[offer.Id].Programa__c_rvoe.push({Id: value.Id, Name: value.Name, DuracionPrograma__c: value.DuracionPrograma__c, Programa__c: value[filter+'__c']});
+                                                        //console.log(value);
+                                                        if(!unique.hasOwnProperty(value[filter+'__c'])) {
+                                                            unique[value[filter+'__c']] = true;
+                                                            result.push({Id: value[filter+'__c'], Name: value[filter+'__r'].Name, DuracionPrograma__c: value.DuracionPrograma__c});
+                                                        }
+                                                    });
+                                                    //$scope.offerBase.opts[offer.Id].Programa__c = result;
+                                                    $scope.offerBase.opts[offer.Id].Programa__c = result;
+                                                    var valueFilter = (initial ? offer.Programa__c__Id : (offer.opts.Programa__c ? offer.opts.Programa__c.Id : ''));
+                                                    if(valueFilter && valueFilter.length > 0) {
+                                                        //var instance = $filter('filter')($scope.offerBase.opts[offer.Id].Programa__c, {Id: valueFilter})[0];
+                                                        var instance = $filter('filter')($scope.offerBase.opts[offer.Id].Programa__c, {Id: valueFilter})[0];
+                                                        if(instance && instance.Id) {
+                                                            offer.opts.Programa__c = instance;
+
+                                                            //if(offer.RvoeVigente__c__Id && offer.RvoeVigente__c__Id != null) {
+                                                                //console.log('tiene RvoeVigente__c__Id');
+                                                                //console.log(offer);
+                                                                //console.log($scope.offerBase.opts[offer.Id]);
+
+                                                                $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o = $filter('filter')($scope.offerBase.opts[offer.Id].Programa__c_rvoe, {Programa__c: offer.opts.Programa__c.Id}, true);
+                                                                angular.forEach($scope.offerBase.opts[offer.Id].Programa__c_rvoe__o, function(v, key){
+                                                                    if(v.DuracionPrograma__c == null) {
+                                                                        v.DuracionPrograma__c = '';
+                                                                    }
+                                                                });
+
+                                                                
+                                                                //console.log($scope.offerBase.opts[offer.Id].Programa__c_rvoe__o);
+                                                                if($scope.offerBase.opts[offer.Id].Programa__c_rvoe__o.length === 1) {
+                                                                    offer.opts.RvoeVigente__c = $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o[0];
+                                                                    if(offer.opts.RvoeVigente__c.DuracionPrograma__c == null) {
+                                                                        offer.opts.RvoeVigente__c.DuracionPrograma__c = '';
+                                                                    }
+                                                                } else {
+                                                                    var RvoeVigente__c__Id = sfDB.findElementInArray('Id', offer.RvoeVigente__c__Id, $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o); 
+                                                                    if(RvoeVigente__c__Id && RvoeVigente__c__Id.Id) {
+                                                                        offer.opts.RvoeVigente__c = RvoeVigente__c__Id;
+                                                                    }
+                                                                }
+                                                            //}
+
+                                                        } else {
+                                                            removeAttr = true;
+                                                        }
+                                                    }
+                                                } else {
+                                                    removeAttr = true;
+                                                }
+                                                if(removeAttr) {
+                                                    delete offer.opts.Programa__c;
+                                                    delete offer.opts.Programa__cOPTS;
+                                                }
+                                            } else {
+                                                delete offer.opts.Programa__c;
+                                                delete offer.opts.Programa__cOPTS;
+                                            }
+                                        }
+                                    }  else {
+                                        angular.forEach(fields, function(field, key) {delete offer.opts[field]; delete offer.opts[field+'OPTS']; });
+                                    }
+                                }
+                            };
+                            $scope.listRvoeByProgram = function(offer) {
+                                $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o = [];
+                                delete offer.opts.RvoeVigente__c;
+                                console.log('\n\n in listRvoeByProgram');
+                                if(offer && offer.opts && offer.opts.Programa__c && offer.opts.Programa__c.Id && $scope.offerBase.opts[offer.Id] && $scope.offerBase.opts[offer.Id].Programa__c_rvoe) {
+                                    console.log(offer);
+                                    console.log($scope.offerBase.opts[offer.Id].Programa__c_rvoe);
+                                    console.log('busca : ' + offer.Id);
+                                    $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o = $filter('filter')($scope.offerBase.opts[offer.Id].Programa__c_rvoe, {Programa__c: offer.opts.Programa__c.Id}, true);
+                                    angular.forEach($scope.offerBase.opts[offer.Id].Programa__c_rvoe__o, function(v, key){
+                                        if(v.DuracionPrograma__c == null) {
+                                            v.DuracionPrograma__c = '';
+                                        }
+                                    });
+                                    
+                                    if($scope.offerBase.opts[offer.Id].Programa__c_rvoe__o.length === 1) {
+                                        offer.opts.RvoeVigente__c = $scope.offerBase.opts[offer.Id].Programa__c_rvoe__o[0];
+
+                                        
+                                    }
+                                }
+                            };
+                            $scope.$watch('[pagination.search, pagination.itemsPerPage]', function (value) {
+                                    $scope.viewPagination($scope.pagination.search, 1);
+                            }, true);
+                            $scope.viewPagination = function(value, page) {
+                                //console.log('in pagination: ' + new Date());
+                                if($scope.offerBase.instances && $scope.offerBase.instances.length > 0) {
+                                    $scope.pagination.filtered = filterFilter($scope.offerBase.instances, value);
+                                    $scope.pagination.totalItems  = $scope.pagination.filtered.length;
+                                    $scope.pagination.totalPages  = Math.ceil($scope.pagination.totalItems / $scope.pagination.itemsPerPage);
+                                    $scope.pagination.currentPage = page;
+                                }
+                            };
+
+                            $scope.$watch('[offerBase.instances]', function (value) {
+                                if($scope.isEditingOA) {
+                                    //$scope.offerBase.duplicated = {};
+                                    angular.forEach($scope.offerBase.instances, function(offer, index) {
+                                        $scope.offerBase.listUnique = {};
+                                        var filter = false;
+                                        if(offer.opts && offer.opts.Modalidad__c && offer.opts.Modalidad__c.Id
+                                            && offer.opts.Plantel__c && offer.opts.Plantel__c.Id
+                                            && offer.opts.Nivel__c && offer.opts.Nivel__c.Id
+                                            && offer.opts.Programa__c && offer.opts.Programa__c.Id
+                                            ) {
+                                            var key = offer.opts.Modalidad__c.Id+'|'+offer.opts.Plantel__c.Id+'|'+offer.opts.Nivel__c.Id+'|'+offer.opts.Programa__c.Id;
+                                            if(!$scope.offerBase.listUnique[key]) {
+                                                $scope.offerBase.listUnique[key] = [];
+                                            }
+                                            $scope.offerBase.listUnique[key].push(offer.Id);
+                                        }
+                                        angular.forEach($scope.offerBase.listUnique, function(unique, key){
+                                            if(unique && unique.length > 1) {
+                                                angular.forEach(unique, function(duplicated, key){
+                                                    $scope.offerBase.duplicated[duplicated] = true;
+                                                });
+                                            }
+                                        });
+                                        $scope.offerBase.hasDuplicated = Object.keys($scope.offerBase.duplicated).length > 0;
+                                    });
+                                }
+                            }, true);
+
+
+
+                            //Catalogs    
+                            $scope.getCatalogs = function() {
+                                $scope.getRVOES();
+                                $scope.catalogs = [
+                                    {n: 'catalog', c: catalogGW}, 
+                                    {n: 'program', c: programGW}, 
+                                    {n: 'campus', c: campusGW}
+                                ];
+                                angular.forEach($scope.catalogs, function(cat, index) {
+                                    sfDB.getRemoteAction({criteria: {orderby: [{Name: 'ASC'}], limit: 100, }, action: 'retrieve'}, cat.c, function(err, res) {
+                                        sfDB.parseFromDB(res, $scope[cat.n+'Fields'], function(err, data) {
+                                            $scope[cat.n] = data;
+                                            angular.forEach($scope[cat.n], function(item, index) {
+                                                $scope[cat.n+'K'][item.Id] = item.Name; 
+                                            });
+                                        });
+                                    });
+                                });
+                            }; 
+                            $scope.getRVOES = function() {
+                                $scope.instances = {rvoe: []};
+                                listInstancesSforce('SELECT Id, Name, DuracionPrograma__c, Modalidad__c, Plantel__c, Nivel__c, Programa__c, Plantel__r.Name, Nivel__r.Name, Programa__r.Name  FROM RVOE__c WHERE Activo__c=\'Activo\'', function(res) {
+                                    if(res && res.records) {
+                                        $scope.instances.rvoe = res.records;
+                                    }
+                                });
+                            };
+
+
+                            //Utils
+                            var listInstancesObject = function(gateway, criteria, fields, callback) {
+                                sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, gateway, function(err, res) {
+                                    sfDB.parseFromDB(res, fields, function(err, data) {
+                                        callback(err, data)
+                                    });
+                                });
+                            };
+                            var listInstancesSforce = function(query, callback) {
+                                sforce.connection.query(query, function(res) {
+                                    callback(res);
+                                });
+                            };
+                            var updateInstancesSforce = function(instances, callback) {
+                                sforce.connection.update(instances, callback);
+                            };
+                            var saveInstancesSforce = function(data, callback) {
+                                sforce.connection.create(data, {onSuccess : callback, onFailure : callback});
+                            }
+                            $scope.setClassValid = function(form, field, instance) {
+                                var retClass = '';
+                                if(instance && instance.$$hashKey) {
+                                    var field = form[field.name+instance.$$hashKey];
+                                    if(field && field.$valid) {
+                                        retClass = $scope.class.valid;
+                                    } else if(field && field.$invalid) {
+                                        retClass = $scope.class.invalid;
+                                    } else {
+                                        return '';
+                                    }
+                                }
+                                return retClass;
+                            };
+                            $scope.processResult = function(err, res, action) {
+                                if(err) {
+                                    $scope.errors = err;
+                                } else {
+                                }
+                                $scope.saving = false;
+                                $scope.$apply();
+                            };
+                            $scope.isDisabledModality = function(field) {
+                                return !$scope.isEditingC ||($scope.activePeriods[field].Id && $scope.activePeriods[field].Id !== $scope.currentPeriod.Id);
+                            };
+                            $scope.setFieldSort = function(sortField) {
+                                $scope.pagination.sortField = sortField;
+                                $scope.pagination.reverse = !$scope.pagination.reverse;
+                            };
+                            var isSortedBy = function (fieldName) {return $scope.pagination.sortField === fieldName; }; 
+                            var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.pagination.reverse; }; 
+                            var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.pagination.reverse; }; 
+                            $scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; };
+                            $scope.editPay = function(offer) {
+                                $scope.sfService.offer = offer;
+                                $scope.sfService.offer.currentPeriod = $scope.currentPeriod;
+                                $scope.sfService.offer.currentPeriod.lastEDIT = new Date();
+                                $scope.sfService.offer.currentPeriod.fields = $scope.periodFields;
+                                $scope.sfService.groupDep = {catTurn: $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Turno'})};
+                                $('#modalGrupos, #modalPagos').on('hidden.bs.modal', function () {
+                                    if(!$scope.isEditingOA) {
+                                        listOfferByPeriod($scope.currentPeriod);
+                                    }
+                                    //$scope.getGroupsByOffer(offer);
+                                    //$scope.getPaymentsByOffer(offer);
+                                });
+                            };
+                            $scope.arrayKeyToObj = function(fields, objName) {
+                                angular.forEach(fields, function(item, index) {
+                                    $scope.fieldsK[objName][item.name] = item;
+                                    $scope.fieldsK[objName][item.name]['objParent'] = objName;
+                                });
+                            };
+                            $scope.initSforce = function(id) {if(typeof sforce !== 'undefined') {sforce.connection.sessionId = id; } };
+                            $scope.initSforce(sessionId);
+                            sfDB.getRemoteAction({action: 'describe'}, periodGW, function(err, res) {
+                                if(!err) {$scope.periodFields = res; $scope.getPeriods();$scope.getPeriodCurrents();$scope.arrayKeyToObj(res, 'period');}
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, offerGW, function(err, res) {
+                                if(!err) {$scope.offerFields = res; $scope.arrayKeyToObj(res, 'offer');
+                                    $scope.fieldsK.offer.Modalidad__c__Id = angular.copy($scope.fieldsK.offer.Modalidad__c);
+                                    $scope.fieldsK.offer.Plantel__c__Id = angular.copy($scope.fieldsK.offer.Plantel__c);
+                                    $scope.fieldsK.offer.Nivel__c__Id = angular.copy($scope.fieldsK.offer.Nivel__c);
+                                    $scope.fieldsK.offer.Nivel__c.label = 'N';
+                                    $scope.fieldsK.offer.Programa__c__Id = angular.copy($scope.fieldsK.offer.Programa__c);
+                                    $scope.fieldsK.offer.AbreviaturaPrograma__c = angular.copy($scope.fieldsK.offer.Programa__c);
+                                    $scope.fieldsK.offer.Plantel__c__Abr = angular.copy($scope.fieldsK.offer.Plantel__c);
+                                    $scope.offerBase.listFields = res;
+                                    $scope.offerBase.keys = $scope.fieldsK.offer;
+                                    $scope.fieldsK.offer.RvoeVigente__c.required = true;
+                                }
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, catalogGW, function(err, res) {
+                                if(!err) {$scope.catalogFields = res; $scope.arrayKeyToObj(res, 'catalog');}
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, programGW, function(err, res) {
+                                if(!err) {$scope.programFields = res; $scope.arrayKeyToObj(res, 'program');}
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, campusGW, function(err, res) {
+                                if(!err) {$scope.campusFields = res; $scope.arrayKeyToObj(res, 'campus');}
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, paymentGW, function(err, res) {
+                                if(!err) {$scope.paymentsFields = res;$scope.arrayKeyToObj(res, 'payment');}
+                            });
+                            sfDB.getRemoteAction({action: 'describe'}, groupGW, function(err, res) {
+                                if(!err) {$scope.groupFields = res;$scope.arrayKeyToObj(res, 'group');}
+                            });
+                            $scope.getCatalogs();
+                        }]);
+
+                        app.filter('startFrom', function () {
+                          return function (input, start) {
+                              if (input) {
+                                  start = +start;
+                                  return input.slice(start);
+                              }
+                              return [];
+                          };
+                        });
+                        app.directive('sfAutoComplete', function($filter, $interval, sfDB) {
+                            //console.log('in autoComplete...');
+                            return {
+                                restrict: 'EA',
+                                scope: {
+                                    selected: '=sfSelected',
+                                    opts: '=sfOpts',
+                                    results: '=sfResults',
+                                    findFields: '=sfFindFields',
+                                    term: '=sfTerm',
+                                    service: '=sfService',
+                                    fields: '=sfFields',
+                                    registered: '=sfAutoRegistered',
+                                    fieldsValidate: '=sfAutoFields',
+                                    instance: '=sfAutoInstance',
+                                    form: '=sfAutoForm',
+                                    disabled: '=sfDisabled',
+                                    callback: '&sfActionSelect',
+                                    hasDuplicated:'=sfIsValid'
+                                },
+                                template: '<div class="sf-autocomplete-holder"><input ng-disabled="disabled" name="Plantel__c{{instance.$$hashKey}}" sf-validate-offer="true" sf-validate-registered="registered" sf-validate-fields="fieldsValidate" sf-has-validated="hasDuplicated" sf-validate-instance="instance" sf-validate-form="form" ng-change="findTerm()" ng-blur="hideResults()" ng-model="term" class="form-control"><span class="fa fa-search sf-autocomplete-search"/><div class="sf-autocomplete-dropdown" ng-if="showDropdown"><div ng-if="searching" class="sf-autocomplete-row"><span ng-bind="labelSearching"/></div><div class="sf-autocomplete-row" ng-repeat="result in results" ng-class="{\'sf-autocomplete-selected-row\': $index == currentIndex}" ng-click="setSelected($index)"><span ng-bind="result[findFields[0]]"/></div></div>',
+                                link: function ($scope, elem, attrs) {
+                                    $scope.searching = false;
+                                    $scope.labelSearching = $scope.search || 'Buscando...';
+                                    $scope.currentIndex = 0;
+                                    $scope.showDropdown = false;
+                                    $scope.Timer = null;
+                                    $scope.fromCtrl = true;
+
+
+                                    $scope.setSelected = function(index) {
+                                        $scope.instance.opts.Plantel__c = $scope.results[index];
+                                        $scope.updateFilter($scope.registered, $scope.form, $scope.fieldsValidate);
+                                        if($scope.instance.opts.Plantel__c && $scope.instance.opts.Plantel__c.Name) {
+                                            $scope.term = $scope.instance.opts.Plantel__c.Name;
+                                            //$scope.instance.Plantel__c = $scope.instance.opts.Plantel__c.Id;
+                                            console.log('\n\nis in setSelected: '+ new Date());
+                                            $scope.callback($scope.instance);
+                                        }
+                                    };
+
+
+                                    var listInstancesObject = function(gateway, criteria, fields, callback) {
+                                        sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, gateway, function(err, res) {
+                                            sfDB.parseFromDB(res, fields, function(err, data) {
+                                                callback(err, data)
+                                            });
+                                        });
+                                    };
+
+                                    $scope.updateFilter = function(registered, form, fields) {
+                                        if(registered && form && fields) {
+                                            angular.forEach(registered, function(offer, index) {
+                                                //console.log(offer);
+                                                angular.forEach(fields, function(field, idx) {
+                                                    //console.log(field);
+                                                    if(form[field+offer.$$hashKey]) {
+                                                        form[field+offer.$$hashKey].$$parseAndValidate();
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    }
+                                    $scope.findTerm = function() {
+                                        $scope.searching = true;
+                                        $scope.showDropdown = true;
+                                        $scope.results = [];
+                                        var keys = {};
+                                        $scope.updateFilter($scope.registered, $scope.form, $scope.fieldsValidate);
+
+                                        
+                                        //FUNCIONAL
+                                        /*$scope.instance.opts.Plantel__c = undefined;
+                                        if($scope.term && $scope.term.length > 0) {
+                                            var criteria = {where: {Name: {like: '%' + $scope.term+ '%'}, }, orderby: [{Name: 'ASC'}]};
+                                            listInstancesObject($scope.service, criteria, $scope.fields, function(err, res) {
+                                                if(!err) {
+                                                    $scope.results = res;
+                                                    if(res.length > 0) {
+                                                        $scope.showDropdown = true;
+                                                    }
+                                                    attrs.created = true;
+                                                    $scope.$apply();
+                                                } else {
+                                                    console.log('\nerr'); console.log(err);
+                                                }
+                                            });
+                                        }*/
+
+                                        if($scope.term && $scope.term.length > 0) {
+                                            $scope.results = $filter('filter')($scope.opts, {Name: $scope.term});
+                                            if($scope.results && $scope.results.length > 0) {
+                                                $scope.showDropdown = true;
+                                            }
+                                            $scope.searching = false;
+                                            attrs.created = true;
+                                            //$scope.$apply();
+                                        } else {
+                                            $scope.instance.opts.Plantel__c = undefined;
+                                            $scope.callback($scope.instance);
+                                        }
+                                        $scope.currentIndex = 0;
+                                        $scope.searching = false;
+                                        
+                                        if($scope.results && $scope.results.length < 1 || $scope.fromCtrl) {
+                                            $scope.showDropdown = false;
+                                            if($scope.fromCtrl) {
+                                                $scope.fromCtrl = false;
+                                            }
+                                        }
+                                    };
+                                    $scope.hideResults = function() {
+                                        $scope.Timer = $interval(function () {
+                                            $scope.showDropdown = false;
+                                            $interval.cancel($scope.Timer);
+                                        }, 200);
+                                    };
+                                    elem.on("keyup", function (event) {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        var strLength = $scope.term ? $scope.term.length : 0;
+                                        if($scope.results && $scope.results.length>0) {
+                                            if(event.which === 40) { 
+                                                if(!$scope.showDropdown && $scope.results.length>0) {
+                                                    $scope.showDropdown = true;
+                                                } else {
+                                                    if (($scope.currentIndex + 1) < $scope.results.length) {
+                                                        $scope.currentIndex ++;
+                                                    } else {
+                                                        $scope.currentIndex = 0;
+                                                    } 
+                                                }
+                                            } else if(event.which === 38) {
+                                                if ($scope.currentIndex >= 1) {
+                                                    $scope.currentIndex --;
+                                                } else {
+                                                    $scope.currentIndex = ($scope.results.length - 1);
+                                                }
+                                                event.target.setSelectionRange(strLength, strLength);
+                                            } else if(event.which === 13) {
+                                                $scope.setSelected($scope.currentIndex);
+                                                $scope.showDropdown = false;
+                                            } else if(event.which === 27) {
+                                                $scope.showDropdown = false;
+                                            }
+                                        } else if(event.which === 38) {
+                                            event.target.setSelectionRange(strLength, strLength);
+                                        }
+                                        $scope.$apply();
+                                    });
+                                }
+                            }
+                        });
+
+                        app.directive('sfValidateOffer', function($filter) {
+                            return {
+                                restrict: 'A',
+                                require: 'ngModel',
+                                scope: {
+                                    registered: '=sfValidateRegistered',
+                                    fields: '=sfValidateFields',
+                                    instance: '=sfValidateInstance',
+                                    form: '=sfValidateForm',
+                                    hasDuplicated: '=sfHasValidated'
+                                },
+                                link: function ($scope, element, attr, ctrl) {
+
+                                    var validateField = function(instance) {
+                                        //console.log('sfValidateOffer: ... ' + new Date() + ' -- ' + $scope.hasDuplicated);
+                                        //console.log(ctrl);
+                                        var filter = {};
+                                        angular.forEach($scope.fields, function(item, key){
+                                            if($scope.instance && $scope.instance.opts) {
+                                                if($scope.instance.opts[item]) {
+                                                    if(attr.name === (item+$scope.instance.$$hashKey)) {
+                                                        if(instance && instance['Id']) {
+                                                            filter[item] = instance['Id'];
+                                                        } else if(instance && instance['value']) {
+                                                            filter[item] = instance['value'];
+                                                        }
+                                                    } else {
+                                                        if($scope.instance.opts[item]['Id']) {
+                                                            filter[item] = $scope.instance.opts[item]['Id'];
+                                                        } else if($scope.instance.opts[item]['value']) {
+                                                            filter[item] = $scope.instance.opts[item]['value'];
+                                                        }
+                                                    }
+                                                } else {
+                                                    if(instance && instance['Id']) {
+                                                        filter[item] = instance['Id'];
+                                                    } else if(instance && instance['value']) {
+                                                        filter[item] = instance['value'];
+                                                    }
+                                                }
+                                            }
+                                        });
+                                        var isValid = true;
+                                        var offers = [];
+                                        var unique = {};
+                                        angular.forEach($scope.registered, function(offer, index) {
+                                            var instance = {};
+                                            angular.forEach($scope.fields, function(field, key) {
+                                                if(offer.opts && offer.opts[field]) {
+                                                    instance[field] = offer.opts[field]['Id'];
+                                                }
+                                            });
+                                            if(Object.keys(instance).length > 0) {
+                                                instance['$$hashKey'] = offer.$$hashKey;
+                                                offers.push(instance);
+                                            }
+
+
+                                            /*var key = offer.Modalidad__c__Id+'|'+offer.Plantel__c__Id+'|'+offer.Nivel__c__Id+'|'+offer.Programa__c__Id;
+                                            var value = '';
+                                            if(!$scope.offerBase.listUnique[key]) {
+                                                $scope.offerBase.listUnique[key] = [];
+                                            }
+                                            $scope.offerBase.listUnique[key].push(offer.Id);*/
+
+
+                                        });
+
+                                        if($scope.fields && Object.keys(filter).length === $scope.fields.length) {
+                                            var find = $filter('filter')(offers, filter);
+                                            if(find && find.length > 0) {
+                                                angular.forEach(find, function(value, key){
+                                                    if(value.$$hashKey !== $scope.instance.$$hashKey && isValid) {
+                                                        isValid = false;
+                                                        angular.forEach($scope.fields, function(field, key) {
+                                                            if($scope.$parent.form && value.$$hashKey && $scope.$parent.form[field+value.$$hashKey]) {
+                                                                $scope.$parent.form[field+value.$$hashKey].$setValidity('offerValid', isValid);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        angular.forEach($scope.fields, function(value, key) {
+                                            if($scope.$parent && $scope.$parent.form && $scope.$parent.form[value+$scope.instance.$$hashKey]) {
+                                                $scope.$parent.form[value+$scope.instance.$$hashKey].$setValidity('offerValid', isValid);
+                                            }
+                                        });
+                                        return instance;
+                                    }
+
+                                    ctrl.$formatters.push(validateField);
+                                    ctrl.$parsers.push(validateField);
+                                }
+                            }
+                        });
+                        app.directive('numbersOnly', function () {
+                            return {
+                                require: 'ngModel',
+                                link: function (scope, element, attr, ngModelCtrl) {
+                                    function fromUser(text) {
+                                        if (text) {
+                                            var transformedInput = text.replace(/[^0-9]/g, '');
+
+                                            if (transformedInput !== text) {
+                                                ngModelCtrl.$setViewValue(transformedInput);
+                                                ngModelCtrl.$render();
+                                            }
+                                            return transformedInput;
+                                        }
+                                        return '';
+                                    }            
+                                    ngModelCtrl.$parsers.push(fromUser);
+                                }
+                            };
+                        });
+                   </script>
+                   
+                   <style type="text/css">
+                       .ieu-panel>.panel-heading{background-color: #2a94d6;border-color: #2585c1; color: white;}
+                       .ieu-th-btns{max-width: 105px;white-space: normal;}
+                       .ieu-modal-danger>.modal-header{color: #ffffff; background-color: #cf5c60; border-color: #c9484d;}
+                       .form-control:focus{background-color: #F3EFEF;}
+                       .ieu-href{cursor: pointer;}
+                       .help-block{font-size: 9pt;position: absolute; right: 33px; bottom: 2px;}
+                       select, textarea{min-width: 120px;}
+                       [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {display: none !important;}
+
+                       .sf-autocomplete-holder {position: relative;}
+                       .sf-autocomplete-row {padding: 5px; color: #000000; margin-bottom: 4px;}
+                       .sf-autocomplete-dropdown {border-color: #ececec; border-width: 1px; border-style: solid; border-radius: 2px; width: 250px; padding: 6px; cursor: pointer; z-index: 9999; position: absolute; margin-top: -6px; background-color: #ffffff;}
+                       .sf-autocomplete-selected-row, .sf-autocomplete-row:hover {background-color: #2a94d6; border-color: #2585c1; color: white;}
+                       
+                       /*#mainContainerOFE {margin: auto; max-width: 1350px;}*/
+                       @media (min-width: 1300px) {.container {width: 1250px; } } @media (min-width: 1600px) {.container {width: 1500px; } } @media (min-width: 1900px) {.container {width: 1800px; } }
+                       @media (min-width: 1300px) {.modal-lg {width: 1250px; } } @media (min-width: 1600px) {.modal-lg {width: 1500px; } } @media (min-width: 1900px) {.modal-lg {width: 1800px; } }
+
+                       .table-offer>table>thead>tr>th {max-width: 120px; min-width: 80px; white-space: normal;}
+                       .form-control {min-width: 150px;}
+                       .sf-autocomplete-search {position: absolute; right: 8px; top: 10px; color: rgba(0, 0, 0, 0.19);}
+                       .ctc-btn {cursor: pointer; text-decoration: none;}
+                       .ctc-th-actions {max-width: 160px !important;min-width: 160px !important;}
+                       .ctc-days {bottom: -12px;}
+                       .ctc-min-head {min-width: 40px !important; max-width: 40px !important;}
+                       .ctc-input-number {min-width: 50px; max-width: 50px;}
+                   </style>
+
+                </apex:component>

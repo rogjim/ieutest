@@ -1,0 +1,9 @@
+<apex:page standardController="FichaPago__c" action="{!sendMail}" extensions="GenerarPDFFichaPagoCtrl">
+    <center>
+        <h2>
+            Se ha enviado la ficha de pago
+        </h2>
+        <br/><br/>
+        <button onclick="history.back(-1);">Volver Atrás</button>
+    </center>
+</apex:page>

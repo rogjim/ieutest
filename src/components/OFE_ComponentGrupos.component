@@ -1,0 +1,264 @@
+<apex:component >
+	<div class="modal fade" tabindex="-1" role="dialog" id="modalGrupos" ng-controller="gruposCtrl">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title text-center">
+		        <span class="fa fa-users fa-fw"></span>
+		        Configurar grupos de la oferta académica: <strong>{{offer.Name}}</strong> periodo <strong>{{offer.currentPeriod.Name}}</strong>
+	        </h4>
+	      </div>
+	      <form class="form-horizontal" name="formEditGroup">
+		      <div class="modal-body">
+	              <div class="row">
+	              	<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.Grupo__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+	              	<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.Name" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+	              </div>
+
+	              <div class="row">
+              		<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.Turno__c" sf-opts="catTurn" sf-label-prop="'Name'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+              		<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.AulaAsignada__c" sf-opts="catClassRoom" sf-label-prop="'Name'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+
+	              	<!--div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.AulaAsignada__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<input class="form-control"></input>
+	              			</div>
+	              		</div>
+	              	</div-->
+	              </div>
+
+	              <div class="row">
+	              	<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.Dia__c" sf-opts="fieldsK.Dia__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+	              	<!--div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Dia__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<select class="form-control"></select>
+	              			</div>
+	              		</div>
+	              	</div-->
+
+	              	<div class="col-sm-6" ng-if="offer.Id">
+	              		<div class="row">
+	              			<div class="col-sm-12">
+								<sf-input sf-field="fieldsK.HoraEntrada__c" sf-opts="fieldsK.HoraEntrada__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+	              			</div>
+	              			<div class="col-sm-12">
+	              				<sf-input sf-field="fieldsK.HoraSalida__c" sf-opts="fieldsK.HoraSalida__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+	              			</div>
+	              		</div>
+					</div>
+	              	<!--div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.HoraEntrada__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<input class="form-control"></input>
+	              			</div>
+	              		</div>
+	              	</div-->
+	              </div>
+
+	              <hr/>
+
+	              <div class="row">
+	              	<div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.FechaInicioClases__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div>
+	              	<!--div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.FechaInicioClases__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<input class="form-control"></input>
+	              			</div>
+	              		</div>
+	              	</div-->
+	              	<!--div class="col-sm-6" ng-if="offer.Id">
+						<sf-input sf-field="fieldsK.Esquema__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+					</div-->
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Esquema__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<select class="form-control"></select>
+	              			</div>
+	              		</div>
+	              	</div>
+	              </div>
+
+	              <div class="row">
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.PeriodoAperturaGrupo__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<select class="form-control"></select>
+	              			</div>
+	              		</div>
+	              	</div>
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Estatus__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<select class="form-control"></select>
+	              			</div>
+	              		</div>
+	              	</div>
+	              </div>
+
+	              <div class="row">
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Colegiatura__c.label"/>Colegiatura</label>
+	              			<div class="col-sm-8">
+	              				<input class="form-control"></input>
+	              			</div>
+	              		</div>
+	              	</div>
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Activo__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<select class="form-control"></select>
+	              			</div>
+	              		</div>
+	              	</div>
+	              </div>
+
+
+	              <div class="row">
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Periodo__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<p class="form-control-static">{{offer.currentPeriod.Name}}</p>
+	              			</div>
+	              		</div>
+	              	</div>
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Nivel__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<p class="form-control-static">{{offer.opts.Nivel__c.Name}}</p>
+	              			</div>
+	              		</div>
+	              	</div>
+	              </div>
+
+	              <div class="row">
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Plantel__c.label"/></label>
+	              			<div class="col-sm-8">
+	              				<p class="form-control-static">{{offer.opts.Plantel__c.Name}}</p>
+	              			</div>
+	              		</div>
+	              	</div>
+	              	<div class="col-sm-6">
+	              		<div class="form-group">
+	              			<label class="control-label col-sm-4"><span ng-bind="fieldsK.Programa__c.label"></span></label>
+	              			<div class="col-sm-8">
+	              				<p class="form-control-static">{{offer.opts.Programa__c.Name}}</p>
+	              			</div>
+	              		</div>
+	              	</div>
+	              </div>
+	              
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-primary"><span class="fa fa-save fa-fw"></span>Guardar</button>
+	            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+		      </div>
+	      </form>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+   <script type="text/javascript">
+   		var app = angular.module('appIEU');
+        
+
+   		app.controller('gruposCtrl', ['$scope', 'sfService', 'sfDB', function($scope, sfService, sfDB) {
+   			try {
+	   			$scope.sfService = sfService;
+	   			$scope.offer = {};
+	   			$scope.title = 'Agregra grupo';
+	   			$scope.currentGroup = {opts: {}};
+	   			$scope.fieldsK = {};
+	   			$scope.catTurn = [];
+	   			$scope.catClassRoom = [];
+	   			$scope.fieldsCR = [];
+
+	   			var groupGW = new sfService.gateway.grupo();
+	   			var classRoomGW = new sfService.gateway.aula();
+
+	   			sfDB.getRemoteAction({action: 'describe'}, groupGW, function(err, res) {
+	   				var fields = res || [];
+	   				angular.forEach(fields, function(item, index) {
+	   					$scope.fieldsK[item.name] = item;
+	   					$scope.fieldsK[item.name]['objParent'] = 'grupo';
+	   				});
+	   			});
+	   			sfDB.getRemoteAction({action: 'describe'}, classRoomGW, function(err, res) {
+	   				$scope.fieldsCR = res || [];
+	   			});
+
+	   			$scope.getGroup = function(fields) {
+	   				var criteria = {where: {OfertaEducativa__c: {eq: $scope.offer.Id}}};
+	   				$scope.currentGroup= {Id: 1};
+					sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, groupGW, function(err, res) {
+						sfDB.parseFromDB(res, fields, function(err, data) {
+							if(!err && data && data.length > 0) {
+								$scope.title = 'Editar grupo';
+								$scope.currentGroup = data[0];
+							}
+						});
+					});
+	   			};
+	   			$scope.getClassRoom = function() {
+	   				var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: 100};
+	   				sfDB.getRemoteAction({criteria: {}, action: 'retrieve'}, classRoomGW, function(err, res) {
+						sfDB.parseFromDB(res, $scope.fieldsCR, function(err, data) {
+							if(!err && data && data.length > 0) {
+								$scope.catClassRoom = data;
+								//$scope.catClassRoom.unshift({Id:'', Name: '-- Seleccione una opción --'});
+								//$scope.currentGroup.opts.AulaAsignada__c = $scope.catClassRoom[0];
+								$scope.$apply();
+							}
+						});
+					});
+	   			};
+
+	   			$scope.$watch('sfService.offer', function () {
+			    	$scope.offer = $scope.sfService.offer;
+			    	if($scope.sfService.groupDep) {
+			    		$scope.catTurn = $scope.sfService.groupDep.catTurn;
+			    	}
+			    	if($scope.offer && $scope.offer.hasOwnProperty('Id')) {
+
+	   					$scope.currentGroup = {opts: {}};
+			    		//$scope.getGroup();
+			    		$scope.getClassRoom();
+			    		$scope.fieldsK.Dia__c.required = true;
+			    		$scope.fieldsK.HoraEntrada__c.required = true;
+			    		$scope.fieldsK.HoraSalida__c.required = true;
+			    	}
+			    }, true);
+	   		}catch(e){
+	   			throw "An error occurs when you run the gruposCtrl";
+	   		}
+   		}]);
+
+   </script>
+</apex:component>

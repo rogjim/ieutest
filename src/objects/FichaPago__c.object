@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>true</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>CadenaCodigo__c</fullName>
+        <externalId>false</externalId>
+        <formula>PrefijoIdentificador__c &amp;( Name ) &amp; 
+TEXT( YEAR( Hasta__c ) ) &amp; 
+IF( LEN(TEXT(MONTH(Hasta__c)))&gt;1, TEXT( MONTH(Hasta__c)), &apos;0&apos;&amp; TEXT(MONTH(Hasta__c))) &amp; 
+IF( LEN(TEXT(DAY(Hasta__c)))&gt;1, TEXT( DAY(Hasta__c)), &apos;0&apos;&amp; TEXT(DAY(Hasta__c))) &amp;
+LPAD(TEXT(FLOOR(TotaPagar__c) ), 5,&quot;0&quot;) &amp;
+RPAD(
+   SUBSTITUTE(TEXT(TotaPagar__c - FLOOR(TotaPagar__c) ), &quot;0.&quot;, &quot;&quot;) ,2,&quot;0&quot;
+   )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Cadena para código</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campana__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Campaña</label>
+        <referenceTo>Campaign</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ConceptoEspecial__c</fullName>
+        <defaultValue>&quot;prueba&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Concepto</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Concepto__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE(TEXT( TipoFicha__c ), 
+&quot;Nivel Doctorado&quot;, &quot;Examen de Admisión e Inscripción&quot;, 
+&quot;Nivel&quot;, &quot;Inscripción&quot;, 
+&quot;Promoción Cero&quot;, &quot;Cuota primer colegiatura&quot;,
+&quot;Ficha Especial&quot;, &quot;Diferencia de mensualidad&quot;,
+&quot;Ficha Móvil&quot;, &quot;El importe incluye &quot; &amp;  TEXT(Descuento__c * 100) &amp; &quot;% de descuento.  &quot; &amp; BR() &amp; &quot;Cuota de inscripción&quot;,
+&quot;N/A&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Concepto</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CondensacionFecha__c</fullName>
+        <externalId>false</externalId>
+        <formula>LPAD(TEXT(((YEAR(Hasta__c) - 2013) * 372) + ( ( MONTH(Hasta__c) -1) * 31) + ( DAY(Hasta__c) - 1)), 4, &quot;0&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Condensación de fecha</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Constante__c</fullName>
+        <externalId>false</externalId>
+        <formula>CASE(TEXT( TipoFicha__c ), 
+&quot;Nivel Doctorado&quot;, &quot;1&quot;, 
+&quot;Nivel&quot;, &quot;2&quot;, 
+&quot;Promoción Cero&quot;, &quot;3&quot;, 
+&quot;Ficha Especial&quot;, &quot;4&quot;, 
+&quot;Ficha Móvil&quot;, &quot;5&quot;, 
+&quot;0&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Constante</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Descuento__c</fullName>
+        <externalId>false</externalId>
+        <label>Descuento</label>
+        <precision>7</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>DiferenciaMontoPagado__c</fullName>
+        <externalId>false</externalId>
+        <formula>TotaPagar__c -  MontoPagado__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Diferencia de monto pagado</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>EnviadoERP__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Enviado ERP</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>FechaPago__c</fullName>
+        <externalId>false</externalId>
+        <label>Fecha de pago</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>FolioLead__c</fullName>
+        <externalId>false</externalId>
+        <label>Folio de lead / oportunidad</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>FuentePago__c</fullName>
+        <externalId>false</externalId>
+        <label>Fuente de pago</label>
+        <picklist>
+            <picklistValues>
+                <fullName>O</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>H</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Hasta__c</fullName>
+        <externalId>false</externalId>
+        <label>Hasta el</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>HoraPago__c</fullName>
+        <externalId>false</externalId>
+        <label>Hora de pago</label>
+        <length>10</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Importe__c</fullName>
+        <externalId>false</externalId>
+        <label>Importe</label>
+        <precision>7</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Lead__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Lead</label>
+        <referenceTo>Lead</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>LoteFichas__c</fullName>
+        <externalId>false</externalId>
+        <label>Lote de fichas</label>
+        <length>5</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MontoPagado__c</fullName>
+        <externalId>false</externalId>
+        <label>Monto pagado</label>
+        <precision>7</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <fields>
+        <fullName>Nivel__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Nivel</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Catalogo__c.TipoCatalogo__c</field>
+                <operation>equals</operation>
+                <value>Nivel</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Catalogo__c</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>NotaEspecial__c</fullName>
+        <externalId>false</externalId>
+        <label>Nota</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Notas1__c</fullName>
+        <externalId>false</externalId>
+        <formula>&quot;Una vez realizado el pago no habrá devolución.&quot;</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Notas 1</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Notas2__c</fullName>
+        <externalId>false</externalId>
+        <formula>&quot;Si se requiere factura, favor de solicitar el mismo día de pago.&quot;</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Notas 2</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NumeroAutorizacion__c</fullName>
+        <description>Numero de autorización del pago</description>
+        <externalId>false</externalId>
+        <label>Numero Autorización</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Oportunidad__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Oportunidad</label>
+        <referenceTo>Opportunity</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Periodo__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Periodo</label>
+        <referenceTo>Periodo__c</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Plantel__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Plantel</label>
+        <referenceTo>Plantel__c</referenceTo>
+        <relationshipLabel>Fichas de pago</relationshipLabel>
+        <relationshipName>Fichas_de_pago</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PrefijoIdentificador__c</fullName>
+        <externalId>false</externalId>
+        <formula>&quot;61&quot;</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Prefijo identificador</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ProgramasRelacionados__c</fullName>
+        <externalId>false</externalId>
+        <label>Programas Relacionados</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>RecibimosDe__c</fullName>
+        <externalId>false</externalId>
+        <label>Recibimos de</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ReferenciaCliente__c</fullName>
+        <externalId>false</externalId>
+        <formula>&quot;600000&quot;&amp; Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Referencia del cliente</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ReferenciaHSBC__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>Referencia HSBC</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>ReferenciaOXXO__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <externalId>true</externalId>
+        <label>Referencia OXXO</label>
+        <length>50</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>TipoFicha__c</fullName>
+        <externalId>false</externalId>
+        <label>Tipo de ficha</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Nivel Doctorado</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Nivel</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Promoción Cero</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ficha Especial</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ficha Móvil</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TotaPagar__c</fullName>
+        <externalId>false</externalId>
+        <label>Total a pagar</label>
+        <precision>7</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Currency</type>
+    </fields>
+    <gender>Feminine</gender>
+    <label>Ficha de pago</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>TipoFicha__c</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>RecibimosDe__c</columns>
+        <columns>Hasta__c</columns>
+        <columns>TotaPagar__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>Todos</label>
+    </listViews>
+    <listViews>
+        <fullName>AllPagadas</fullName>
+        <columns>NAME</columns>
+        <columns>TipoFicha__c</columns>
+        <columns>LAST_UPDATE</columns>
+        <columns>RecibimosDe__c</columns>
+        <columns>Hasta__c</columns>
+        <columns>TotaPagar__c</columns>
+        <columns>FuentePago__c</columns>
+        <columns>FechaPago__c</columns>
+        <columns>MontoPagado__c</columns>
+        <columns>HoraPago__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>FuentePago__c</field>
+            <operation>equals</operation>
+            <value>O,H</value>
+        </filters>
+        <label>Todos Pagadas</label>
+    </listViews>
+    <listViews>
+        <fullName>AllPendientes</fullName>
+        <columns>NAME</columns>
+        <columns>TipoFicha__c</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>RecibimosDe__c</columns>
+        <columns>Hasta__c</columns>
+        <columns>TotaPagar__c</columns>
+        <columns>ReferenciaOXXO__c</columns>
+        <columns>ReferenciaHSBC__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>FuentePago__c</field>
+            <operation>equals</operation>
+        </filters>
+        <label>Todos Pendientes de pago</label>
+    </listViews>
+    <listViews>
+        <fullName>FichasDeNivel</fullName>
+        <columns>NAME</columns>
+        <columns>TipoFicha__c</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>RecibimosDe__c</columns>
+        <columns>Hasta__c</columns>
+        <columns>TotaPagar__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>FichaPago__c.FichaNivel</value>
+        </filters>
+        <label>Fichas de nivel</label>
+    </listViews>
+    <nameField>
+        <displayFormat>{0000000}</displayFormat>
+        <label>Folio</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Fichas de pago</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
+    <recordTypes>
+        <fullName>FichaEspecial</fullName>
+        <active>true</active>
+        <label>Ficha Especial</label>
+        <picklistValues>
+            <picklist>FuentePago__c</picklist>
+            <values>
+                <fullName>H</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>O</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>TipoFicha__c</picklist>
+            <values>
+                <fullName>Ficha Especial</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>FichaMovil</fullName>
+        <active>true</active>
+        <label>Ficha Móvil</label>
+        <picklistValues>
+            <picklist>FuentePago__c</picklist>
+            <values>
+                <fullName>H</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>O</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>TipoFicha__c</picklist>
+            <values>
+                <fullName>Ficha Móvil</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>FichaNivel</fullName>
+        <active>true</active>
+        <label>Ficha de Nivel</label>
+        <picklistValues>
+            <picklist>FuentePago__c</picklist>
+            <values>
+                <fullName>H</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>O</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>TipoFicha__c</picklist>
+            <values>
+                <fullName>Nivel</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nivel Doctorado</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts>
+        <customTabListAdditionalFields>RecibimosDe__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Hasta__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>TotaPagar__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>TipoFicha__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Hasta__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>RecibimosDe__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>TotaPagar__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>RECORDTYPE</lookupDialogsAdditionalFields>
+        <searchFilterFields>RecibimosDe__c</searchFilterFields>
+        <searchFilterFields>NAME</searchFilterFields>
+        <searchResultsAdditionalFields>RecibimosDe__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Hasta__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>TotaPagar__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <webLinks>
+        <fullName>GenerarLead</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Generar lead</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>/apex/LEAD_Layout?idFicha={!FichaPago__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>GenerarPDF</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Generar y enviar PDF</masterLabel>
+        <openType>sidebar</openType>
+        <page>GenerarPDFFichaPago</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>

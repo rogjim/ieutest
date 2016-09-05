@@ -1,0 +1,114 @@
+<apex:page controller="UtilsExternal" showHeader="false" sideBar="false">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+	 	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        <apex:includeScript value="{!URLFOR($Resource.Handlebars)}" />
+        
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChained)}" />
+        <script id="templateOptions" type="text/x-handlebars-template">
+		  <option value="">--Seleccionar {{titulo}}--</option>
+          {{#items}}
+				 <option value="{{dataId}}" class="{{parent}}"> {{name}}</option>
+          {{/items}}
+	    </script>
+    	<script id="templateOptionsU" type="text/x-handlebars-template">
+		  <option value="">--Seleccionar--</option>
+          {{#items}}
+				 <option value="{{IdUbicacion__c}}" class="{{IdEstadoPais__c}}"> {{Name}}</option>
+          {{/items}}
+	    </script>
+        <select id="modalidad-remote" name="nivel" style="width:320px;" class="modalidad-remote">
+        </select><br></br>
+        <select id="nivel-remote" name="modalid" style="width:320px;" class="nivel-remote">
+        </select><br></br>
+         <select id="plantel-remote" name="plantel" style="width:320px;" class="plantel-remote">
+        </select><br></br>
+         <select id="programa-remote" name="programa" style="width:320px;" class="programa-remote">
+		</select><br/><br/>
+		<!--Ubicacion-->
+		<select id="pais-remote" name="pais" style="width:320px;" class="pais-remote">
+        </select><br></br>
+        <select id="estado-remote" name="estado" style="width:320px;" class="estado-remote">
+        </select><br></br>
+        <select id="municipio-remote" name="municipio" style="width:320px;" class="municipio-remote">
+        </select><br></br>
+        <div id="responseErrors"></div>
+         <script> 
+	   		 j$ = jQuery.noConflict();
+	   		  j$(document).ready(function() { 
+	   		  	var source = j$('#templateOptions').html();
+	   		  	var template = Handlebars.compile(source);
+	   		  	
+                
+
+				Visualforce.remoting.Manager.invokeAction(
+			            '{!$RemoteAction.UtilsExternal.getExternalOfertaAcademica}', 
+			            function(result, event){
+			                if (event.status) {
+			                  console.log(result);
+			                
+			                   var renderedModalidades = template(result.modalidad);
+	   		  			  	   j$('#modalidad-remote').html(renderedModalidades);
+	   		  			  	   
+	   		  			  	   var renderedNiveles = template(result.nivel );
+	   		  			  	   j$('#nivel-remote').html(renderedNiveles);
+	   		  			  	   
+	   		  			  	   var renderedPlanteles = template(result.plantel);
+	   		  			  	   j$('#plantel-remote').html(renderedPlanteles);
+	   		  			  	   
+	   		  			  	   var renderedProgramas =template(result.programa);
+	   		  			  	   j$('#programa-remote').html(renderedProgramas);
+	   		  			  	   
+	   		  			  	   j$("#nivel-remote").chained("#modalidad-remote");
+					   		   j$("#plantel-remote").chained("#nivel-remote");
+					   		   j$("#programa-remote").chained("#plantel-remote");
+	   		  	
+			                } else if (event.type === 'exception') {
+			                    document.getElementById("responseErrors").innerHTML = 
+			                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+			                } else {
+			                    document.getElementById("responseErrors").innerHTML = event.message;
+			                }
+			            }, 
+			            {escape: true}
+			        );
+                  var ubicacionT = j$('#templateOptionsU').html();
+                  var templateUbi = Handlebars.compile(ubicacionT);
+                  
+                  Visualforce.remoting.Manager.invokeAction(
+			            '{!$RemoteAction.UtilsExternal.getExternalUbicacion}', 
+			            function(result, event){
+			                if (event.status) {
+			                  console.log(result);
+			                
+                               var dataSource = {items:result.pais};
+			                   var renderedPaises = templateUbi(dataSource);
+	   		  			  	   j$('#pais-remote').html(renderedPaises);
+	   		  			  	   
+                               dataSource = {items:result.estado};
+	   		  			  	   var renderedEstados = templateUbi(dataSource);
+	   		  			  	   j$('#estado-remote').html(renderedEstados);
+	   		  			  	   
+                               dataSource = {items:result.municipio};
+	   		  			  	   var renderedMunicipios = templateUbi(dataSource);
+	   		  			  	   j$('#municipio-remote').html(renderedMunicipios);	   		  			  	   
+	   		  			  	   
+	   		  			  	   j$("#estado-remote").chained("#pais-remote");
+					   		   j$("#municipio-remote").chained("#estado-remote");
+	   		  	
+			                } else if (event.type === 'exception') {
+			                    document.getElementById("responseErrors").innerHTML = 
+			                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+			                } else {
+			                    document.getElementById("responseErrors").innerHTML = event.message;
+			                }
+			            }, 
+			            {escape: true}
+			        );
+	   		  });
+	    </script>
+</apex:page>

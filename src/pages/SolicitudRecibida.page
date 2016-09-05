@@ -1,0 +1,449 @@
+<apex:page controller="LNP_OfertaEducativaCtrl" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false">
+    <head>
+        <title>Gracias, recibimos tu solicitud | IEU</title>
+        
+         <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" /> 
+        
+        <!--Fancybox-->
+        <link rel="stylesheet" href="{!URLFOR($Resource.FancyBox215,'fancyapps-fancyBox-18d1712/source/jquery.fancybox.css')}" type="text/css" media="screen" />
+        <apex:includeScript value="{!URLFOR($Resource.FancyBox215,'fancyapps-fancyBox-18d1712/source/jquery.fancybox.pack.js')}" />
+        
+        <!--     <apex:includeScript value="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/site.min.js')}" />-->
+        <!--  <apex:includeScript value="{!URLFOR($Resource.demo,'/PreinscipcionStyleIEU/ Colegiaturasss/Colegiatura/Costo/site.min.js')}" />-->
+        <apex:includeScript value="{!URLFOR($Resource.spriteIEU,'/IEUstyle/site.min.js')}" />
+        
+        <!-- <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"/>-->
+        
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        
+        <link rel="stylesheet" href="{!URLFOR($Resource.CalculadoraEstilos)}"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        
+        
+        <link rel="stylesheet" href="{!URLFOR($Resource.spriteIEU, '/IEUstyle/site.min.css')}"/>
+        
+        <style type="text/css">
+            .sprite{background-image:url("{!URLFOR($Resource.spriteIEU, '/IEUstyle/sprites-ieu.png')}")};
+        </style> 
+        
+        <style type="text/css">
+            .zopim { display: block    };
+        </style>
+        
+
+    </head>
+    <body>
+        <div>
+            
+            <div id="phone-contact-wrapper"> 
+                <div id="phone-contact" class="content-block"> 
+                    <div class="container"> 
+                        <span id="phone-contact-heading"> 
+                            <span id="phone-contact-title">Atención Telefónica Inmediata</span> 
+                            <span id="phone-contact-subtitle">Envíanos tu número y te llamamos en 5 minutos</span> 
+                        </span>  
+                        
+                        <!--   <form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" accept-charset="UTF-8" autocomplete="off" id="phone-contact-form" class="sphone-contact-form">-->
+                        <form accept-charset="UTF-8" autocomplete="off" id="phone-contact-form" class="phone-contact-form">  
+                            
+                            <label for="phone_contact_name">Nombre:</label>
+                            <div class="phone-contact-name-wrapper"> 
+                                <input id="phone_contact_name" tabindex="1" maxlength="30" name="phone_contact_name" type="text"/> 
+                                <div class="phone-contact-name-tooltip"> 
+                                    <div class="phone-contact-name-tooltip-caret"></div> Envíanos tu nombre / número y 
+                                    <div class="phone-contact-name-tooltip-big-text"> TE LLAMAMOS EN 5 MINUTOS </div> 
+                                </div> 
+                            </div>  
+                            <label id="phone-contact-phone-label" for="phone_contact_phone"> Teléfono: <small>(10 dígitos)</small> </label> 
+                            <input id="phone_contact_phone" pattern="[0-9]{0,10}" tabindex="2" maxlength="10" name="phone_contact_phone" type="text"/> 
+                            <input id="phone-contact-submit" class="sprite sprite-phone-contact-submit" type="button" onclick="validarAte()" data-no-disable="true" value=""/> 
+                            
+                        </form>  
+                    </div> 
+                </div> 
+            </div>
+            
+            <div id="navbar-mobile-header"> 
+                <span id="navbar-mobile-logo" class="sprite sprite-ieu-logo-horizontal">IEU Universidad</span> 
+                <a id="navbar-mobile-toggle-menu" class="sprite sprite-navbar-header-toggle-menu" href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#">Toggle Menu</a> 
+            </div> 
+            
+            <div id="navbar-wrapper" style="position: absolute; top: 69px;"> 
+                <div class="content-block"> 
+                    <div class="container"> 
+                        <a id="navbar-menu-logo" href="http://ieu.edu.mx/"> 
+                            <img src="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/ieu-logo.png')}" alt="IEU | Universidad"/> 
+                        </a> 
+                        <nav id="navbar-menu" class="navbar-menu"> 
+                            <ul> 
+                                <li class="mobile-show"><a href="http://ieu.edu.mx/">Home</a></li> 
+                                <li id="navbar-acerca-ieu"> <a href="http://ieu.edu.mx/conocenos">Conócenos</a> 
+                                    <ul class="navbar-dropdown"> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/filosofia#filosofia" rel="canonical">FILOSOFÍA</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/rvoe#rvoe" rel="canonical">RVOE</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/historia#historia" rel="canonical">HISTORIA</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/acreditaciones-y-convenios#acreditaciones-y-convenios" rel="canonical">ACREDITACIONES Y CONVENIOS</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/cuerpo-academico#cuerpo-academico" rel="canonical">CUERPO ACADÉMICO</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos/opiniones#opiniones" rel="canonical">OPINIONES</a></li> 
+                                    </ul> 
+                                </li>  
+                                <li id="navbar-modalidades" class="mobile-hide"> <a href="javascript:;">Modalidades</a> 
+                                    <ul class="navbar-dropdown">  
+                                        <li><a href="http://ieu.edu.mx/modalidades/presencial">Presencial</a></li>  
+                                        <li><a href="http://ieu.edu.mx/modalidades/online">Online</a></li>  
+                                        <li><a href="http://ieu.edu.mx/modalidades/ejecutiva">Ejecutiva</a></li>  
+                                    </ul> 
+                                </li>   
+                                <li id="navbar-oferta-academica" class="navbar-menu-multiline"> <a href="http://ieu.edu.mx/oferta-academica" data-navbar-toggle-dropdown="">Oferta <span>Académica</span></a> 
+                                    <ul class="navbar-dropdown navbar-dropdown-oferta-academica"> 
+                                        <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>   
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/bachillerato" data-navbar-toggle-dropdown=""> Bachillerato <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/bachillerato/bachillerato">Bachillerato</a></li>    
+                                            </ul> 
+                                        </li>  
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/licenciaturas" data-navbar-toggle-dropdown=""> Licenciaturas <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-del-talento-humano">Licenciatura en  Administración del Talento Humano</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion">Licenciatura en Administración</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-de-empresas-de-la-hospitalidad">Licenciatura en Administración de empresas de la hospitalidad</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-publica-y-ciencias-politicas">Licenciatura en Administración Pública y Ciencias Políticas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-y-direccion-estrategica">Licenciatura en Administración y Dirección Estratégica</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ciencias-de-la-educacion">Licenciatura en Ciencias de la Educación</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-comunicacion-integrada-en-las-organizaciones">Licenciatura en Comunicación integrada en las organizaciones</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-contaduria-y-finanzas">Licenciatura en Contaduría y Finanzas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-creacion-e-innovacion-de-empresas">Licenciatura en Creación e Innovación de empresas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-criminologia-victimologia-y-politica-criminal">Licenciatura en Criminología, Victimología y Política Criminal</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-derecho">Licenciatura en Derecho</a></li> 
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-direccion-de-mercadotecnia">Licenciatura en Dirección de Mercadotecnia</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-diseno-y-comunicacion-grafica">Licenciatura en Diseño y Comunicación Gráfica</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ecoturismo-y-sustentabilidad">Licenciatura en Ecoturismo y Sustentabilidad</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-finanzas-y-administracion-bancaria">Licenciatura en Finanzas y Administración Bancaria</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-gastronomia">Licenciatura en Gastronomía</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-historia">Licenciatura en Historia</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-en-sistemas-computacionales">Licenciatura en Ingeniería en Sistemas Computacionales</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-en-sistemas-y-tecnologias-de-la-informacion">Licenciatura en Ingeniería en Sistemas y Tecnologías de la Información</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-industrial-y-administrativa">Licenciatura en Ingeniería Industrial y Administrativa</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-lengua-y-literatura">Licenciatura en Lengua y Literatura</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-mercadotecnia-digital-y-community-manager">Licenciatura en Mercadotecnia Digital y Community Manager</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-mercadotecnia-y-publicidad">Licenciatura en Mercadotecnia y Publicidad</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-organizacion-y-relaciones-publicas-para-la-alta-direccion">Licenciatura en Organización y relaciones públicas para la alta dirección</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-psicologia">Licenciatura en Psicología</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-turismo">Licenciatura en Turismo</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ventas-y-comercializacion">Licenciatura en Ventas y Comercialización</a></li>    
+                                            </ul> 
+                                        </li>  
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/maestrias" data-navbar-toggle-dropdown=""> Maestrías <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion">Maestría en Administración</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-instituciones-de-la-salud">Maestría en Administración de Instituciones de la Salud</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-instituciones-educativas">Maestría en Administración de Instituciones Educativas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-negocios-de-alimentos-y-bebidas">Maestría en Administración de negocios de alimentos y bebidas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-publica">Maestría en Administración Pública</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-alta-direccion-e-inteligencia-estrategica">Maestría en Alta Dirección e Inteligencia Estratégica</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-apreciacion-y-creacion-literaria">Maestría en Apreciación y Creación Literaria</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ciencias-computacionales-y-telecomunicaciones">Maestría en Ciencias Computacionales y Telecomunicaciones</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ciencias-de-la-educacion">Maestría en Ciencias de la Educación</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-derecho-fiscal">Maestría en Derecho Fiscal</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-derecho-y-ciencias-penales">Maestría en Derecho y Ciencias Penales</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-desarrollo-y-gestion-de-marcas">Maestría en Desarrollo y Gestión de Marcas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-direccion-de-ingenieria-de-software">Maestría en Dirección de Ingeniería de Software</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-direccion-del-talento-humano">Maestría en Dirección del Talento Humano</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-finanzas">Maestría en Finanzas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-gerencia-administrativa-con-enfoque-en-direccion-general">Maestría en Gerencia Administrativa con Enfoque en Dirección General</a></li> 
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-gestion-de-la-industria-de-petroleo-y-gas">Maestría en Gestión de la Industria de Petróleo y Gas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-historia">Maestría en Historia</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-impuestos">Maestría en Impuestos</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ingenieria-administrativa">Maestría en Ingeniería Administrativa</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-innovacion-y-tecnologia-educativa">Maestría en Innovación y Tecnología Educativa</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-logistica-y-cadena-de-suministro">Maestría en Logística y Cadena de Suministro</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-mercadotecnia">Maestría en Mercadotecnia</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-mercadotecnia-estrategica">Maestría en Mercadotecnia Estratégica</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-psicologia-organizacional">Maestría en Psicología Organizacional</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-relaciones-publicas-y-procesos-directivos">Maestría en Relaciones públicas y procesos directivos</a></li>    
+                                            </ul> 
+                                        </li>  
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/especialidades" data-navbar-toggle-dropdown=""> Especialidades <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-calidad-en-el-servicio">Especialidad en Calidad en el Servicio</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-coaching-y-mentoring">Especialidad en Coaching y Mentoring</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-gestion-del-talento-humano-en-las-organizaciones">Especialidad en Gestión del Talento Humano en las Organizaciones</a></li>
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-imagen-y-relaciones-publicas">Especialidad en Imagen y Relaciones Públicas</a></li>    
+                                            </ul> 
+                                        </li>  
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/doctorados" data-navbar-toggle-dropdown=""> Doctorados <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-ciencias-administrativas">Doctorado en Ciencias Administrativas</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-direccion-e-innovacion-de-instituciones">Doctorado en Dirección e Innovación de Instituciones</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-educacion">Doctorado en Educación</a></li>    
+                                            </ul> 
+                                        </li>  
+                                        <li>  <a href="http://ieu.edu.mx/oferta-academica/educacion-continua" data-navbar-toggle-dropdown=""> Educación continua <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                            <ul class="navbar-deep-dropdown"> 
+                                                <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                                <li><div class="navbar-subdegree-title">Cursos</div></li>   
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-certificacion-en-diseno-digital-con-photoshop-cs6">Curso de Certificación en Diseño Digital con Photoshop CS6</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-certificacion-en-sitios-web-con-dreamweaver-cs6">Curso de Certificación en Sitios Web con Dreamweaver CS6</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-panaderia-basica">Curso de Panadería Básica</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-reposteria-basica">Curso de Repostería Básica</a></li>    
+                                                <li><div class="navbar-subdegree-title">Diplomados</div></li>   <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-cocina-oriental">Diplomado en Cocina Oriental</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-competencias-docentes">Diplomado en Competencias Docentes</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-executive-bar-manager">Diplomado en Executive Bar Manager</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-turismo-de-eventos">Diplomado en Turismo de Eventos</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-profesional-en-organizacion-de-eventos">Diplomado Profesional en Organización de Eventos</a></li>  
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-profesional-en-wedding-planning">Diplomado Profesional en Wedding Planning</a></li>    
+                                                <li><div class="navbar-subdegree-title">Talleres</div></li>   
+                                                <li><a href="http://ieu.edu.mx/oferta-academica/talleres/taller-de-cocteleria-internacional-y-flair">Taller de Coctelería Internacional y Flair</a></li>      
+                                            </ul> 
+                                        </li>   
+                                    </ul> 
+                                </li>  
+                                <li class="mobile-show"><a href="http://ieu.edu.mx/calculador-de-mensualidades">Calcula tu Colegiatura</a></li>  
+                                <li id="navbar-admisiones"> <a data-navbar-toggle-dropdown="" href="javascript:;">Admisiones</a> 
+                                    <ul class="navbar-dropdown"> 
+                                        <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li> 
+                                        <li><a id="idLinkPreinsc">Proceso de Preinscripción</a></li> 
+                                        <li><a href="http://ieu.edu.mx/admisiones/becas-y-apoyos">Becas y Apoyos</a></li> 
+                                        <li><a href="http://ieu.edu.mx/calendario">Calendario</a></li> 
+                                    </ul> 
+                                </li> 
+                                <li id="navbar-campus"><a href="http://ieu.edu.mx/campus"><span class="mobile-show">Localiza Tu</span> Campus</a></li> 
+                                <li id="navbar-experiencias-ieu" class="mobile-hide"> <a href="http://ieu.edu.mx/experiencias">Experiencias IEU</a> 
+                                    <ul class="navbar-dropdown"> 
+                                        <li><a href="http://ieu.edu.mx/practicas-profesionales#practicas-profesionales" rel="canonical">Prácticas profesionales</a></li> 
+                                        <li><a href="http://ieu.edu.mx/viajes#viajes" rel="canonical">Viajes</a></li> 
+                                        <li><a href="http://ieu.edu.mx/intercambios#intercambios" rel="canonical">Intercambios</a></li> 
+                                    </ul> 
+                                </li> 
+                                <li id="navbar-experiencias-ieu" class="mobile-show"> <a href="http://ieu.edu.mx/contacto" contact-header-button="">Contacto</a> </li> 
+                            </ul> 
+                        </nav> 
+                        <nav id="navbar-submenu" class="navbar-menu"> 
+                            <ul> 
+                                <li id="navbar-submenu-acceso-portales" class="navbar-submenu-multiline"><a href="http://portales.ieu.edu.mx/">Acceso a <span>Portales</span></a></li> 
+                                <li id="navbar-submenu-preguntas-frecuentes" class="navbar-submenu-multiline"><a href="http://ieu.edu.mx/preguntas-frecuentes">Preguntas <span>Frecuentes</span></a></li> 
+                                <li id="navbar-submenu-contacto"><a href="http://ieu.edu.mx/contacto" contact-header-button="">Contacto</a></li>
+                                <li id="navbar-submenu-chat-online"><a href="/Preinscripcion#" data-open-chat="#">Chat Online</a></li> 
+                                <li id="navbar-submenu-form-search"> 
+                                    <form method="GET" action="http://ieu.edu.mx/busqueda" accept-charset="UTF-8" id="navbar-form-search"> 
+                                        <label for="navbar-form-search-field">Buscador:</label> 
+                                        <input id="navbar-form-search-field" name="search" type="text"/> 
+                                        <button type="submit" data-no-disable="true"><i class="sprite sprite-navbar-search-submit"></i></button> 
+                                    </form> 
+                                </li> 
+                            </ul> 
+                        </nav> 
+                        <nav id="navbar-social-networks"> 
+                            <ul> 
+                                <li><a href="https://www.facebook.com/pages/IEU-Instituto-de-Estudios-Universitarios/186246394744618" target="_blank" class="sprite sprite-navbar-facebook">Facebook</a></li> 
+                                <li><a href="https://twitter.com/IEU_Universidad" target="_blank" class="sprite sprite-navbar-twitter">Twitter</a></li> 
+                                <li><a href="https://www.youtube.com/IEUuniversidad" target="_blank" class="sprite sprite-navbar-youtube">YouTube</a></li> 
+                                <li><a href="https://plus.google.com/u/0/116258308312438600353" target="_blank" class="sprite sprite-navbar-google-plus">Google+</a></li> 
+                            </ul> 
+                        </nav> 
+                    </div> 
+                </div> 
+            </div>     
+            
+            
+           <!-- <div id="preregistration-request-header">-->
+             <div id="calculator-header">
+                
+                <div class="content-block">
+                    <div class="container under-header">
+                        <h1 class="page-title page-title-type2">
+                            <span class="tablet-hide" >Gracias, recibimos tu solicitud</span>
+                            <span class="tablet-show">Solicitud enviada</span>
+                        </h1>
+                    </div><!-- div.container -->
+                </div><!-- div.content-block -->
+            </div>
+            <!-- div#preregistration-header -->
+            
+            <apex:remoteObjects >
+            <apex:remoteObjectModel name="Lead" jsShorthand="LeadGateway" fields="LastName,Phone,LeadSource,SubOrigenCandidato__c,AsignacionAutomatica__c,PorcentajeDescuento__c,PorcentajeBeca__c,Periodo__c,GrupoAsignado__c,Pais__c,Municipio__c,Estado__c,MedioDifusion__c,EstadoOtro__c,Promotor__c"/>
+                 </apex:remoteObjects>
+            
+            <div class="content-block">
+                <div class="container">
+                    <div class="block-type3">
+                        <div class="row row-without-spaces">
+                            
+                            <div class="xcol xcol-1 text-center">
+                             <div class="sprite sprite-check"></div> 
+                               <!-- <div class="xcol xcol-1 text-center" id="calculator-logo">
+                                <i class="sprite sprite-calculadora-logo">IEU Calculadora</i>-->
+                            </div>
+                            
+                            <!-- Message -->
+                            <div class="xcol xcol-5">
+                                <div class="title-features-lite" style=" font-size: 30px;">La siguiente información se envió al correo que proporcionaste:  <p id="demo"></p></div>
+                               
+                                
+                                <ul class="pre-registration-success-list">
+                                    <li>Ficha de pago.</li>
+                                    <li>Listado de la documentación necesaria.</li>
+                                </ul>
+                            </div>
+                            <!-- / Message -->
+                            
+                            
+                        </div><!-- div.row -->
+                        
+                        <!-- Back Button -->
+                        <div class="row row-without-spaces">
+                            <div class="xcol xcol-1">&nbsp;</div>
+                            <div class="xcol xcol-5">
+                                <a class="btn btn-type-3" href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud">
+                                    Volver a procedimiento
+                                </a>
+                            </div>
+                        </div>
+                        <!-- / Back Button -->
+                    </div><!-- div.block-type1 -->
+                </div><!-- div.container -->
+            </div>
+            <!-- div.content-block -->
+            <div id="root_footer"></div>
+            
+            
+        </div>  
+        <footer id="footer"> <div class="content-block"> 
+            <div class="content-block"> <a id="footer-logo" class="mobile-hide" href="https://ieu.edu.mx">
+                <apex:image url="{!URLFOR($Resource.spriteIEU, '/IEUstyle/ieu-logo-footer.png')}" width="50" height="150"/>
+                <!--<img src="/images/ieu-logo-footer.png" alt="IEU | Universidad">--> </a> 
+                <div id="footer-top"> 
+                    <div id="footer-social-networks"> <span id="footer-social-networks-title" class="mobile-hide">Síguenos:</span> <ul> <li><a href="https://www.facebook.com/pages/IEU-Instituto-de-Estudios-Universitarios/186246394744618" target="_blank" class="sprite sprite-footer-facebook">Facebook</a></li> <li><a href="https://twitter.com/IEU_Universidad" target="_blank" class="sprite sprite-footer-twitter">Twitter</a> </li> <li><a href="https://es.foursquare.com/ieu_universidad" target="_blank" class="sprite sprite-footer-foursquare">Foursquare</a></li> <li><a href="https://www.youtube.com/IEUuniversidad" target="_blank" class="sprite sprite-footer-youtube">YouTube</a> </li> </ul> </div> 
+                    <div id="footer-phone-wrapper"> <i class="sprite sprite-footer-phone"></i> 
+                        <div id="footer-phone-text"> 
+                            <div id="footer-phone-lada">LADA SIN COSTO</div> 
+                            <div id="footer-phone-number">01 800 00 00 438</div> </div> </div> </div> 
+                <div id="footer-body" class="mobile-hide">
+                    <div class="footer-links-list"> <strong class="footer-links-list-title">QUIÉNES SOMOS</strong> <nav> <ul>
+                        <li><a href="https://ieu.edu.mx/conocenos">Conócenos</a></li>
+                        <li><a href="https://ieu.edu.mx/acreditaciones">Validez oficial y acreditaciones</a></li> 
+                        <li><a href="https://ieu.edu.mx/conocenos#opiniones">Opiniones</a></li> <li><a href="https://ieu.edu.mx/conocenos#cuerpo-academico">Cuerpo académico</a></li> </ul> </nav> </div> <div class="footer-links-list"> <strong class="footer-links-list-title">MODALIDADES EDUCATIVAS</strong> <nav> <ul>  <li> <a href="https://ieu.edu.mx/modalidades/presencial">Presencial</a> </li>  <li> <a href="https://ieu.edu.mx/modalidades/online">Online</a> </li>  <li> <a href="https://ieu.edu.mx/modalidades/ejecutiva">Ejecutiva</a> </li>  </ul> </nav> </div> 
+                    <div class="footer-links-list"> <strong class="footer-links-list-title">OFERTA ACADÉMICA</strong> <nav> <ul>  <li> <a href="https://ieu.edu.mx/oferta-academica/bachillerato">Bachillerato</a> </li> 
+                        <li> <a href="https://ieu.edu.mx/oferta-academica/licenciaturas">Licenciaturas</a> </li>  <li> <a href="https://ieu.edu.mx/oferta-academica/maestrias">Maestrías</a> </li>  <li> <a href="https://ieu.edu.mx/oferta-academica/especialidades">Especialidades</a> </li>  <li> <a href="https://ieu.edu.mx/oferta-academica/doctorados">Doctorados</a> </li>  <li> <a href="https://ieu.edu.mx/oferta-academica/educacion-continua">Educación continua</a> </li>  </ul> </nav> </div> <div class="footer-links-list"> <strong class="footer-links-list-title">ADMISIONES</strong> <nav> <ul> 
+                    <li><a href="https://ieu.edu.mx/admisiones/preinscripcion">Proceso de admisión</a></li> 
+                    <li><a href="https://ieu.edu.mx/admisiones/preinscripcion#requisitos">Requisitos</a></li> <li><a href="https://ieu.edu.mx/calculador-de-mensualidades">Colegiatura</a></li> <li><a href="https://ieu.edu.mx/admisiones/becas-y-apoyos">Becas y apoyos económicos</a></li> </ul> </nav> </div> </div> <i class="sprite sprite-footer-logo-mobile mobile-show"></i> </div> </div> <div id="footer-footer"> <div class="content-block"> <div class="container"> <div id="footer-footer-copyright"> Copyright © 2016 Instituto de Estudios Universitarios </div> <div id="footer-footer-links" class="mobile-hide"> <nav> <ul> <li><a href="http://espacio.ieu.edu.mx/" target="_blank" rel="nofollow">NOTICIAS</a></li> <li><a href="https://ieu.edu.mx/publicidad">PUBLICIDAD</a></li> 
+            <li><a href="https://ieu.edu.mx/aviso-de-privacidad">AVISO DE PRIVACIDAD</a></li> </ul> </nav> </div> </div> </div> </div>
+        </footer>       
+        
+        <a id="contact-footer-button" href="https://ieu.edu.mx/contacto" contact-footer-button=""></a>
+        
+        
+        <script id="alert-message-message" type="text/x-handlebars-template">            
+        <div class="alert-message alert-message-message">
+            <div class="alert-message-header">
+                <a id="cerrarAlert" href="#" class="sprite sprite-btn-alert-close" data-close-alert=""></a>
+                </div> 
+                <div class="alert-message-body">{{text}}</div>                    
+                <div class="alert-message-footer">                        
+                    <a id="aceptarAlert" class="btn btn-type-1" href="#" data-close-alert="">Aceptar</a>
+                    </div>
+                    </div>                        
+                    </script>
+        
+        
+        <script id="phone-contact-alert-body" type="text/x-handlebars-template">
+        <div class="title-description">¡Gracias!</div>
+        <p class="alert-message-featured">{{ name }}</p>
+        <strong>En un momento un asesor llamará al número:</strong>
+        <p class="alert-message-featured">{{ phone }}</p>
+        <strong>Nuestro horario de atención es de:</strong>
+        <br/>Lunes a sábado de 7:30 a 21:00 horas
+        </script>       
+        
+        <script>
+        var ON_MOBILE   = false;
+        var ON_TABLET   = false;
+        var ON_HANDHELD = false;
+        var ON_DESKTOP  = true;
+        var CURRENT_URI = "/calculador-de-mensualidades";
+        </script>     
+        
+        <script>
+        AverageSelector.init();
+        CareerSelector.init();
+        
+        </script>
+        
+        <script>
+        
+         function validarAte(){   
+        
+        j$('#phone-contact-submit').prop('disabled', true);
+        if(j$('#phone_contact_name').val()==''){
+            Alert.error('El nombre es requerido');
+            habilitarButtons();
+        }
+        else if(j$('#phone_contact_phone').val()==''){
+            Alert.error('El teléfono es requerido');
+            habilitarButtons();
+        }
+            else if(j$('#phone_contact_phone').val().length < 6){
+                Alert.error('El teléfono debe contener al menos 7 caracteres');
+                habilitarButtons();
+            }
+                else if(j$('#phone_contact_phone').val()!='' && isNaN(j$('#phone_contact_phone').val()) == true){
+                    Alert.error('El teléfono solo debe contener números');
+                    habilitarButtons();
+                }
+                    else {
+                        var i = j$('[name="phone_contact_name"]').val();
+                        var r = j$('[name="phone_contact_phone"]').val();
+                        PhoneContact.init();
+                        var leadInsertAteInme = new SObjectModel.LeadGateway();
+                        var leadAteInme = {};
+                        leadAteInme.LastName = j$('#phone_contact_name').val();
+                        leadAteInme.Phone = j$('#phone_contact_phone').val();
+                        leadAteInme.LeadSource = 'Marketing';					
+                        leadAteInme.SubOrigenCandidato__c = 'Atención Inmediata';
+                        
+                        leadInsertAteInme.create(leadAteInme,function(err,res){
+                            if(err){
+                                console.log(err);
+                                console.log('No inserto ' + err);
+                            }            
+                            else{
+                                Alert.message(PhoneContact.alertBody({name: i,phone: r}));
+                            }
+                        }); 
+                        
+                        habilitarButtons();
+                    }
+    }
+        
+        function habilitarButtons(){
+            j$('#cerrarAlert').on('click', function(){
+                j$('#phone-contact-submit').prop('disabled', false);
+            });
+            j$('#aceptarAlert').on('click', function(){
+                j$('#phone-contact-submit').prop('disabled', false);
+            });
+        }
+    
+        
+        </script>
+    
+    </body>
+    <script type="text/javascript">
+    j$ = jQuery.noConflict();
+    j$(document).ready(function(){
+        Chat.init();
+        j$('#ref').attr('href','https://'+window.location.hostname+'/Preinscripcion')
+        var urlRecordType = '{!$CurrentPage.parameters.mail}'; 
+        j$('#mail').text(urlRecordType);
+  document.getElementById("demo").innerHTML = urlRecordType;
+ 
+    });
+    </script>
+</apex:page>
