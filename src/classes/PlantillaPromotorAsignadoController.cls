@@ -1,15 +1,15 @@
 public class PlantillaPromotorAsignadoController {
     
     public ID  salesRepID {get; set;}
-    Public List<Plantel__c> plantel = new List<Plantel__c>();
-     Public List<RequisitosInscripcion__c> requisitos = new List<RequisitosInscripcion__c>();
+    public List<Plantel__c> plantel = new List<Plantel__c>();
+    public List<RequisitosInscripcion__c> requisitos = new List<RequisitosInscripcion__c>();
     public  Lead AllLeads= new Lead();
     public  Plantel__c Direccion= new Plantel__c();
     public  Rvoe__c rvoe;
     //Integer cantidadPlanteles {get; set;}
     String dir='';
     String Nivel='';
-      String RvoeVigente='';
+    String RvoeVigente='';
     public PlantillaPromotorAsignadoController() {
         
     }    
@@ -18,16 +18,16 @@ public class PlantillaPromotorAsignadoController {
         
         try {
                 AllLeads = [select Id, Promotor__c, Promotor__r.PromotorName__c ,Folio__c,Name, Programa__r.Name ,Inscripcion__c, 
-                            Nivel__r.Name,VigenciaDescuento__c,Programa__R.AbreviaturaPrograma__c,Programa__R.NombreMin__c,
+                            Nivel__r.Name,VigenciaDescuento__c,Programa__r.AbreviaturaPrograma__c,Programa__r.NombreMin__c,
                             Colegiatura__c, Nivel__c, Modalidad__c , Promotor__r.UrlFotoGrande__c, 
-                            OfertaEducativa__R.RvoeVigente__R.ModalidadRVOE__c , OfertaEducativa__R.RvoeVigente__R.Name, 
-                            OfertaEducativa__R.RvoeVigente__R.ClaveCentroTrabajo__c, Modalidad__R.Name ,
-                            OfertaEducativa__R.DuracionPrograma__c , Plantel__c ,  Periodo__r.name , Periodo__r.FechaInicio__c ,
-                            Programa__R.LigaPlan__c, OfertaEducativa__R.Periodicidad__C 
+                            OfertaEducativa__r.RvoeVigente__r.ModalidadRVOE__c , OfertaEducativa__r.RvoeVigente__r.Name, 
+                            OfertaEducativa__r.RvoeVigente__r.ClaveCentroTrabajo__c, Modalidad__r.Name ,
+                            OfertaEducativa__r.DuracionPrograma__c , Plantel__c ,  Periodo__r.name , Periodo__r.FechaInicio__c ,
+                            Programa__r.LigaPlan__c, OfertaEducativa__r.Periodicidad__c 
                             from Lead where Id=: salesRepID  LIMIT 1];                           
          //   System.debug('otra URLPlanEstudios__c--> '+AllLeads.OfertaEducativa__r.RvoeVigente__r.URLPlanEstudios__c);
             dir=AllLeads.Plantel__c; 
-             Nivel=AllLeads.Nivel__r.Name; 
+            Nivel=AllLeads.Nivel__r.Name; 
             RvoeVigente=AllLeads.OfertaEducativa__R.RvoeVigente__r.name;
             
         } catch (Exception e) {

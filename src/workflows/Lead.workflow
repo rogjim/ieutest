@@ -123,7 +123,7 @@
             <name>ActivarAsignacionW2L</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>false</active>
+        <active>true</active>
         <description>Sobre escribe la asignación del propietario de los candidatos provenientes de los formatos WebToLead. Al actualizar el campo se ejecuta el trigger sobre Candidato que proporciona la asignación del candidato</description>
         <formula>ISPICKVAL(LeadSource, &apos;Marketing&apos;) &amp;&amp; ISPICKVAL(SubOrigenCandidato__c ,&apos;Verticales IEU (por programa)&apos;) &amp;&amp; WebToLead__c</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
@@ -134,7 +134,7 @@
             <name>DescripcionAsignacion</name>
             <type>Alert</type>
         </actions>
-        <active>false</active>
+        <active>true</active>
         <description>Solo aplica para LP</description>
         <formula>AsignacionAutomatica__c &amp;&amp; NOT(ISBLANK(Promotor__c)) &amp;&amp;  TEXT(SubOrigenCandidato__c)  &lt;&gt; &apos;Calcula tu colegiatura&apos;</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>

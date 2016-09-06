@@ -782,7 +782,25 @@ System.debug('solicitudPromocion.Estatus__c--> '+solicitudPromocion.Estatus__c);
                 }catch(Exception e){
                     solicitudBecaComercial = new SolicitudBeca__c();
                 }
-                
+                System.debug(solicitudBecaComercial);
+                if(solicitudBecaComercial.Id!=null){
+                    LetraBecaString = solicitudBecaComercial.LetraBecaComercial__c;                    
+                }
+                else{
+                    //Verifica que la beca haya sido aprobada
+                    SolicitudBeca__c solicitudBecaComercial2 = new SolicitudBeca__c();
+                    solicitudBecaComercial2 = [SELECT Id, Estatus__c, Lead__c, Oportunidad__c, Name, Beca__c, Porcentaje__c, LetraBecaComercial__c, AsignacionBecaConvenio__c, NombreConvenio__c, TipoBeca__c 
+                                              FROM SolicitudBeca__c 
+                                              WHERE TipoBeca__c = 'Comercial' 
+                                              AND Beca__c=:ofertaSeleccionada.Beca__c 
+                                              AND Oportunidad__c =: oportunidad.Id 
+                                              AND Oportunidad__c!=null 
+                                              AND Estatus__c ='Activo' LIMIT 1 ];
+                    if(solicitudBecaComercial2.Id!=null){
+                    	LetraBecaString = solicitudBecaComercial2.LetraBecaComercial__c;   
+                        solicitudBecaComercial = solicitudBecaComercial2;
+                    }
+                }
                 String ofe = oportunidad.OfertaEducativa__c;
                 becaOferta = new Beca__c();
                 try{

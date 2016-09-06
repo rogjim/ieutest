@@ -737,6 +737,9 @@ public with sharing class LEAD_LayoutCtrl {
                     solicitudBecaComercial = new SolicitudBeca__c();
                 }
                 System.debug(solicitudBecaComercial);
+                 if(solicitudBecaComercial.Id!=null){
+                    LetraBecaStringA = solicitudBecaComercial.LetraBecaComercial__c;
+                }
                 String ofe = candidato.OfertaEducativa__c;
                 becaOferta = new Beca__c();
                 try{

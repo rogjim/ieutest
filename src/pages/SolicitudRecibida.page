@@ -301,7 +301,10 @@
                         <div class="row row-without-spaces">
                             <div class="xcol xcol-1">&nbsp;</div>
                             <div class="xcol xcol-5">
-                                <a class="btn btn-type-3" href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud">
+                              <!--  <a class="btn btn-type-3" href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud">-->
+                                    <a class="btn btn-type-3" href="/Preinscripcion">
+                                    
+                                  <!--  https://' + window.location.hostname + '/Preinscripcion';-->
                                     Volver a procedimiento
                                 </a>
                             </div>
