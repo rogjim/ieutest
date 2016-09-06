@@ -1,0 +1,2418 @@
+<apex:component >
+	<div class="container" id="agreementCtrl" ng-controller="agreementCtrl">
+		<br/>
+		<div class="row">
+			<div class="col-sm-8">
+				<h3>Configuración de convenios</h3>
+			</div>
+		</div>
+		<hr/>
+		<br/>
+
+		<div ng-if="!base.scholarship.loading && base.scholarship.instances.length <= 0" class="alert alert-danger" role="alert">
+			<span ng-bind="messages.noData"/>
+		</div>
+
+		<div ng-if="base.scholarship.loading" class="alert alert-success" role="alert">
+			<i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+			<span ng-bind="messages.loading"/>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-4 text-right">
+				<div class="input-group">
+			        <span class="input-group-addon">Buscar</span>
+			        <input type="text" class="form-control" ng-model="base.scholarship.pag.sea" autofocus="true" />
+			    </div>
+			</div>
+			<div class="col-sm-4 form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-8">Elementos por página</label>
+					<div class="col-sm-4">
+						<select class="form-control" ng-options="opt as opt for opt in base.scholarship.pag.psi" ng-model="base.scholarship.pag.ipp">
+			                    <option value="" selected="true">-- Ninguno --</option>
+		                </select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4 text-right">
+				<a class="btn btn-success" ng-click="editScholarship({})">
+					<span class="fa fa-plus"/>
+					Agregar
+				</a>
+			</div>
+		</div>
+		<div class="table-responsive table-scholarship" ng-if="base.scholarship.filtered.length > 0">
+
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th> <a ng-click="setFieldSort('EstatusBeca__c')" class="ctc-btn"> <span ng-class="iconSort('EstatusBeca__c')"/> <span ng-bind="fieldsK.scholarship.EstatusBeca__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('NombreConvenio__c')" class="ctc-btn"> <span ng-class="iconSort('NombreConvenio__c')"/> <span ng-bind="fieldsK.scholarship.NombreConvenio__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('FechaFirma__c')" class="ctc-btn"> <span ng-class="iconSort('FechaFirma__c')"/> <span ng-bind="fieldsK.scholarship.FechaFirma__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('AplicaPara__c')" class="ctc-btn"> <span ng-class="iconSort('AplicaPara__c')"/> <span ng-bind="fieldsK.scholarship.AplicaPara__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('NoAplicaPara__c')" class="ctc-btn"> <span ng-class="iconSort('NoAplicaPara__c')"/> <span ng-bind="fieldsK.scholarship.NoAplicaPara__c.label"/> </a> </th>
+
+						<!--th> <a ng-click="setFieldSort('TipoPorcentaje__c')" class="ctc-btn"> <span ng-class="iconSort('TipoPorcentaje__c')"/> <span ng-bind="fieldsK.scholarship.TipoPorcentaje__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('PorcentajeBeca__c')" class="ctc-btn"> <span ng-class="iconSort('PorcentajeBeca__c')"/> <span ng-bind="fieldsK.scholarship.PorcentajeBeca__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('Inicial__c')" class="ctc-btn"> <span ng-class="iconSort('Inicial__c')"/> <span ng-bind="fieldsK.scholarship.Inicial__c.label"/> </a> </th>
+
+						<th> <a ng-click="setFieldSort('Final__c')" class="ctc-btn"> <span ng-class="iconSort('Final__c.name')"/> <span ng-bind="fieldsK.scholarship.Final__c.label"/> </a> </th-->
+
+
+						<th class="ctc-th-actions">Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="sc in base.scholarship.filtered|orderBy:base.scholarship.pag.sfi:base.scholarship.pag.rev | filter:base.scholarship.pag.sea | startFrom:(base.scholarship.pag.cpa - 1) * base.scholarship.pag.ipp|limitTo: base.scholarship.pag.ipp">
+
+						<td> <span ng-bind="sc.EstatusBeca__c"></span> <span class="hidden" >{{sc|json}}</span></td>
+
+						<td> <span ng-bind="sc.NombreConvenio__c"></span> </td>
+
+						<td> <span ng-bind="sc.FechaFirma__c"></span> </td>
+
+						<td> 
+							<ul class="list-unstyled">
+								<li ng-repeat="app in sc.AplicaPara__o"><span uib-tooltip="{{app}}" ng-bind="app|limitTo: 13"/></li>
+							</ul>
+						</td>
+
+						<td>
+							<ul class="list-unstyled">
+								<li ng-repeat="app in sc.NoAplicaPara__o"><span uib-tooltip="{{app}}" ng-bind="app|limitTo: 13"/></li>
+							</ul>
+						</td>
+
+						<!--td> <span ng-bind="sc.TipoPorcentaje__c"></span> </td>
+
+						<td> <span ng-bind="sc.PorcentajeBeca__c"></span> </td>
+
+						<td> <span ng-bind="sc.Inicial__c"></span> </td>
+
+						<td> <span ng-bind="sc.Final__c"></span> </td-->
+
+						<td>
+							<a ng-click="editScholarship(sc)" class="btn btn-success">
+								<span class="fa fa-edit fa-fw"/>
+							</a>
+							<a ng-click="removeScholarship(sc)" class="btn btn-danger">
+								<span class="fa fa-trash-o fa-fw"/>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<uib-pagination 
+			ng-if="base.scholarship.filtered.length > base.scholarship.pag.ipp"
+			items-per-page="base.scholarship.pag.ipp" 
+			total-items="base.scholarship.pag.tit" 
+			ng-model="base.scholarship.pag.cpa" 
+			max-size="base.scholarship.pag.mpa" 
+			boundary-links="true" 
+			force-ellipses="true" 
+			first-text="{{base.scholarship.pag.fir}}" 
+			previous-text="{{base.scholarship.pag.pre}}" 
+			next-text="{{base.scholarship.pag.next}}" 
+			last-text="{{base.scholarship.pag.last}}"
+			></uib-pagination>
+
+		<!-- INIT Edit scholarship -->
+		<div class="modal fade md-lg" id="modalEditScholarship" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg" ng-if="status.editing">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        	<h4 class="modal-title"><span ng-bind="messages.edit"/></h4>
+			      	</div>
+			      	<form name="formEditSS" class="form-horizontal" ng-submit="saveScholarship()">
+
+
+					    <div class="modal-body">
+
+						    <div class="row">
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.NombreConvenio__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+		                    	</div>
+						    	<div class="col-sm-6">
+		                        	<sf-input sf-field="fieldsK.scholarship.EstatusBeca__c" sf-opts="fieldsK.scholarship.EstatusBeca__c.values" sf-label-prop="'label'" sf-instance="current.scholarship.editing" sf-form="formEditSS"></sf-input>
+		                    	</div>
+						    </div>
+
+						    <div class="row">
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Descripcion__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div>
+
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Beneficiados__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div>
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.TipoPorcentaje__c" ctc-instance="current.scholarship.editing" ctc-opts="fieldsK.scholarship.TipoPorcentaje__c.values" ctc-label="'label'"></ctc-form-group>
+								</div-->
+							</div>
+
+						    <div class="row">
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Beneficiados__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div-->
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.PorcentajeBeca__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div-->
+							</div>
+
+						    <div class="row">
+						    	<div class="col-sm-6">
+						    		<div ></div>
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.AplicaPara__c" ctc-instance="current.scholarship.editing" ctc-opts="current.scholarship.editing.opts.AplicaPara__c" ctc-label="'label'"></ctc-form-group>
+								</div>
+								
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.NoAplicaPara__c" ctc-instance="current.scholarship.editing" ctc-opts="current.scholarship.editing.opts.NoAplicaPara__c" ctc-label="'label'"></ctc-form-group>
+								</div>
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Inicial__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div-->
+							</div>
+
+						    <div class="row">
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.NoAplicaPara__c" ctc-instance="current.scholarship.editing" ctc-opts="current.scholarship.editing.opts.NoAplicaPara__c" ctc-label="'label'"></ctc-form-group>
+								</div-->
+						    	<!--div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Final__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.Incrementos__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div-->
+							</div>
+
+						    <div class="row">
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.FechaFirma__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div>
+						    	<div class="col-sm-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.RequiereAutorizacion__c" ctc-instance="current.scholarship.editing"></ctc-form-group>
+								</div>
+							</div>
+							<!--div class="row" ng-if="current.scholarship.editing.RequiereAutorizacion__c">
+						    	<div class="col-sm-6 col-sm-offset-6">
+									<ctc-form-group ctc-form="formEditSS" ctc-field="fieldsK.scholarship.TipoAutorizacion__c" ctc-instance="current.scholarship.editing"
+									ctc-opts="fieldsK.scholarship.TipoAutorizacion__c.values" ctc-label="'label'"></ctc-form-group>
+								</div>
+							</div-->
+
+							<!-- configure campus, levels and programs -->
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="col-sm-12">
+											<div class="row">
+												<div class="col-sm-9">
+													<span class="fa fa-building-o"></span>
+													Planteles, Niveles y Programas Asginados
+												</div>
+												<div class="col-sm-3 text-right">
+													<a class="btn btn-success" ng-click="addCampus({})" uib-tooltip="Agregar">
+														<span class="fa fa-plus" />
+													</a>
+												</div>
+											</div>
+											<div class="table-responsive table-scholarship">
+												<table class="table table-hover">
+													<thead>
+														<tr>
+															<th ng-repeat="field in base.campus.fields">
+																<a ng-click="setFieldSort(field)" class="ctc-btn"> <span ng-class="iconSort(field)"/> <span ng-bind="base.obj.BecaConvenioAsignacion__c.k[field].label"/> </a> 
+															</th>
+															<th class="ctc-th-actions">Acciones</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="campus in current.scholarship.editing.Becas_Convenio_Asignaci_n__o">
+															<!--td ng-repeat="field in base.campus.fields" ng-bind="campus[field] | limitTo:10" title="{{campus[field]}}"></td-->
+															<td>
+                                                                <ctc-auto-complete 
+																ctc-parent-instance="campus"
+																ctc-instance="campus.opts.Plantel__c"
+																ctc-term="campus.opts.Plantel__c__t"
+																ctc-field="base.obj.BecaConvenioAsignacion__c.k.Plantel__c" 
+																ctc-action-select="filterLevels(instance, parent)"
+																ctc-datasource="base.campus.opts[campus.Id].Plantel__c__o"
+																ctc-filter="{Name: campus.opts.Plantel__c__t}"
+																ctc-opts="campus.opts"
+																ctc-clear-fields="['Nivel__c', 'Programa__c']"
+																ctc-fields="['Name']"
+																ctc-form="formEditSS"
+																ctc-registered="current.scholarship.editing.Becas_Convenio_Asignaci_n__o"
+																></ctc-auto-complete>
+															</td>
+															<td>
+																<ctc-auto-complete 
+																ctc-parent-instance="campus"
+																ctc-instance="campus.opts.Nivel__c"
+																ctc-term="campus.opts.Nivel__c__t"
+																ctc-field="base.obj.BecaConvenioAsignacion__c.k.Nivel__c" 
+																ctc-action-select="filterPrograms(instance, parent)"
+																ctc-datasource="base.campus.opts[campus.Id].Nivel__c__o"
+																ctc-filter="{Name: campus.opts.Nivel__c__t}"
+																ctc-opts="campus.opts"
+																ctc-clear-fields="['Programa__c']"
+																ctc-fields="['Name']"
+																ctc-form="formEditSS"
+																ctc-registered="current.scholarship.editing.Becas_Convenio_Asignaci_n__o"
+																></ctc-auto-complete>
+															</td>
+															<td>
+																<ctc-auto-complete 
+																ctc-parent-instance="campus"
+																ctc-instance="campus.opts.Programa__c"
+																ctc-term="campus.opts.Programa__c__t"
+																ctc-field="base.obj.BecaConvenioAsignacion__c.k.Programa__c" 
+																ctc-datasource="base.campus.opts[campus.Id].Programa__c__o"
+																ctc-filter="{Name: campus.opts.Programa__c__t}"
+																ctc-opts="base.campus.editing.opts"
+																ctc-clear-fields="[]"
+																ctc-fields="['Name']"
+																ctc-form="formEditSS"
+																ctc-registered="current.scholarship.editing.Becas_Convenio_Asignaci_n__o"
+																></ctc-auto-complete>
+															</td>
+															<td>
+																<ctc-input
+																	ctc-form="formEditSS"
+																	ctc-field="base.campus.opts[campus.Id].fields.Tipo_de_porcentaje__c"
+																	ctc-instance="campus"
+																	ctc-opts="base.campus.opts[campus.Id].fields.Tipo_de_porcentaje__c.values"
+																	ctc-label="'label'"
+																></ctc-input>
+															</td>
+															<td>
+																<ctc-input
+																	ctc-form="formEditSS"
+																	ctc-field="base.campus.opts[campus.Id].fields.PorcentajeBeca__c"
+																	ctc-instance="campus"
+																></ctc-input>
+															</td>
+															<td>
+																<ctc-input
+																	ctc-form="formEditSS"
+																	ctc-field="base.campus.opts[campus.Id].fields.Inicial__c"
+																	ctc-instance="campus"
+																></ctc-input>
+															</td>
+															<td>
+																<ctc-input
+																	ctc-form="formEditSS"
+																	ctc-field="base.campus.opts[campus.Id].fields.Final__c"
+																	ctc-instance="campus"
+																></ctc-input>
+															</td>
+															<td>
+																<ctc-input
+																	ctc-form="formEditSS"
+																	ctc-field="base.campus.opts[campus.Id].fields.Incrementos__c"
+																	ctc-instance="campus"
+																></ctc-input>
+															</td>
+															<td>
+																<a class="btn btn-danger" data-toggle="modal" data-target="#modalRemoveCampus" uib-tooltip="eliminar" ng-click="base.campus.editing = campus; setFormScope(formEditSS)"><span class="fa fa-trash-o"/></a>
+																<a uib-tooltip="Duplicar" ng-click="cloneCampus(campus)" class="btn btn-primary"> <span class="fa fa-clone"/> </a>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group" ng-class="{'has-success': hasSelected(instances.requirement), 'has-error': !hasSelected(instances.requirement)}">
+										<label class="control-label col-sm-4">
+											<a class="ctc-btn" ng-click="editRequirementAndApply('requirement', 'allRequirement', 'modalEditRequirement')">
+												<span class="fa fa-list-ul"></span>
+												Requisitos *
+											</a>
+										</label>
+										<div class="col-sm-8">
+											<div ng-if="base.requirement.loading" class="alert alert-success" role="alert">
+												<i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+												<span ng-bind="messages.loading"/>
+											</div>
+											<ul class="list-unstyled well" ng-if="!base.requirement.loading">
+												<li ng-repeat="requirement in instances.requirement">
+													<div ng-if="requirement.isChecked">
+														<span ng-bind="requirement.Name"/>
+													</div>
+												</li>
+											</ul>
+											<i class="ctc-error-message" ng-if="!hasSelected(instances.requirement)">Requerido</i>
+										</div>
+									</div>
+								</div>
+								<!--div class="col-sm-6">
+									<div class="form-group">
+										<label class="control-label col-sm-4" ng-class="{'has-success': hasSelected(instances.profile), 'has-error': !hasSelected(instances.profile)}">
+											<a class="ctc-btn" ng-click="editRequirementAndApply('profile', 'allApply', 'modalEditApply')">
+												<span class="fa fa-eye"></span>
+												Visible para *
+											</a>
+										</label>
+										<div class="col-sm-8">
+											<ul class="list-unstyled well">
+												<li ng-repeat="profile in instances.profile">
+													<div ng-if="profile.isChecked">
+														<span ng-bind="profile.Name"/>
+													</div>
+												</li>
+											</ul>
+											<i class="ctc-error-message" ng-if="!hasSelected(instances.profile)">Requerido</i>
+										</div>
+									</div>
+								</div-->
+							</div>
+
+							<div class="row" ng-if="errors.length>0">
+                                <div class="col-sm-6 col-sm-offset-6 text-right">
+                                    <div class="alert alert-danger">
+                                        <ul class="list-unstyled">
+                                            <li ng-repeat="err in errors"><span ng-bind="err"/></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+					    </div>
+
+
+				        <div class="modal-footer">
+				        	<button type="submit" class="btn btn-success" ng-disabled="formEditSS.$invalid || status.saving || !hasSelected(instances.requirement) || !hasSelected(instances.profile)">
+				        		<span class="fa fa-spinner fa-pulse" ng-if="status.saving"></span>
+				        		<span class="fa fa-save fa-fw"/>
+				        		Guardar
+				        	</button>
+				        	<button type="button" class="btn btn-default" data-dismiss="modal">
+				        		<span class="fa fa-mail-reply fa-fw"/>
+				        		Cancelar
+				        	</button>
+				        </div>
+			        </form>
+			    </div>
+		    </div>
+		</div>
+		<!-- END Edit scholarship -->
+
+		<!-- INIT configure requirement -->
+		<div class="modal fade" id="modalEditRequirement" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog" ng-if="status.editing">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        	<h4 class="modal-title"><span ng-bind="messages.requirement"/></h4>
+			      	</div>
+			      	<!--form name="formEditReq" class="form-horizontal" ng-submit="saveRequirement()"-->
+					    <div class="modal-body">
+						    <div class="table-responsive">
+						    	<table class="table table-hover">
+									<thead>
+										<tr>
+											<th ng-repeat="field in fieldsS.requirement">
+												<span ng-bind="fieldsK.requirement[field].label"/>
+											</th>
+											<th>
+												<div class="checkbox">
+												    <label>
+												      <input type="checkbox" ng-model="status.allRequirement" ng-change="checkAll(instances.requirementEdit, status.allRequirement)"/> Todos
+												    </label>
+												</div>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="requirement in instances.requirementEdit">
+											<td ng-repeat="field in fieldsS.requirement">
+												<span ng-bind="requirement[field]"></span>
+											</td>
+											<td>
+												<div class="checkbox">
+												    <label>
+												      <input type="checkbox" ng-model="requirement.isChecked" ng-change="isSelectAll(instances.requirementEdit, 'allRequirement')"/> Seleccionar
+												    </label>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+						    </div>
+					    </div>
+					    <div class="modal-footer">
+				        	<button ng-click="saveRequirementAndApply('requirement', 'allRequirement', 'modalEditRequirement')" class="btn btn-primary">
+				        		<span class="fa fa-save fa-fw"/>
+				        		Aceptar
+				        	</button>
+					    	<button type="button" class="btn btn-default" data-dismiss="modal">
+				        		<span class="fa fa-mail-reply fa-fw"/>
+				        		Cancelar
+				        	</button>
+				        </div>
+					<!--/form-->
+				</div>
+			</div>
+		</div>
+		<!-- END configure requirement -->
+
+		<!-- INIT configure appliesTo -->
+		<div class="modal fade" id="modalEditApply" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog" ng-if="status.editing">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        	<h4 class="modal-title"><span ng-bind="messages.applies"/></h4>
+			      	</div>
+			      	<!--form name="formEditApplies" class="form-horizontal" ng-submit="saveAppliesTo()"-->
+					    <div class="modal-body">
+						    <div class="table-responsive">
+						    	<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>
+												<div class="checkbox">
+												    <label>
+												      <input type="checkbox" ng-model="status.allApply" ng-change="checkAll(instances.profileEdit, status.allApply)"/> Todos
+												    </label>
+												</div>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="profile in instances.profileEdit">
+											<td>
+												<div class="checkbox">
+												    <label>
+												      <input type="checkbox" ng-model="profile.isChecked"  ng-change="isSelectAll(instances.profileEdit, 'allApply')"/> <span ng-bind="profile.Name"/>
+												    </label>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+						    </div>
+					    </div>
+					    <div class="modal-footer">
+				        	<button ng-click="saveRequirementAndApply('profile', 'allApply', 'modalEditApply')" class="btn btn-primary">
+				        		<span class="fa fa-save fa-fw"/>
+				        		Aceptar
+				        	</button>
+					    	<button type="button" class="btn btn-default" data-dismiss="modal">
+				        		<span class="fa fa-mail-reply fa-fw"/>
+				        		Cancelar
+				        	</button>
+				        </div>
+					<!--/form-->
+				</div>
+			</div>
+		</div>
+		<!-- END configure appliesTo -->
+
+		<!-- INIT remove scholarship -->
+		<div class="modal fade" id="modalRemoveScholarship" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        	<h4 class="modal-title"><span ng-bind="messages.remove"/></h4>
+			      	</div>
+				    <div class="modal-body">
+					    <p> <span ng-bind="messages.removeScholarship"/> <span ng-bind="current.scholarship.selected.Name"/></p>
+				    </div>
+				    <div class="modal-footer">
+			        	<button ng-click="confirmRemoveScholarship()" class="btn btn-danger" ng-disabled="status.deleting">
+			        		<span class="fa fa-spinner fa-pulse" ng-if="status.deleting"></span>
+			        		<span class="fa fa-exclamation-triangle fa-fw"/>
+			        		Eliminar
+			        	</button>
+				    	<button type="button" class="btn btn-default" data-dismiss="modal">
+			        		<span class="fa fa-mail-reply fa-fw"/>
+			        		Cancelar
+			        	</button>
+			        </div>
+				</div>
+			</div>
+		</div>
+		<!-- END remove scholarship -->
+
+		<!-- INIT remove campus -->
+		<div class="modal fade" id="modalRemoveCampus" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        	<h4 class="modal-title"><span ng-bind="messages.remove"/></h4>
+			      	</div>
+				    <div class="modal-body">
+					    <p> <span ng-bind="messages.removeCampus"/> <span ng-bind="current.scholarship.selected.Name"/></p>
+				    </div>
+				    <div class="modal-footer">
+			        	<button ng-click="confirmRemoveCampus()" class="btn btn-danger" ng-disabled="status.deletingCampus">
+			        		<span class="fa fa-spinner fa-pulse" ng-if="status.deletingCampus"></span>
+			        		<span class="fa fa-exclamation-triangle fa-fw"/>
+			        		Eliminar
+			        	</button>
+				    	<button type="button" class="btn btn-default" data-dismiss="modal">
+			        		<span class="fa fa-mail-reply fa-fw"/>
+			        		Cancelar
+			        	</button>
+			        </div>
+				</div>
+			</div>
+		</div>
+		<!-- END remove campus -->
+
+	</div>
+
+
+			<script type="text/javascript">
+				var app = angular.module('appIEU');
+				app.controller('agreementCtrl', ['$scope', '$filter', '$timeout', '$interval', 'sfService', 'sfDB', 'sfUtils', 'filterFilter', '$log', function($scope, $filter, $timeout, $interval, sfService, sfDB, sfUtils, filterFilter, $log) {
+					var agreementGW = new sfService.gateway.scholarship();
+					var requirementGW = new sfService.gateway.requirement();
+					var requirementBSGW = new sfService.gateway.requirementScholarship();
+					var profileGW = new sfService.gateway.profile();
+					var recordTypeGW = new sfService.gateway.recordType();
+					var campusGW = new sfService.gateway.recordType();
+					$scope.fieldsK = {scholarship: {}, requirement: {}, requirementBS: {}, profile: {}, recordType: {}, campus: {}};
+					$scope.fieldsA = {scholarship: [], requirement: [], requirementBS: [], profile: [], recordType: [], campus: []};
+					//$scope.fieldsS = {scholarship: ['Name', 'NombreConvenio__c', 'Descripcion__c', 'Beneficiados__c', 'AplicaPara__c'], requirement: ['Name', 'Tipo__c', 'Entregable__c', 'Caras__c', 'Nivel__c'], profile: ['Name']};
+					$scope.fieldsS = {scholarship: ['EstatusBeca__c', 'NombreConvenio__c', 'FechaFirma__c', 'AplicaPara__c', 'NoAplicaPara__c', 'TipoPorcentaje__c', 'PorcentajeBeca__c', 'Inicial__c', 'Final__c'], requirement: ['Name', 'Tipo__c', 'Entregable__c', 'Caras__c', 'Nivel__c'], profile: ['Name']};
+					
+					$scope.instances = {
+						scholarship: [], 
+						requirement: [], 
+						requirementBS: [], 
+						requirementSaved: {}, 
+						appliesToSaved: {}, 
+						profile: [], 
+						requirementEdit: [], 
+						profileEdit: [], 
+						recordType: [], 
+						rvoe: [],
+						campus: [],
+						levels: [],
+						programs: []
+					};
+					$scope.status = {editing: false, saving: false, allRequirement: false, allApply: false, deleting: false};
+					$scope.current = {scholarship: {editing: {}, selected: {}}};
+					$scope.errors = [];
+
+					$scope.Timer = null;
+		            $scope.delay = 500;
+		            $scope.pagination = {
+		            	itemsPerPage: 10,  
+		            	maxPages: 5, 
+		            	totalItems: 0, 
+		            	currentPage: 0,
+		            	totalPages: 0,
+		            	first: 'Primero',
+		            	previous: 'Ant',
+		            	next: 'Sig',
+		            	last: 'Último',
+		            	filtered: [],
+		            	pageSize : [5, 10, 15, 20, 25, 50, 100],
+		            	sortField: 'EstatusBeca__c',
+		            	reverse: false
+		            };
+					$scope.messages = {noData: 'No hay información para mostrar', edit: 'Editar convenio', requirement: 'Configurar requisitos', loading: 'Cargando', applies: 'Aplica para', remove: 'Se va a eliminar un registro', removeScholarship: 'Eliminar beca', campus: 'Agregar Plantel, Nivel y Programa', loading: 'Cargando información', removeCampus: 'Se va a eliminar la beca'};
+
+					$scope.autocomplete = {Plantel__c: {term: '', query: '', selected: {}, results: []}};
+
+
+
+					$scope.base = {
+						describe: ['Beca__c', 'BecaConvenioAsignacion__c', 'RecordType'],
+						obj: {},
+						hasData: false,
+						delay: 150,
+						scholarship: {
+							//get: 'SELECT Id, EstatusBeca__c, NombreConvenio__c, Descripcion__c, Beneficiados__c, FechaFirma__c, AplicaPara__c, NoAplicaPara__c, TipoPorcentaje__c, PorcentajeBeca__c, Inicial__c, Final__c, Incrementos__c, RequiereAutorizacion__c, TipoAutorizacion__c, (SELECT Id, Name FROM Requisitos_Beca__r), (SELECT Id, Plantel__r.Id, Plantel__r.Name, Nivel__r.Id, Nivel__r.Name, Programa__r.Id, Programa__r.Name, Programa__r.AbreviaturaPrograma__c,Tipo_de_porcentaje__c, PorcentajeBeca__c, Inicial__c, Final__c, Incrementos__c FROM Becas_Convenio_Asignaci_n__r), VisiblePara__c FROM Beca__c ',
+							//get: 'SELECT Id, EstatusBeca__c, NombreConvenio__c, Descripcion__c, Beneficiados__c, FechaFirma__c, AplicaPara__c, NoAplicaPara__c, TipoPorcentaje__c, PorcentajeBeca__c, Inicial__c, Final__c, Incrementos__c, RequiereAutorizacion__c, TipoAutorizacion__c, VisiblePara__c FROM Beca__c ',
+							get: 'SELECT Id, EstatusBeca__c, NombreConvenio__c, Descripcion__c, Beneficiados__c, FechaFirma__c, AplicaPara__c, NoAplicaPara__c, RequiereAutorizacion__c, TipoAutorizacion__c, VisiblePara__c FROM Beca__c ',
+							fields: ['EstatusBeca__c', 'NombreConvenio__c', 'FechaFirma__c', 'AplicaPara__c', 'NoAplicaPara__c', 'TipoPorcentaje__c', 'PorcentajeBeca__c', 'Inicial__c', 'Final__c'],
+							filtered: [],
+							pag: { //pagination
+								ipp: 10,  //items per page
+				            	mpa: 5, //max pages
+				            	tit: 0,  //total items
+				            	cpa: 1, //current page
+				            	tpa: 0, //total pages
+				            	fir: 'Primero', // first
+				            	pre: 'Ant', // previous
+				            	next: 'Sig',
+				            	last: 'Último',
+				            	psi : [5, 10, 15, 20, 25, 50, 100], //page sizes
+				            	sfi: 'EstatusBeca__c', //sort field
+				            	rev: false, //reverse
+				            	sea: ''//search
+							},
+							loading: true
+						},
+						campus: {
+							filtered: [],
+							fields: ['Plantel__c__n', 'Nivel__c__n', 'Programa__c__n', 'Tipo_de_porcentaje__c', 'PorcentajeBeca__c', 'Inicial__c', 'Final__c', 'Incrementos__c'],
+							editing: {},
+							opts: {},
+							deleted: [],
+							pag: { //pagination
+								ipp: 10,  //items per page
+				            	mpa: 5, //max pages
+				            	tit: 0,  //total items
+				            	cpa: 0, //current page
+				            	tpa: 0, //total pages
+				            	fir: 'Primero', // first
+				            	pre: 'Ant', // previous
+				            	next: 'Sig',
+				            	last: 'Último',
+				            	psi : [5, 10, 15, 20, 25, 50, 100], //page sizes
+				            	sfi: 'EstatusBeca__c', //sort field
+				            	rev: false, //reverse
+				            	sea: ''//search
+							}
+						},
+						recordType: {
+							get: 'SELECT Id,Name,SobjectType,Description FROM RecordType WHERE SobjectType=\'Beca__c\''
+						},
+						requirement: {
+							loading: false
+						}
+					};
+
+					$scope.setFormScope = function(form) {
+						$scope.formEditSS = form;
+					}
+		            //Describe objects
+		            $scope.describeObjects = function(objs) {
+		            	$scope.base.scholarship.loading = true;
+		            	if(objs && objs !== null) {
+			            	var a = objs.length;
+			            	var b = 0;
+			            	angular.forEach(objs, function(o, i) {
+			            		$scope.base.obj[o] = {a: [], k: {}};
+			            		sfUtils.describe(o, function(res) {
+									b++;
+			            			if(res.faultcode) { delete $scope.base.obj[o]; return console.error(res); }
+									$scope.base.obj[o].a = res;
+									angular.forEach($scope.base.obj[o].a, function(f, j){$scope.base.obj[o].k[f.name] = f; });
+								});
+			            	});
+			            	$scope.Timer = $interval(function () {
+		                        if(b === a) {
+		                            $interval.cancel($scope.Timer);
+		                            $scope.base.hasData = true;
+		                            $scope.listRecordTypes();
+		                            //$scope.listScholarship();
+
+									$scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c.length = parseInt($scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c.precision);
+									$scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c.length = parseInt($scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c.precision);
+									$scope.base.obj.BecaConvenioAsignacion__c.k.Final__c.length = parseInt($scope.base.obj.BecaConvenioAsignacion__c.k.Final__c.precision);
+									$scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c.length = parseInt($scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c.precision);
+
+
+		                            $scope.base.obj.BecaConvenioAsignacion__c.k.Plantel__c__n = angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Plantel__c);
+		                            $scope.base.obj.BecaConvenioAsignacion__c.k.Nivel__c__n = angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Nivel__c);
+		                            $scope.base.obj.BecaConvenioAsignacion__c.k.Programa__c__n = angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Programa__c);
+
+		                            $scope.base.obj.BecaConvenioAsignacion__c.k.Plantel__c.required = true;
+		                            $scope.base.obj.BecaConvenioAsignacion__c.k.Nivel__c.required = true;
+		                            //$scope.base.obj.BecaConvenioAsignacion__c.k.Programa__c.required = true;
+		                        }
+		                    }, $scope.base.delay);
+		            	}
+		            };
+
+
+		            //list Scholarship
+		            $scope.listScholarship = function() {
+		            	if($scope.base && $scope.base.scholarship && $scope.base.scholarship.get && $scope.base.scholarship.get.length > 0) {
+		            		sfUtils.retrieve($scope.base.scholarship.get, function(res) {
+                                //console.log('\n\nresponse listScholarship');
+                                //console.log(res);
+		            			$scope.base.scholarship.loading = false;
+								$scope.getRequirement();
+								$scope.getProfile();
+		            			if(res.faultcode) {return console.error(res); }
+		            			$scope.base.scholarship.instances = res || [];
+		            			//console.log('has data... ' + new Date());
+		            			angular.forEach($scope.base.scholarship.instances, function(sc, index) {
+									if(sc.Requisitos_Beca__r && sc.Requisitos_Beca__r.size === '1') {
+										var t = angular.copy(sc.Requisitos_Beca__r.records);
+										sc.Requisitos_Beca__r = [];
+										sc.Requisitos_Beca__r.push(t);
+									} else if(sc.Requisitos_Beca__r && sc.Requisitos_Beca__r && sc.Requisitos_Beca__r.records && sc.Requisitos_Beca__r.records.length > 0) {
+										sc.Requisitos_Beca__r = angular.copy(sc.Requisitos_Beca__r.records);
+									}	
+									if(sc.AplicaPara__c && sc.AplicaPara__c !== null && sc.AplicaPara__c.length > 0) {//AplicaPara__c
+										sc.AplicaPara__o = [];
+							    		angular.forEach(sc.AplicaPara__c.split(';'), function(app, key){
+							    			if(app && app.length > 0){
+							    				sc.AplicaPara__o.push(app);
+							    			}
+							    		});
+									}   
+									if(sc.NoAplicaPara__c && sc.NoAplicaPara__c !== null && sc.NoAplicaPara__c.length > 0) {//NoAplicaPara__c
+										sc.NoAplicaPara__o = [];
+							    		angular.forEach(sc.NoAplicaPara__c.split(';'), function(app, key){
+							    			if(app && app.length > 0){
+							    				sc.NoAplicaPara__o.push(app);
+							    			}
+							    		});
+									}
+									if(sc.Becas_Convenio_Asignaci_n__r && sc.Becas_Convenio_Asignaci_n__r.size === '1') {//Becas_Convenio_Asignaci_n__r
+										var t = angular.copy(sc.Becas_Convenio_Asignaci_n__r.records);
+										sc.Becas_Convenio_Asignaci_n__r = [];
+										sc.Becas_Convenio_Asignaci_n__r.push(t);
+									} else if(sc.Becas_Convenio_Asignaci_n__r && sc.Becas_Convenio_Asignaci_n__r && sc.Becas_Convenio_Asignaci_n__r.records && sc.Becas_Convenio_Asignaci_n__r.records.length > 0) {
+										sc.Becas_Convenio_Asignaci_n__r = angular.copy(sc.Becas_Convenio_Asignaci_n__r.records);
+									}
+
+									if(sc.PorcentajeBeca__c && sc.PorcentajeBeca__c != null) {
+										sc.PorcentajeBeca__c = parseInt(sc.PorcentajeBeca__c);
+									}
+									if(sc.Inicial__c && sc.Inicial__c != null) {
+										sc.Inicial__c = parseInt(sc.Inicial__c);
+									}
+									if(sc.Final__c && sc.Final__c != null) {
+										sc.Final__c = parseInt(sc.Final__c);
+									}
+									if(sc.Incrementos__c && sc.Incrementos__c != null) {
+										sc.Incrementos__c = parseInt(sc.Incrementos__c);
+									}
+									if(sc.FechaFirma__c && sc.FechaFirma__c != null && sc.FechaFirma__c.indexOf('-')) {
+										var str = sc.FechaFirma__c.substring(sc.FechaFirma__c.lastIndexOf('-') + 1, sc.FechaFirma__c.length);
+										sc.FechaFirma__c = sfUtils.parseDate(new Date(sc.FechaFirma__c.substring(0, sc.FechaFirma__c.lastIndexOf('-') + 1) + (parseInt(str) + 1)));
+									}
+									sc.RequiereAutorizacion__c = sc.RequiereAutorizacion__c !== null && sc.RequiereAutorizacion__c === 'true';
+		            			});
+		            		});
+		            	}
+		            };
+		            $scope.paginationScholarship = function(value, page) {
+		            	if($scope.base.scholarship && $scope.base.scholarship.instances && $scope.base.scholarship.instances.length > 0) {
+		            		//console.log('pagination ... ' + new Date());
+			            	$scope.base.scholarship.filtered = filterFilter($scope.base.scholarship.instances, value);
+			            	$scope.base.scholarship.pag.tit = $scope.base.scholarship.instances.length;
+			            	$scope.base.scholarship.pag.tpa = Math.ceil($scope.base.scholarship.pag.tit / $scope.base.scholarship.pag.ipp);
+		            	}
+		            };
+		            $scope.$watch('[base.scholarship.pag.sea, base.scholarship.instances, base.scholarship.pag.ipp]', function (value) {
+				    	$scope.paginationScholarship($scope.base.scholarship.pag.sea);
+				    }, true);
+
+					$scope.editScholarship = function(scholarship) {
+						//console.log('\n\n to editScholarship...');
+						//console.log(scholarship);
+						$scope.status.editing = true;
+						$scope.errors = [];
+						$scope.status.allRequirement = false;
+						$scope.status.allApply = false;
+						$scope.base.campus.opts = {};
+		                $scope.base.requirement.loading = true;
+		                $scope.base.campus.deleted = [];
+
+
+						$scope.instances.requirementBS = [];
+						$scope.instances.requirementSaved = {};
+						$scope.instances.appliesToSaved = {};
+
+						$('#modalEditScholarship').modal('show');
+						$scope.current.scholarship.selected = scholarship;
+						$scope.current.scholarship.editing = angular.copy(scholarship);
+
+		                $scope.fieldsK.scholarship.AplicaPara__c.requiredM = true;
+		                $scope.fieldsK.scholarship.NoAplicaPara__c.requiredM = true;
+
+
+
+
+		                
+						if(scholarship && scholarship.hasOwnProperty('Id')) {
+							$scope.messages.edit = 'Editar convenio';
+							$scope.current.scholarship.editing.opts = {};
+
+							$scope.current.scholarship.editing.opts.EstatusBeca__c = findElementInArray('value', $scope.current.scholarship.editing.EstatusBeca__c, $scope.fieldsK.scholarship.EstatusBeca__c.values);
+							$scope.current.scholarship.editing.opts.TipoPorcentaje__c = findElementInArray('value', $scope.current.scholarship.editing.TipoPorcentaje__c, $scope.fieldsK.scholarship.TipoPorcentaje__c.values);
+
+							var TA = findElementInArray('value', $scope.current.scholarship.editing.TipoAutorizacion__c, $scope.fieldsK.scholarship.TipoAutorizacion__c.values);
+							if(TA && TA.value) {
+								$scope.current.scholarship.editing.opts.TipoAutorizacion__c = TA;
+							}
+							$scope.current.scholarship.editing.opts.AplicaPara__c = angular.copy($scope.fieldsK.scholarship.AplicaPara__c.values);
+		                    angular.forEach($scope.current.scholarship.editing.opts.AplicaPara__c, function(instance) {instance.isChecked = false;});
+
+							if($scope.current.scholarship.editing.AplicaPara__c && $scope.current.scholarship.editing.AplicaPara__c.length > 0) {
+								var opts = $scope.current.scholarship.editing.AplicaPara__c.split(';');
+								//console.log('\n\n opts AplicaPara__c');
+								//console.log(opts);
+								angular.forEach(opts, function(opt, key) {
+									if(opt && opt.length > 0) {
+										var instanceOpts = sfDB.findElementInArray('value', opt, $scope.current.scholarship.editing.opts.AplicaPara__c, false);
+										//console.log(instanceOpts);
+										if(instanceOpts && instanceOpts.value) {
+											instanceOpts.isChecked = true;
+											$scope.fieldsK.scholarship.AplicaPara__c.requiredM = false;
+										}
+									}
+								});
+							}
+
+							$scope.current.scholarship.editing.opts.NoAplicaPara__c = angular.copy($scope.fieldsK.scholarship.NoAplicaPara__c.values);
+		                    angular.forEach($scope.current.scholarship.editing.opts.NoAplicaPara__c, function(instance) {instance.isChecked = false;});
+							if($scope.current.scholarship.editing.NoAplicaPara__c && $scope.current.scholarship.editing.NoAplicaPara__c.length > 0) {
+								var opts = $scope.current.scholarship.editing.NoAplicaPara__c.split(';');
+								//console.log('\n\n opts NoAplicaPara__c');
+								//console.log(opts);
+								angular.forEach(opts, function(opt, key) {
+									if(opt && opt.length > 0) {
+										var instanceOpts = sfDB.findElementInArray('value', opt, $scope.current.scholarship.editing.opts.NoAplicaPara__c, false);
+										//console.log(instanceOpts);
+										if(instanceOpts && instanceOpts.value) {
+											instanceOpts.isChecked = true;
+											$scope.fieldsK.scholarship.NoAplicaPara__c.requiredM = false;
+										}
+									}
+								});
+							}
+
+							//get ids profiles
+							var VisiblePara__c = $scope.current.scholarship.editing.VisiblePara__c;
+							if(VisiblePara__c && VisiblePara__c.length > 0 ) {
+								var visibles = VisiblePara__c.split(';');
+								angular.forEach(visibles, function(id, index){
+									if(id && id.length > 0) {
+										$scope.instances.appliesToSaved[id] = true;
+									}
+								});
+							}
+
+							if($scope.current.scholarship.editing.Plantel__c) {
+								var Plantel__c = sfDB.findElementInArray('Id', $scope.current.scholarship.editing.Plantel__c, $scope.instances.campus);
+								if(Plantel__c && Plantel__c.Id) {
+									$scope.current.scholarship.editing.opts.Plantel__cTERM = Plantel__c.Name;
+									$scope.current.scholarship.editing.opts.Plantel__c = Plantel__c;
+									$scope.filterLevels($scope.current.scholarship.editing.opts.Plantel__c);
+
+
+									if($scope.current.scholarship.editing.Nivel__c) {
+										var Nivel__c = sfDB.findElementInArray('Id', $scope.current.scholarship.editing.Nivel__c, $scope.instances.levels);
+										if(Nivel__c && Nivel__c.Id) {
+											$scope.current.scholarship.editing.opts.Nivel__cTERM = Nivel__c.Name;
+											$scope.current.scholarship.editing.opts.Nivel__c = Nivel__c;
+											$scope.filterPrograms($scope.current.scholarship.editing.opts.Nivel__c);
+
+
+											if($scope.current.scholarship.editing.Programa__c) {
+												var Programa__c = sfDB.findElementInArray('Id', $scope.current.scholarship.editing.Programa__c, $scope.instances.programs);
+												if(Programa__c && Programa__c.Id) {
+													$scope.current.scholarship.editing.opts.Programa__cTERM = Programa__c.Name;
+													$scope.current.scholarship.editing.opts.Programa__c = Programa__c
+												}
+											}
+										}
+									}
+								}
+							}
+							//$scope.detailCampusLevelProgram($scope.current.scholarship.editing);
+							$scope.listCampusLevelProgramBySc($scope.current.scholarship.editing);
+						} else {
+							angular.forEach($scope.instances.requirement, function(requirement, key){
+								delete requirement.isChecked;
+							});
+							angular.forEach($scope.instances.profile, function(profile, key){
+								delete profile.isChecked;
+							});
+							$scope.instances.appliesToSaved = {};
+							$scope.instances.requirementSaved = {};
+							$scope.messages.edit = 'Agregar convenio';
+							$scope.current.scholarship.editing = {EstatusBeca__c: '', TipoPorcentaje__c: '', AplicaPara__c: '', NoAplicaPara__c: '', opts: {EstatusBeca__c: $scope.fieldsK.scholarship.EstatusBeca__c.values[0], AplicaPara__c: angular.copy($scope.fieldsK.scholarship.AplicaPara__c.values), NoAplicaPara__c: angular.copy($scope.fieldsK.scholarship.NoAplicaPara__c.values), Plantel__c: {}, Nivel__c: {}, Programa__c: {}}};
+
+		                    angular.forEach($scope.current.scholarship.editing.opts.AplicaPara__c, function(instance) {instance.isChecked = false;});
+		                    angular.forEach($scope.current.scholarship.editing.opts.NoAplicaPara__c, function(instance) {instance.isChecked = false;});
+						}
+
+						$scope.getRequirementByScholarship($scope.current.scholarship.editing);
+						$scope.getProfile();
+						
+						$timeout(function() {$('#NombreConvenio__c').focus();}, 400);
+					};
+					$scope.saveScholarship = function() {
+						$scope.errors = [];
+						$scope.status.saving = true;
+						if($scope.current.scholarship.editing.opts) {
+							$scope.current.scholarship.editing.EstatusBeca__c = $scope.current.scholarship.editing.opts.EstatusBeca__c ? $scope.current.scholarship.editing.opts.EstatusBeca__c.value : '';
+
+							$scope.current.scholarship.editing.TipoPorcentaje__c = $scope.current.scholarship.editing.opts.TipoPorcentaje__c ? $scope.current.scholarship.editing.opts.TipoPorcentaje__c.value : '';
+							$scope.current.scholarship.editing.TipoAutorizacion__c = $scope.current.scholarship.editing.opts.TipoAutorizacion__c ? $scope.current.scholarship.editing.opts.TipoAutorizacion__c.value : '';
+							$scope.current.scholarship.editing.Plantel__c = $scope.current.scholarship.editing.opts.Plantel__c ? $scope.current.scholarship.editing.opts.Plantel__c.Id : '';
+							$scope.current.scholarship.editing.Nivel__c = $scope.current.scholarship.editing.opts.Nivel__c ? $scope.current.scholarship.editing.opts.Nivel__c.Id : '';
+							$scope.current.scholarship.editing.Programa__c = $scope.current.scholarship.editing.opts.Programa__c ? $scope.current.scholarship.editing.opts.Programa__c.Id : '';
+						}
+						$scope.current.scholarship.editing.VisiblePara__c = '';
+						angular.forEach($scope.instances.profile, function(profile, index) {
+							if(profile.isChecked) {
+								if($scope.current.scholarship.editing.VisiblePara__c.length > 0) {
+									$scope.current.scholarship.editing.VisiblePara__c += ';';
+								}
+								$scope.current.scholarship.editing.VisiblePara__c += profile.Id;
+							}
+						});
+						var AplicaPara__c = '';
+						angular.forEach($scope.current.scholarship.editing.opts.AplicaPara__c, function(instance, key){
+							if(instance.isChecked) {
+								if(AplicaPara__c.length > 0) {
+									AplicaPara__c += ';';
+								}
+								AplicaPara__c += instance.value;
+							}
+						});
+						$scope.current.scholarship.editing.AplicaPara__c = AplicaPara__c;
+
+						var NoAplicaPara__c = '';
+						angular.forEach($scope.current.scholarship.editing.opts.NoAplicaPara__c, function(instance, key){
+							if(instance.isChecked) {
+								if(NoAplicaPara__c.length > 0) {
+									NoAplicaPara__c += ';';
+								}
+								NoAplicaPara__c += instance.value;
+							}
+						});
+						$scope.current.scholarship.editing.NoAplicaPara__c = NoAplicaPara__c;
+
+						var toStore = angular.copy($scope.current.scholarship.editing);
+						toStore.FechaFirma__c = sfDB.createDate(toStore.FechaFirma__c);
+						var BecaConvenio = sfDB.findElementInArray('DeveloperName', 'BecaConvenio', $scope.instances.recordType);
+						if(BecaConvenio && BecaConvenio.Id) {
+							toStore.RecordTypeId = BecaConvenio.Id;
+						}
+
+						delete toStore.Name;
+						delete toStore.CreatedDate;
+						delete toStore.opts;
+						delete toStore.AplicaPara__o;
+						delete toStore.NoAplicaPara__o;
+						delete toStore.Requisitos_Beca__r;
+						delete toStore.type;
+						delete toStore.Becas_Convenio_Asignaci_n__r;
+						delete toStore.Becas_Convenio_Asignaci_n__o;
+						upsertObject(toStore, new sfService.gateway.scholarship(toStore), function(err, res, evt) {
+							if(err) {
+								angular.forEach(err, function(value, key){$scope.errors.push(value); });
+								$scope.status.saving = false;
+								$scope.$apply();
+							} else {
+
+								if(toStore.hasOwnProperty('Id')) {
+									for(key in $scope.current.scholarship.editing) {
+										$scope.current.scholarship.selected[key] = $scope.current.scholarship.editing[key];
+									}
+								} else {
+									toStore.Id = res[0];
+									var criteria = {where: {Id: {eq: res[0]}}};
+									listInstancesObject(agreementGW, criteria, $scope.fieldsA.scholarship, function(err, res) {
+										if(!err) {
+											//$scope.instances.scholarship.unshift(res[0]);
+											$scope.base.scholarship.instances.unshift(res[0]);
+											$scope.$apply();
+										}
+									});
+								}
+
+								//$scope.saveCampus($scope.current.scholarship.editing);
+
+								//add or update requirement
+								var completed = 0;
+								var toComplete = $scope.instances.requirement.length;
+								if($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o && $scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o.length > 0) {
+									toComplete++;
+								}
+								if($scope.base.campus.deleted && $scope.base.campus.deleted.length > 0) {
+									toComplete++;
+								}
+
+
+								//save campus, level and program && requirement
+								var dynamics = {requirement: {upserts: [], deleted: {}}, campus: {upserts: [], deleted: []}};
+
+								angular.forEach($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o, function(v, index) {
+									var obj = new sforce.SObject('BecaConvenioAsignacion__c');
+									var i = parseInt(v.Id);
+									if(isNaN(i)) {
+										obj.Id = v.Id;
+									}
+									obj.Plantel__c = v.opts.Plantel__c.Id;
+									obj.Nivel__c = v.opts.Nivel__c.Id;
+									obj.Programa__c = v.opts.Programa__c && v.opts.Programa__c.Id ? v.opts.Programa__c.Id : null;
+									obj.Tipo_de_porcentaje__c = v.opts && v.opts.Tipo_de_porcentaje__c ? v.opts.Tipo_de_porcentaje__c.value : null;
+									obj.PorcentajeBeca__c = v.PorcentajeBeca__c;
+									obj.Inicial__c = v.Inicial__c;
+									obj.Final__c = v.Final__c;
+									obj.Incrementos__c = v.Incrementos__c;
+									obj.BecaConvenio__c = $scope.current.scholarship.editing.Id;
+
+									if(obj.PorcentajeBeca__c === '') {
+										obj.PorcentajeBeca__c = null;
+									}
+									if(obj.Inicial__c === '') {
+										obj.Inicial__c = null;
+									}
+									if(obj.Final__c === '') {
+										obj.Final__c = null;
+									}
+									if(obj.Incrementos__c === '') {
+									 	obj.Incrementos__c = null;
+									}
+
+									if(obj.Plantel__c === 'Todos') {
+										obj.Plantel__c = null;
+										obj.PlantelTodos__c = true;
+									} else {
+										obj.PlantelTodos__c = false;
+									}
+									if(obj.Nivel__c === 'Todos') {
+										obj.Nivel__c = null;
+										obj.NivelTodos__c = true;
+									} else {
+										obj.NivelTodos__c = false;
+									}
+
+									if(obj.Programa__c === 'Todos') {
+										obj.Programa__c = null;
+										obj.ProgramaTodos__c = true;
+									} else {
+										obj.ProgramaTodos__c = false;
+									}
+
+									dynamics.campus.upserts.push(obj);
+								});
+								console.log('\n\n to save dynamics');
+								console.log(dynamics);
+								if($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o && $scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o.length > 0) {
+									sfUtils.upsert(dynamics.campus.upserts, function(res) {
+										console.log('\n\nresponse upserts: ');
+										console.log(res);
+										completed++;
+										if(res.length >0 && res[0].errors) {
+											$scope.errors.push(res[0].errors.message);
+										}
+									});
+								}
+								if($scope.base.campus.deleted && $scope.base.campus.deleted.length > 0) {
+									sfUtils.delete($scope.base.campus.deleted, function(res) {
+
+										completed++;
+										console.log('\n\nresponse delete: ');
+										console.log(res);
+									});
+								}
+
+
+
+
+								angular.forEach($scope.instances.requirement, function(requirement, index) {
+									if(requirement.isChecked && !$scope.instances.requirementSaved.hasOwnProperty(requirement.Id)) { //create new
+										var payload = {Beca__c: toStore.Id, Requisito__c: requirement.Id, Name: requirement.Name};
+										upsertObject(payload, new sfService.gateway.requirementScholarship(payload), function(err, res, evt) {
+											completed++;
+											angular.forEach(err, function(value, key){$scope.errors.push(value); });
+										});
+									} else if(!requirement.isChecked && $scope.instances.requirementSaved.hasOwnProperty(requirement.Id)) { //remove from DB
+										removeObject({Id: $scope.instances.requirementSaved[requirement.Id]}, requirementBSGW, function(err, res) {
+											completed++;
+											angular.forEach(err, function(value, key){$scope.errors.push(value); });
+										});
+									} else {
+										completed++;
+									}
+								});
+								//verify if requirement save or delete is completed
+								$scope.Timer = $interval(function () {
+									console.log('completed: ' + completed + ' --- toComplete : ' + toComplete);
+			                        if(completed === toComplete) {
+			                            $scope.status.saving = false;
+			                            $interval.cancel($scope.Timer);
+			                            if($scope.errors.length < 1) {
+			                            	$scope.listScholarship();
+											closeModal();
+			                            }
+			                        }
+			                    }, $scope.delay);
+							}
+						});
+					};
+					$scope.removeScholarship = function(scholarship) {
+						if(scholarship) {
+							$scope.status.deleting = false;
+							$scope.current.scholarship.selected = scholarship;
+							$('#modalRemoveScholarship').modal('show');
+							$('#modalRemoveScholarship').on('hidden.bs.modal', function () {
+							 	$scope.current.scholarship.selected = {};
+							});
+						}
+					};
+					$scope.confirmRemoveScholarship = function() {
+						if($scope.current.scholarship.selected && $scope.current.scholarship.selected.Id) {
+							$scope.status.deleting = true;
+							var ids = [];
+							ids.push($scope.current.scholarship.selected.Id);
+							if($scope.current.scholarship.selected.Requisitos_Beca__r) {
+								angular.forEach($scope.current.scholarship.selected.Requisitos_Beca__r, function(req, key){
+									ids.push(req.Id); 
+								});
+							}
+							sfUtils.delete(ids, function(res) {
+								console.log(res);
+								$scope.status.deleting = false;
+								var index = $scope.base.scholarship.instances.indexOf($scope.current.scholarship.selected);
+								if(index !== -1) {
+									$scope.base.scholarship.instances.splice(index, 1);
+									$('#modalRemoveScholarship').modal('hide');
+									$scope.$apply();
+								}
+							});
+						}
+					};
+
+					$scope.listRequirementBySc = function(sc) {
+
+					};
+					$scope.listCampusLevelProgramBySc = function(sc)  {
+						if(sc && sc.Id) {
+							var query = 'SELECT Id, Plantel__r.Id, Plantel__r.Name, Nivel__r.Id, Nivel__r.Name, Programa__r.Id, Programa__r.Name, Programa__r.AbreviaturaPrograma__c,Tipo_de_porcentaje__c, PorcentajeBeca__c, Inicial__c, Final__c, Incrementos__c, PlantelTodos__c, NivelTodos__c, ProgramaTodos__c FROM BecaConvenioAsignacion__c WHERE BecaConvenio__c=\''+sc.Id+'\'';
+							sfUtils.retrieve(query, function(res) {
+								//console.log('\n\n response listCampusLevelProgramBySc');
+								//console.log(res);
+								sc.Becas_Convenio_Asignaci_n__r = [];
+								sc.Becas_Convenio_Asignaci_n__r = res;
+								$scope.detailCampusLevelProgram(sc);
+							});
+						}
+					};
+					
+					$scope.detailCampusLevelProgram = function(scholarship) {
+						if(scholarship.Becas_Convenio_Asignaci_n__r != null && scholarship.Becas_Convenio_Asignaci_n__r.length > 0) {
+							scholarship.Becas_Convenio_Asignaci_n__o = [];
+							angular.forEach($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__r, function(sch, key) {
+								var sc = {
+									Id: sch.Id, 
+									Plantel__c: sch.Plantel__r ? sch.Plantel__r.Id : sch.Plantel__c, 
+									Plantel__c__n: sch.Plantel__r ? sch.Plantel__r.Name : sch.Plantel__c__n, 
+									Nivel__c: sch.Nivel__r ? sch.Nivel__r.Id : sch.Nivel__c,
+									Nivel__c__n: sch.Nivel__r ? sch.Nivel__r.Name : sch.Nivel__c__n,
+									Programa__c: sch.Programa__r ? sch.Programa__r.Id : sch.Programa__c, 
+									Programa__c__n: sch.Programa__r && sch.Programa__r.AbreviaturaPrograma__c != null ? sch.Programa__r.AbreviaturaPrograma__c : (sch.Programa__r ? sch.Programa__r.Name : sch.Programa__c__n), 
+									Tipo_de_porcentaje__c: sch.Tipo_de_porcentaje__c,
+									PorcentajeBeca__c: sch.PorcentajeBeca__c != null ? parseInt(sch.PorcentajeBeca__c) : '',
+									Inicial__c: sch.Inicial__c != null && sch.Inicial__c  !== '' ? parseInt(sch.Inicial__c) : '',
+									Final__c: sch.Final__c != null && sch.Final__c  !== '' ? parseInt(sch.Final__c) : '',
+									Incrementos__c: sch.Incrementos__c != null && sch.Incrementos__c  !== '' ? parseInt(sch.Incrementos__c) : '',
+									PlantelTodos__c: sch.PlantelTodos__c,
+									NivelTodos__c: sch.NivelTodos__c,
+									ProgramaTodos__c: sch.ProgramaTodos__c
+								};
+								if(sc.PorcentajeBeca__c === '') {
+									delete sc.PorcentajeBeca__c;
+								}
+								if(sc.Inicial__c === '') {
+									delete sc.Inicial__c;
+								}
+								if(sc.Final__c === '') {
+									delete sc.Final__c;
+								}
+								if(sc.Incrementos__c === '') {
+									delete sc.Incrementos__c;
+								}
+								$scope.detailCampus(scholarship, sc);
+							});
+							delete $scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__r;
+						}
+					};
+					$scope.getRequirementByScholarship = function(scholarship) {
+						if(scholarship) {
+							describeAnObject(requirementBSGW, function(err, res) {
+								if(!err) {
+									$scope.fieldsA.requirementBS = res;
+									angular.forEach(res, function(item, index) {$scope.fieldsK.requirement[item.name] = item; });
+									var criteria = {where: {Beca__c: {eq: scholarship.Id}}};
+									listInstancesObject(requirementBSGW, criteria, $scope.fieldsA.requirementBS, function(err, res) {
+		                				$scope.base.requirement.loading = false;
+										if(!err) {
+											$scope.instances.requirementBS = res;
+											angular.forEach($scope.instances.requirement, function(value, key){
+												value.isChecked = false;
+											});
+											$scope.verifyIfExistRequirement();
+											angular.forEach($scope.instances.requirementBS, function(item, key){
+												$scope.instances.requirementSaved[item.Requisito__c] = item.Id;
+											});
+										} else {
+											console.log('\nerr'); console.log(err);
+										}
+									});
+								} else {
+									console.log('\nerr'); console.log(err);
+								}
+							});
+						}
+					};
+					$scope.verifyIfExistRequirement = function() {
+						if($scope.instances.requirementBS && $scope.instances.requirement) {
+							angular.forEach($scope.instances.requirementBS, function(requirementBS, index) {
+								var exist = findElementInArray('Id', requirementBS.Requisito__c, $scope.instances.requirement);
+								if(exist && exist.Id) {
+									exist.isChecked = true;
+								}
+							});
+							$scope.$apply();
+						}
+					};
+					$scope.getProfile = function() {
+						describeAnObject(profileGW, function(err, res) {
+							if(!err) {
+								$scope.fieldsA.profile = res;
+								angular.forEach(res, function(item, index) {$scope.fieldsK.profile[item.name] = item; });
+								var criteria = {where: {Name: {like: '*%'}}, orderby: [{Name: 'ASC'}]};
+								listInstancesObject(profileGW, criteria, $scope.fieldsA.profile, function(err, res) {
+									if(!err) {
+										$scope.instances.profile = res;
+										var length = res.length;
+										var checked = 0;
+										angular.forEach($scope.instances.profile, function(profile, key) {
+											profile.Name = profile.Name.replace('*', '');
+											//verify if profile exist in VisiblePara__c
+											if($scope.instances.appliesToSaved[profile.Id]) {
+												profile.isChecked = true;
+												checked ++;
+											}
+										});
+										$scope.status.allApply = checked === length;
+										$scope.$apply();
+									} else {
+										console.log('\nerr'); console.log(err);
+									}
+								});
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+					};
+
+					//Configure Campus, Level and Program
+					$scope.addCampus = function() {
+						var sc = {Id: new Date().getTime()};
+						$scope.detailCampus($scope.current.scholarship.editing, sc);
+					};
+					$scope.cloneCampus = function(campus) {
+						var sc = angular.copy(campus);
+						sc.Id = new Date().getTime();
+						if(sc.opts.Plantel__c) {sc.Plantel__c = sc.opts.Plantel__c.Id;sc.Plantel__c__n = sc.opts.Plantel__c.Name; } else {
+							delete sc.Plantel__c;
+							delete sc.Plantel__c__n;
+						}
+						if(sc.opts.Nivel__c) {sc.Nivel__c = sc.opts.Nivel__c.Id;sc.Nivel__c__n = sc.opts.Nivel__c.Name; } else {
+							delete sc.Nivel__c;
+							delete sc.Nivel__c__n;
+						}
+						if(sc.opts.Programa__c) {sc.Programa__c = sc.opts.Programa__c.Id;sc.Programa__c__n = sc.opts.Programa__c.Name; } else {
+							delete sc.Programa__c;
+							delete sc.Programa__c__n;
+						}
+						if(sc.opts.Tipo_de_porcentaje__c) {sc.Tipo_de_porcentaje__c = sc.opts.Tipo_de_porcentaje__c.value; } else {
+							delete sc.Tipo_de_porcentaje__c;
+							delete sc.Tipo_de_porcentaje__c__n;
+						}
+
+						//console.log('clone');
+						//console.log(campus);
+						//console.log(sc);
+						$scope.detailCampus($scope.current.scholarship.editing, sc);
+						//$scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o.push(sc);
+					}
+					$scope.detailCampus = function(scholarship, sc) {
+						if(!scholarship.Becas_Convenio_Asignaci_n__o) {
+							scholarship.Becas_Convenio_Asignaci_n__o = [];
+						}
+						scholarship.Becas_Convenio_Asignaci_n__o.push(sc);
+						sc.opts = {};
+						$scope.base.campus.opts[sc.Id] = {Plantel__c__o: [], Nivel__c__o: [], Programa__c__o: [], fields: {
+								Tipo_de_porcentaje__c: angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Tipo_de_porcentaje__c),
+								PorcentajeBeca__c: angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c),
+								Inicial__c: angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c),
+								Final__c: angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Final__c),
+								Incrementos__c: angular.copy($scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c)
+							}
+						};
+						if(sc.Tipo_de_porcentaje__c != null) {
+							var tp = sfDB.findElementInArray('value', sc.Tipo_de_porcentaje__c, $scope.base.campus.opts[sc.Id].fields.Tipo_de_porcentaje__c.values);
+							if(tp && tp.value) {
+								sc.opts.Tipo_de_porcentaje__c = tp;
+							}
+						}
+						//detail opts
+						$scope.base.campus.opts[sc.Id].Plantel__c__o = angular.copy($scope.instances.campus);
+						//$scope.base.campus.opts[sc.Id].Plantel__c__o.unshift({Id: 'Todos', Name: 'Todos'});
+						var Plantel__c = {};
+
+						if(sc.PlantelTodos__c && sc.PlantelTodos__c === 'true') {
+							sc.opts.Plantel__c__t = 'Todos';
+							sc.opts.Plantel__c = {Id: 'Todos', Name: 'Todos'};
+							Plantel__c = sc.opts.Plantel__c;
+						} else {
+							Plantel__c = sfDB.findElementInArray('Id', sc.Plantel__c, $scope.base.campus.opts[sc.Id].Plantel__c__o);
+						}
+
+						if(Plantel__c && Plantel__c.Id) {
+								sc.opts.Plantel__c__t = Plantel__c.Name;
+								sc.opts.Plantel__c = Plantel__c;
+								$scope.filterLevels(sc.opts.Plantel__c, sc);
+
+								var Nivel__c = {};
+
+								if(sc.NivelTodos__c && sc.NivelTodos__c === 'true') {
+									sc.opts.Nivel__c__t = 'Todos';
+									sc.opts.Nivel__c = {Id: 'Todos', Name: 'Todos'};
+									Nivel__c = sc.opts.Nivel__c;
+								} else {
+									Nivel__c = sfDB.findElementInArray('Id', sc.Nivel__c, $scope.base.campus.opts[sc.Id].Nivel__c__o);
+								}
+
+
+								if(Nivel__c && Nivel__c.Id) {
+									sc.opts.Nivel__c__t = Nivel__c.Name;
+									sc.opts.Nivel__c = Nivel__c;
+									$scope.filterPrograms(sc.opts.Nivel__c, sc);
+
+									var Programa__c = {};
+
+									if(sc.ProgramaTodos__c && sc.ProgramaTodos__c === 'true') {
+										sc.opts.Programa__c__t = 'Todos';
+										sc.opts.Programa__c = {Id: 'Todos', Name: 'Todos'};
+										Programa__c = sc.opts.Programa__c;
+									} else {
+										Programa__c = sfDB.findElementInArray('Id', sc.Programa__c, $scope.base.campus.opts[sc.Id].Programa__c__o);
+									} 
+
+									if(Programa__c && Programa__c.Id) {
+										sc.opts.Programa__c__t = Programa__c.Name;
+										sc.opts.Programa__c = Programa__c;
+									}
+								}
+							}
+
+
+						/*
+						if(sc.Plantel__c) {
+							var Plantel__c = sfDB.findElementInArray('Id', sc.Plantel__c, $scope.base.campus.opts[sc.Id].Plantel__c__o);
+							if(Plantel__c && Plantel__c.Id) {
+								sc.opts.Plantel__c__t = Plantel__c.Name;
+								sc.opts.Plantel__c = Plantel__c;
+								$scope.filterLevels(sc.opts.Plantel__c, sc);
+
+								if(sc.NivelTodos__c && sc.NivelTodos__c === 'true') {
+									sc.opts.Nivel__c__t = 'Todos';
+									sc.opts.Nivel__c = {Id: 'Todos', Name: 'Todos'};
+								} else if(sc.Nivel__c) {
+									var Nivel__c = sfDB.findElementInArray('Id', sc.Nivel__c, $scope.base.campus.opts[sc.Id].Nivel__c__o);
+									if(Nivel__c && Nivel__c.Id) {
+										sc.opts.Nivel__c__t = Nivel__c.Name;
+										sc.opts.Nivel__c = Nivel__c;
+										$scope.filterPrograms(sc.opts.Nivel__c, sc);
+										if(sc.ProgramaTodos__c && sc.ProgramaTodos__c === 'true') {
+											sc.opts.Programa__c__t = 'Todos';
+											sc.opts.Programa__c = {Id: 'Todos', Name: 'Todos'};
+										} else if(sc.Programa__c) {
+											var Programa__c = sfDB.findElementInArray('Id', sc.Programa__c, $scope.base.campus.opts[sc.Id].Programa__c__o);
+											if(Programa__c && Programa__c.Id) {
+												sc.opts.Programa__c__t = Programa__c.Name;
+												sc.opts.Programa__c = Programa__c;
+											}
+										}
+									}
+								}
+							}
+						}*/
+					};
+					$scope.saveCampus = function(sch) {
+						var upserts = [];
+						var deleted = [];
+						angular.forEach(sch.Becas_Convenio_Asignaci_n__o, function(v, index) {
+							var obj = new sforce.SObject('BecaConvenioAsignacion__c');
+							var i = parseInt(v.Id);
+							if(isNaN(i)) {
+								obj.Id = v.Id;
+							}
+							obj.Plantel__c = v.opts.Plantel__c.Id;
+							obj.Nivel__c = v.opts.Nivel__c.Id;
+							obj.Programa__c = v.opts.Programa__c.Id;
+							obj.Tipo_de_porcentaje__c = v.opts && v.opts.Tipo_de_porcentaje__c ? v.opts.Tipo_de_porcentaje__c.value : '';
+							obj.PorcentajeBeca__c = v.PorcentajeBeca__c;
+							obj.Inicial__c = v.Inicial__c;
+							obj.Final__c = v.Final__c;
+							obj.Incrementos__c = v.Incrementos__c;
+							obj.BecaConvenio__c = sch.Id;
+
+							if(obj.Plantel__c === 'Todos') {
+								obj.Plantel__c = null;
+								obj.PlantelTodos__c = true;
+							} else {
+								obj.PlantelTodos__c = false;
+							}
+							if(obj.Nivel__c === 'Todos') {
+								obj.Nivel__c = null;
+								obj.NivelTodos__c = true;
+							} else {
+								obj.NivelTodos__c = false;
+							}
+							if(obj.Programa__c === 'Todos') {
+								obj.Programa__c = null;
+								obj.ProgramaTodos__c = true;
+							} else {
+								obj.ProgramaTodos__c = false;
+							}
+							upserts.push(obj);
+						});
+						console.log('\n\n to save campus');
+						console.log(upserts);
+						sfUtils.upsert(upserts, function(res) {
+							//console.log('\n\nresponse upserts: ');
+							//console.log(res);
+						});
+						if($scope.base.campus.deleted) {
+							sfUtils.delete($scope.base.campus.deleted, function(res) {
+								//console.log('\n\nresponse delete: ');
+								//console.log(res);
+							});
+						}
+					};
+					$scope.confirmRemoveCampus = function(form) {
+						if($scope.base.campus.editing) {
+							var index = $scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o.indexOf($scope.base.campus.editing);
+							if(index !== -1) {
+								$scope.base.campus.deleted.push($scope.base.campus.editing.Id);
+								$scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o.splice(index, 1);
+							}
+						}
+		                var fields = ['Plantel__c', 'Nivel__c', 'Programa__c'];
+						angular.forEach($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o, function(instance, index) {
+                            angular.forEach(fields, function(field, idx) {
+                                if($scope.formEditSS[field+instance.Id]) {
+                                    $scope.formEditSS[field+instance.Id].$$parseAndValidate();
+                                }
+                            });
+                        });
+						$scope.base.campus.editing = undefined;
+						closeModal('modalRemoveCampus');
+					};
+
+
+
+		            //Initial deploy
+		            $scope.describeObjects($scope.base.describe);
+    
+
+		            //Utils
+		            $scope.filterLevels = function(campus, sc) {
+						//console.log('\n\nin filterLevels');
+						//console.log(campus);
+						//console.log(sc);
+						var unique = {};
+						if(campus && campus.Id) {
+							//sc.opts.Nivel__c__o = [];
+							//sc.opts.Programa__c__o = [];
+
+							$scope.base.campus.opts[sc.Id].Nivel__c__o = [];
+							$scope.base.campus.opts[sc.Id].Programa__c__o = [];
+	                        angular.forEach($scope.instances.rvoe, function(rvoe, index) {
+	                        	if(rvoe.Plantel__c === campus.Id || campus.Id === 'Todos') {
+		                        	if(!unique[rvoe.Nivel__c]) {
+		                        		unique[rvoe.Nivel__c] = true;
+		                        		//$scope.base.campus.opts[sc.Id].Plantel__c__o
+		                        		
+		                        		//sc.opts.Nivel__c__o.push({Id: rvoe.Nivel__c, Name: rvoe.Nivel__r.Name});
+		                        		$scope.base.campus.opts[sc.Id].Nivel__c__o.push({Id: rvoe.Nivel__c, Name: rvoe.Nivel__r.Name});
+		                        	}
+	                        	}
+	                        });
+	                        //if(sc.opts.Nivel__c__o > 0) {
+	                        if($scope.base.campus.opts[sc.Id].Nivel__c__o.length > 0) {
+	                        	//sc.opts.Nivel__c__o.unshift({Id: 'Todos', Name: 'Todos'});
+	                        	$scope.base.campus.opts[sc.Id].Nivel__c__o.unshift({Id: 'Todos', Name: 'Todos'});
+	                        }
+	                        //console.log('longitud nivel : ' + $scope.base.campus.opts[sc.Id].Nivel__c__o.length);
+	                    }
+					};
+					$scope.filterPrograms = function(level, sc) {
+						//console.log('in filterPrograms...');
+						//console.log(level);
+						//console.log(sc);
+						var unique = {};
+                        if(level && level.Id && sc.opts && sc.opts.Plantel__c && sc.opts.Plantel__c.Id) {
+							//sc.opts.Programa__c__o = [];
+							$scope.base.campus.opts[sc.Id].Programa__c__o = [];
+	                        angular.forEach($scope.instances.rvoe, function(rvoe, index) {
+	                        	if((rvoe.Nivel__c === level.Id && sc.opts.Plantel__c.Id == rvoe.Plantel__c)
+	                        		|| (level.Id === 'Todos' && (sc.opts.Plantel__c.Id == rvoe.Plantel__c || sc.opts.Plantel__c.Id === 'Todos'))
+	                        		|| (sc.opts.Plantel__c.Id === 'Todos' && rvoe.Nivel__c === level.Id)) {
+
+		                        	if(!unique[rvoe.Programa__c]) {
+		                        		unique[rvoe.Programa__c] = true;
+		                        		//sc.opts.Programa__c__o.push({Id: rvoe.Programa__c, Name: rvoe.Programa__r.Name});
+		                        		$scope.base.campus.opts[sc.Id].Programa__c__o.push({Id: rvoe.Programa__c, Name: rvoe.Programa__r.Name});
+		                        	}
+	                        	}
+	                        });
+	                        //if(sc.opts.Programa__c__o.length > 0) {
+	                        if($scope.base.campus.opts[sc.Id].Programa__c__o.length > 0) {
+	                        	//sc.opts.Programa__c__o.unshift({Id: 'Todos', Name: 'Todos'});
+	                        	$scope.base.campus.opts[sc.Id].Programa__c__o.unshift({Id: 'Todos', Name: 'Todos'});
+	                        }
+	                    }
+					};
+					$scope.listRecordTypes = function() {
+						if($scope.base.recordType && $scope.base.recordType.get) {
+							sfUtils.retrieve($scope.base.recordType.get, function(res) {
+								if(res.faultcode) {$scope.base.scholarship.loading = false; return console.error(res); }
+		            			$scope.base.recordType.instances = res || [];
+		            			var recordType = sfUtils.findElement('Name', 'Beca Convenio', $scope.base.recordType.instances);
+		            			if(recordType && recordType.Id) {
+		            				$scope.base.scholarship.get += ' WHERE RecordTypeId=\''+ recordType.Id +'\'';
+		            				$scope.listScholarship();
+		            			} else { $scope.base.scholarship.loading = false; }
+							});
+						}
+					};
+
+
+
+
+
+
+
+
+					$scope.$watch('[search, instances.scholarship, pagination.itemsPerPage]', function (value) {
+				    	//$scope.viewPagination($scope.search, 1);
+				    }, true);
+
+					$scope.viewPagination = function(value, page) {
+						$scope.pagination.filtered = filterFilter($scope.instances.scholarship, value);
+					    $scope.pagination.totalItems  = $scope.pagination.filtered.length;
+					    $scope.pagination.totalPages  = Math.ceil($scope.pagination.totalItems / $scope.pagination.itemsPerPage);
+					    $scope.pagination.currentPage = 1;
+					    angular.forEach($scope.pagination.filtered, function(value, key){
+					    	var AplicaPara__c = value.AplicaPara__c;
+					    	if(AplicaPara__c && AplicaPara__c.length > 0) {
+					    		value.AplicaPara__cOPTS = [];
+					    		AplicaPara__c = AplicaPara__c.split(';');
+					    		angular.forEach(AplicaPara__c, function(app, key){
+					    			if(app && app.length > 0){
+					    				value.AplicaPara__cOPTS.push(app);
+					    			}
+					    		});
+					    	}
+					    	var NoAplicaPara__c = value.NoAplicaPara__c;
+					    	if(NoAplicaPara__c && NoAplicaPara__c.length > 0) {
+					    		value.NoAplicaPara__cOPTS = [];
+					    		NoAplicaPara__c = NoAplicaPara__c.split(';');
+					    		angular.forEach(NoAplicaPara__c, function(app, key){
+					    			if(app && app.length > 0){
+					    				value.NoAplicaPara__cOPTS.push(app);
+					    			}
+					    		});
+					    	}
+
+					    });
+					};
+
+
+
+					var describeAnObject = function(gateway, callback) {
+						sfDB.getRemoteAction({action: 'describe'}, gateway, callback);
+					};
+					var listInstancesObject = function(gateway, criteria, fields, callback) {
+		                sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, gateway, function(err, res) {
+		                    sfDB.parseFromDB(res, fields, function(err, data) {
+		                        callback(err, data);
+		                    });
+		                });
+					};
+
+
+					var upsertObject = function(toStore, constructor, callback) {
+						sfDB.getRemoteAction({action: 'upsert'}, constructor, function(err, res, all) {
+		                    callback(err, res, all);
+		                });
+					};
+					var removeObject = function(instance, gateway, callback) {
+						sfDB.getRemoteAction({instance: instance, action: 'del'}, gateway, function(err, res) {
+		                    callback(err, res);
+		                });
+					};
+					var closeModal = function(idModal) {
+						idModal = idModal || 'modalEditScholarship';
+						$('#'+idModal).modal('hide');
+					};
+					var findElementInArray = function(field, value, datasource) {
+		                var ret = {};
+		                if(field && value && datasource) {
+		                    var res = $filter('filter')(datasource, {[field]: value}, true);
+		                    if(res && res.length > 0) {
+		                        ret = res[0];
+		                    }
+		                }
+		                return ret;
+		            };
+		            var listInstancesSforce = function(query, callback) {
+		                sforce.connection.query(query, function(res) {
+		                    callback(res);
+		                });
+		            };
+		            $scope.$watch('current.scholarship.editing', function (newValue, oldValue) {
+
+		            	if($scope.current.scholarship.editing && $scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o) {
+		            		angular.forEach($scope.current.scholarship.editing.Becas_Convenio_Asignaci_n__o, function(sc, key) {
+	            				$scope.base.campus.opts[sc.Id].fields.PorcentajeBeca__c.required = false;
+	            				$scope.base.campus.opts[sc.Id].fields.Inicial__c.required = false;
+	            				$scope.base.campus.opts[sc.Id].fields.Final__c.required = false;
+	            				$scope.base.campus.opts[sc.Id].fields.Incrementos__c.required = false;
+
+		            			if(sc.opts && sc.opts.Tipo_de_porcentaje__c) {
+		            				if(sc.opts.Tipo_de_porcentaje__c.value === 'Fijo') {
+		            					$scope.base.campus.opts[sc.Id].fields.PorcentajeBeca__c.required = true;
+		            				} else {
+			            				$scope.base.campus.opts[sc.Id].fields.Inicial__c.required = true;
+			            				$scope.base.campus.opts[sc.Id].fields.Final__c.required = true;
+			            				$scope.base.campus.opts[sc.Id].fields.Incrementos__c.required = true;
+		            				}
+		            			}
+		            		});
+		            	}
+
+
+		            	if($scope.current.scholarship.editing && $scope.current.scholarship.editing.opts && $scope.current.scholarship.editing.opts.TipoPorcentaje__c && $scope.current.scholarship.editing.opts.TipoPorcentaje__c.hasOwnProperty('value')) {
+		            		$scope.fieldsK.scholarship.PorcentajeBeca__c.required = false;
+		            		$scope.fieldsK.scholarship.Inicial__c.required = false;
+		            		$scope.fieldsK.scholarship.Final__c.required = false;
+		        			$scope.fieldsK.scholarship.Incrementos__c.required = false;
+
+		        			//$scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c.required = false;
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c.required = false;
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.Final__c.required = false;
+		        			//$scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c.required = false;
+
+
+		            		if($scope.current.scholarship.editing.opts.TipoPorcentaje__c.value === 'Fijo') {
+		            			$scope.fieldsK.scholarship.PorcentajeBeca__c.required = true;
+
+		            			$scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c.required = true;
+		            		} else {
+		            			$scope.fieldsK.scholarship.Inicial__c.required = true;
+		            			$scope.fieldsK.scholarship.Final__c.required = true;
+		            			$scope.fieldsK.scholarship.Incrementos__c.required = true;
+
+		            			//$scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c.required = true;
+		            			//$scope.base.obj.BecaConvenioAsignacion__c.k.Final__c.required = true;
+		            			//$scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c.required = true;
+		            		}
+		            	} else if($scope.fieldsK.scholarship && $scope.fieldsK.scholarship.PorcentajeBeca__c) {
+		            		$scope.fieldsK.scholarship.PorcentajeBeca__c.required = false;
+		            		$scope.fieldsK.scholarship.Inicial__c.required = false;
+		            		$scope.fieldsK.scholarship.Final__c.required = false;
+		            		$scope.fieldsK.scholarship.Incrementos__c.required = false;
+
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.PorcentajeBeca__c.required = false;
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.Inicial__c.required = false;
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.Final__c.required = false;
+		            		//$scope.base.obj.BecaConvenioAsignacion__c.k.Incrementos__c.required = false;
+		            	}
+
+		            	//TipoAutorizacion__c when 	RequiereAutorizacion__c is true
+		            	if($scope.fieldsK.scholarship && $scope.fieldsK.scholarship.TipoAutorizacion__c) {
+		            		$scope.fieldsK.scholarship.TipoAutorizacion__c.required = $scope.current.scholarship.editing.RequiereAutorizacion__c;
+		            	}
+
+		            }, true);
+					//process
+					$scope.describeAgreement = function() {
+						describeAnObject(agreementGW, function(err, res) {
+							if(!err) {
+								$scope.fieldsA.scholarship = res;
+								//list instances of scholarship
+								$scope.describeRecordType();
+								//$scope.listInstancesAgreement();
+								angular.forEach(res, function(item, index) {
+		                        	$scope.fieldsK.scholarship[item.name] = item;
+		                    	});
+								//set fields require
+								var required = ['NombreConvenio__c', 'EstatusBeca__c', 'TipoPorcentaje__c', 'Beneficiados__c', 'AplicaPara__c', 'NoAplicaPara__c', 'FechaFirma__c', 'RequiereAutorizacion__c'];
+								angular.forEach(required, function(value, key){if($scope.fieldsK.scholarship[value]) {$scope.fieldsK.scholarship[value].required = true; } });
+
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+					};
+					$scope.listInstancesAgreement = function() {
+						var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: 100};
+						listInstancesObject(agreementGW, criteria, $scope.fieldsA.scholarship, function(err, res) {
+							if(!err) {
+								$scope.instances.scholarship = res;
+
+								$scope.getRequirement();
+								$scope.getProfile();
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+					};
+					$scope.requirementIsCheck = function() {
+						angular.forEach($scope.instances.requirement, function(item, key){
+							if($scope.instances.requirementBSU[item.Id]) {
+								item.isChecked = true;
+							} else {
+								item.isChecked = false;
+							}
+						});
+					};
+					$scope.hasSelected = function(datasource) {
+						var hasReq = false;
+						angular.forEach(datasource, function(instance, key) {
+							if(instance.isChecked && !hasReq) {
+								hasReq = true;
+							}
+						});
+						return hasReq;
+					};
+					$scope.getRequirement = function() {
+						describeAnObject(requirementGW, function(err, res) {
+							if(!err) {
+								$scope.fieldsA.requirement = res;
+								angular.forEach(res, function(item, index) {$scope.fieldsK.requirement[item.name] = item; });
+		                    	var criteria = {orderby: [{CreatedDate: 'DESC'}], where: {Estatus__c: {eq: 'Activo'}}, limit: 100};
+								listInstancesObject(requirementGW, criteria, $scope.fieldsA.requirement, function(err, data) {
+									if(!err) {
+										$scope.instances.requirement = data;
+										angular.forEach($scope.instances.requirement, function(requirement, key) {
+											var levels = requirement.Nivel__c ? requirement.Nivel__c.split(';') : [];
+											if(levels && levels.length) {
+												requirement.Nivel__c = '';
+												angular.forEach(levels, function(value, key){
+													if(value !== '') {
+														if(requirement.Nivel__c.length > 0) { requirement.Nivel__c += ', '; }
+														requirement.Nivel__c += value;
+													}
+												});
+											}
+										});
+										$scope.$apply();
+									} else {
+										console.log('\nerr'); console.log(err);
+									}
+								});
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+					};
+					$scope.editRequirementAndApply = function(objName, status, modalId) {
+						$scope.instances[objName + 'Edit'] = angular.copy($scope.instances[objName]);
+						var length = $scope.instances[objName].length;
+						var count = 0;
+						angular.forEach($scope.instances[objName + 'Edit'], function(instance, key) {if(instance.isChecked) {count++; } });
+						$scope.status[status] = length === count;
+						$('#' + modalId).modal('show');
+						$('#' + modalId).on('hidden.bs.modal', function () {
+							 $scope.status[status] = false;
+						});
+					};
+					$scope.saveRequirementAndApply = function(objName, status, modalId) {
+						angular.forEach($scope.instances[objName + 'Edit'], function(instance, key) {
+							var instanceTemp = findElementInArray('Id', instance.Id, $scope.instances[objName]);
+							if(instanceTemp) {instanceTemp.isChecked = instance.isChecked; }
+						});
+						$('#' + modalId).modal('hide');
+					};
+					$scope.checkAll = function(instances, check) {
+						angular.forEach(instances, function(instance, index) {
+							instance.isChecked = check;
+						});
+					};
+					$scope.isSelectAll = function(instances, status) {
+						if(instances && status) {
+							var length = instances.length;
+							var checked = 0;
+							angular.forEach(instances, function(instance, index) {
+								if(instance.isChecked) {
+									checked ++;
+								}
+							});
+							$scope.status[status] = checked === length;
+						}
+					};
+					$scope.$watch('autocomplete.Plantel__c.term', function (newValue, oldValue) {
+						if(!angular.equals(newValue, oldValue) && newValue.length > 0) {
+							$scope.autocomplete.Plantel__c.query = 'SELECT Plantel__r.Id Id, Plantel__r.Name Name  FROM RVOE__c WHERE Plantel__r.Name LIKE \'%'+newValue+'%\' GROUP BY Plantel__r.Id, Plantel__r.Name'
+						}
+		            }, true);
+
+					//Plantel__c
+					$scope.getRVOES = function() {
+		                $scope.instances.rvoe = [];
+		                listInstancesSforce('SELECT Id, Modalidad__c, Plantel__c, Nivel__c, Programa__c, Plantel__r.Name, Nivel__r.Name, Programa__r.Name  FROM RVOE__c WHERE Activo__c=\'Activo\'', function(res) {
+		                    if(res && res.records) {
+		                        $scope.instances.rvoe = res.records;
+		                        var unique = {};
+		                        angular.forEach($scope.instances.rvoe, function(rvoe, index) {
+		                        	if(!unique[rvoe.Plantel__c]) {
+		                        		unique[rvoe.Plantel__c] = true;
+		                        		$scope.instances.campus.push({Id: rvoe.Plantel__c, Name: rvoe.Plantel__r.Name});
+		                        	}
+		                        });
+		                        if($scope.instances.campus.length > 0) {
+		                        	$scope.instances.campus.unshift({Id: 'Todos', Name: 'Todos'});
+		                        }
+		                    }
+		                });
+		            };
+		            $scope.getRVOES();
+		            $scope.describeCampus = function() {
+		            	sfUtils.describe('BecaConvenioAsignacion__c', function(res) {
+							$scope.fieldsA.campus = res;
+							angular.forEach($scope.fieldsA.campus, function(field, key){$scope.fieldsK.campus[field.name] = field; });
+						});
+		            };
+
+
+					
+
+
+					//Utils
+					$scope.setFieldSort = function(sortField) {
+		                $scope.pagination.sortField = sortField;
+		                $scope.pagination.reverse = !$scope.pagination.reverse;
+		            }
+		            var isSortedBy = function (fieldName) {return $scope.pagination.sortField === fieldName; }; 
+		            var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.pagination.reverse; }; 
+		            var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.pagination.reverse; }; 
+		            $scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; }; 
+		            $scope.describeRecordType = function() {
+		            	describeAnObject(recordTypeGW, function(err, res) {
+							if(!err) {
+								$scope.fieldsA.recordType = res;
+								$scope.listRecordType();
+								angular.forEach(res, function(item, index) {
+		                        	$scope.fieldsK.recordType[item.name] = item;
+		                    	});
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+		            };
+		            $scope.listRecordType = function() {
+		            	var criteria = {orderby: [{NamespacePrefix: 'ASC'}]};
+						listInstancesObject(recordTypeGW, criteria, $scope.fieldsA.recordType, function(err, res) {
+							if(!err) {
+								$scope.instances.recordType = res;
+
+								var BecaConvenio = sfDB.findElementInArray('DeveloperName', 'BecaConvenio', $scope.instances.recordType);
+								if(BecaConvenio && BecaConvenio.Id) {
+									//$scope.listInstancesAgreement(BecaConvenio.Id);
+								}
+							} else {
+								console.log('\nerr'); console.log(err);
+							}
+						});
+		            };
+					$scope.describeAgreement();
+				}]);
+				app.filter('startFrom', function () {
+				    return function (input, start) {
+				        if (input) {
+				            start = +start;
+				            return input.slice(start);
+				        }
+				        return [];
+				    };
+				});
+
+
+				var directives = angular.module('ctc.directives', ['ctc.input.html'])
+				.directive('ctcFormGroup',['$q', function($q) {
+					return {
+						scope: {
+							form: '=ctcForm',
+							field: '=ctcField',
+							instance: '=ctcInstance',
+							opts: '=ctcOpts',
+							label: '=ctcLabel'
+						},
+						replace: true,
+						template: '<div class="form-group" ng-class="validateClass(form, field.name)"><label class="control-label col-sm-{{cols.one}}"><span uib-tooltip="{{field.helpText}}" ng-bind="field.label"/> <i ng-if="field.required"> *</i></label><div class="col-sm-{{cols.two}}" ><ctc-input ctc-form="form" ctc-field="field" ctc-type="{{field.type}}" ctc-instance="instance" ctc-opts="opts" ctc-label="label"></ctc-input><i class="ctc-error-message" ng-if="form[field.name].$invalid" >{{getErrorMessage(form, field.name)}}</i></div></div> ',
+
+						link: function($scope, element, attrs) {
+							$scope.cols = {one: '4', two: '8'};
+							$scope.fieldTypes = {string: 'string', textarea: 'textarea'};
+							if($scope.field && $scope.field.type === 'percent' || $scope.field.type === 'double' ) {
+								$scope.field.length = $scope.field.precision;
+							}
+							$scope.errors = {required: 'Requerido', maxlength: 'Máximo ' + $scope.field.length + ' caracteres', number: 'Debe ser numérico', minlength: 'Longitud mínima ' + $scope.field.length + ' caracteres', pattern: 'Formato requerido dd/MM/aaaa'};
+
+							$scope.validateClass = function(form, fieldName) {
+								if(form && fieldName && form[fieldName]) {
+									return form[fieldName].$valid ? 'has-success' : 'has-error';
+								}
+							};
+
+							$scope.getErrorMessage = function(form, fieldName) {
+								var err = '';
+								if(form && fieldName && form[fieldName]) {
+									//console.log(form[fieldName].$error);
+									for(key in form[fieldName].$error) {
+										err += $scope.errors[key];
+									}
+								}
+								return err;
+							}
+						}
+					}
+				}])
+				.directive('ctcFormatNumber', function () {
+		            return {
+		                require: 'ngModel',
+		                scope: {
+		                	field: '=sfField'
+		                },
+		                link: function ($scope, element, attr, ngModelCtrl) {
+		                    function fromUser(text) {
+		                        if (text) {
+		                        	var field = $scope.field;
+		                        	var scale = field && $scope.field.scale ? $scope.field.scale : 0;
+		                            var transformedInput = text;
+		                        	if(scale > 0) {
+		                        		transformedInput = text.replace(/[^0-9\.]/g, '');
+		                        		var decimalCheck = transformedInput.split('.');
+		                        		if(!angular.isUndefined(decimalCheck[1])) {
+			                        		decimalCheck[1] = decimalCheck[1].slice(0, scale);
+			                				transformedInput = decimalCheck[0] + '.' + decimalCheck[1];
+			                			}
+		                        	} else {
+		                        		transformedInput = text.replace(/[^0-9]/g, '');
+		                        	}
+		                            if(field.precision && transformedInput.length > field.precision) {
+		                            	transformedInput = transformedInput.substring(0, field.precision);
+		                            }
+		                            if (transformedInput !== text) {
+		                                ngModelCtrl.$setViewValue(transformedInput);
+		                                ngModelCtrl.$render();
+		                            }
+		                            return transformedInput;
+		                        }
+		                        return '';
+		                    }            
+		                    ngModelCtrl.$parsers.push(fromUser);
+		                }
+		            };
+		        })
+				.directive('ctcInput',['$templateCache', 'sfDB', function($templateCache, sfDB) {
+					return {
+						scope: {
+							form: '=ctcForm',
+							field: '=ctcField',
+							instance: '=ctcInstance',
+							opts: '=ctcOpts',
+							label: '=ctcLabel'
+						},
+						replace: true,
+						template: '<ng-include src="getTemplateUrl()"/>',
+						link: function($scope, element, attrs) {
+							if($scope.field.type === 'multipicklist') {
+								$scope.selected = {};
+								//$scope.field.requiredM = $scope.field.required;
+								//console.log('\n\nis multipicklist: ');
+								//console.log($scope);
+								//console.log(element);
+								//console.log(attrs);
+							}
+							$scope.validateClass = function(form, fieldName) {
+								if(form && fieldName && form[fieldName]) {
+									return form[fieldName].$valid ? 'ctc-has-success' : 'ctc-has-error';
+								}
+							};
+							$scope.getTemplateUrl = function() {
+								var url = 'ctc.input.html';
+								var type = $scope.field.type;
+
+								if (type === 'textarea') {
+									url = 'ctc.textarea.html';
+								} else if(type === 'double') {
+									url = 'ctc.number.html';
+								} else if(type === 'percent') {
+									url = 'ctc.percent.html';
+								} else if(type === 'picklist') {
+									url = 'ctc.select.html';
+								} else if(type === 'boolean') {
+									url = 'ctc.checkbox.html';
+								} else if(type === 'date') {
+									url = 'ctc.datebox.html';
+								} else if(type == 'multipicklist') {
+									//console.log('\n\n in getTemplateUrl ... ' + new Date());
+									//console.log($scope);
+									url = 'ctc.multipicklist.html';
+
+									//url = 'sf-select.html';
+								}
+								//console.log('url : ' + url);
+								return url;
+							};
+							$scope.getOptions = function() {
+								//console.log('in ge options...' + new Date());
+								//console.log($scope);
+								var field = $scope.field;
+								$scope.selected = {};
+								var selected = $scope.instance[field.name];
+
+								angular.forEach($scope.opts, function(instance, key){instance.isChecked = false; });
+
+								if(selected && selected.length > 0 && $scope.opts) {
+									var opts = selected.split(';');
+									angular.forEach(opts, function(opt, key) {
+										if(opt && opt.length > 0) {
+											var instanceOpts = sfDB.findElementInArray('value', opt, $scope.opts);
+											if(instanceOpts) {
+												instanceOpts.isChecked = true;
+												$scope.field.requiredM = false;
+											}
+										}
+									});
+								}
+								//console.log($scope);
+							};
+							$scope.moveOptions = function(source) {
+								//console.log('\n\nin move options');
+								//console.log($scope.selected);
+								if(source) {
+									angular.forEach($scope.selected[source], function(instance, index) {
+										//console.log('busca');
+										var instanceOpts = sfDB.findElementInArray('value', instance.value, $scope.opts);
+										//console.log(instanceOpts);
+										if(instanceOpts) {
+											instanceOpts.isChecked = source === 'Base';
+										}
+										//console.log(instanceOpts);
+									});
+								}
+								//is valid
+								var required = true;
+								angular.forEach($scope.opts, function(value, key){
+									if(required && value.isChecked) {
+										required = false;
+									}
+								});
+
+								$scope.field.requiredM = required;
+								//$scope.form[$scope.field.name].$invalid = required;
+								//$scope.form[$scope.field.name].$valid = !required;
+								//console.log('\n\nfinis moveOptions');
+								//console.log($scope);
+
+								$scope.selected = {};
+								//console.log($scope);
+							};
+						}
+					}
+				}])
+				.directive('ctcAutoComplete', function($filter, $interval, $log) {
+		            return {
+		                restrict: 'EA',
+		                replace: true,
+		                scope: {
+		                    instance: '=ctcInstance',
+		                    term: '=ctcTerm',
+		                    field: '=ctcField',
+		                    datasource: '=ctcDatasource',
+		                    filter: '=ctcFilter',
+		                    callback: '&ctcActionSelect',
+		                    clearFields: '=ctcClearFields',
+		                    opts: '=ctcOpts',
+		                    fields: '=ctcFields',
+		                    instanceParent: '=ctcParentInstance',
+		                    form: '=ctcForm',
+		                    registered: '=ctcRegistered'
+		                },
+		                template: '<div class="sf-autocomplete-holder"><input ng-keypress="verifyKey($event)" ng-disabled="disabled" ng-class="validateClass(form, field.name + instanceParent.Id)" ng-change="findTerm()" ng-blur="hideResults()" ng-model="term" class="form-control"><select ctc-validate-campus ctc-registered="registered" ctc-form="form" ng-model="instance" name="{{field.name+instanceParent.Id}}" ng-hide="true" ctc-parent="instanceParent" ng-required="field.required"/><span class="fa fa-search sf-autocomplete-search"/><div class="sf-autocomplete-dropdown" ng-if="showDropdown"><div ng-if="searching" class="sf-autocomplete-row"><span ng-bind="labelSearching"/></div><div class="sf-autocomplete-row" ng-repeat="result in results" ng-class="{\'sf-autocomplete-selected-row\': $index == currentIndex}" ng-click="setSelected($index)"><span ng-repeat="field in fields" ng-bind="result[field]"/></div></div>',
+		                link: function ($scope, elem, attrs) {
+		                    $scope.searching = false;
+		                    $scope.labelSearching = $scope.search || 'Buscando...';
+		                    $scope.currentIndex = 0;
+		                    $scope.showDropdown = false;
+		                    $scope.Timer = null;
+		                    $scope.fromCtrl = true;
+		                    var fields = ['Plantel__c', 'Nivel__c', 'Programa__c'];
+		                    //$scope.results = [];
+
+		                    $scope.setSelected = function(index) {
+		                    	$scope.instance = $scope.results[index];
+		                    	$scope.term = $scope.instance.Name;
+		                        $scope.callback({instance: $scope.instance, parent: $scope.instanceParent});
+		                        $scope.updateFilter($scope.registered, $scope.form);
+		                    };
+
+
+		                    var listInstancesSforce = function(query, callback) {
+				                sforce.connection.query(query, function(res) {
+				                    callback(res);
+				                });
+				            };
+				            $scope.verifyKey = function($event) {
+				            	if($event.keyCode === 13) {
+				            		$event.preventDefault();
+		                        	$event.stopPropagation();
+				            	}
+				            };
+				            $scope.validateClass = function(form, fieldName) {
+								if(form && fieldName && form[fieldName]) {
+									return form[fieldName].$valid ? 'ctc-has-success' : 'ctc-has-error';
+								}
+							};
+
+		                    $scope.updateFilter = function(registered, form) {
+						        //console.log('\n\nin updateFilter...' + new Date());
+						        //console.log(registered);
+						        //console.log($scope.instance);
+		                        if(registered && form) {
+		                        	//console.log('in updateFilter ' + new Date());
+		                            angular.forEach(registered, function(instance, index) {
+		                                angular.forEach(fields, function(field, idx) {
+		                                	//console.log(form[field+$scope.instanceParent.Id]);
+		                                    if(form[field+instance.Id]) {
+		                                        form[field+instance.Id].$$parseAndValidate();
+		                                    }
+		                                });
+		                            });
+		                        }
+		                    }
+		                    $scope.findTerm = function() {
+		                        $scope.searching = true;
+		                        $scope.showDropdown = true;
+		                        $scope.results = [];
+		                        var keys = {};
+
+		                        //FUNCIONAL
+		                        $scope.instance = undefined;
+		                        $scope.updateFilter($scope.registered, $scope.form);
+		                        if($scope.clearFields) {
+			                        angular.forEach($scope.clearFields, function(field, index) {
+			                        	$scope.opts[field] = undefined;
+			                        	$scope.opts[field+'__t'] = undefined;
+			                        });
+			                    }
+		                        /*
+		                        if($scope.query && $scope.query.length > 0) {
+		                        	listInstancesSforce($scope.query, function(res) {
+		                        		$log.debug('result findTerm...');
+		                        		$log.info(res);
+		                        		if(res.records && res.size === '1') {
+		                        			var temp = angular.copy(res.records);
+		                        			$scope.results.push(temp);
+		                        		} else if (res.records && res.records.length > 0) {
+		                        			$scope.results = angular.copy(res.records);
+		                        		}
+		                        		if($scope.results.length > 0) {
+		                        			$scope.showDropdown = true;
+		                        		}
+		                        		$scope.$apply();
+		                        		console.log($scope);
+		                        	});
+		                        }*/
+
+
+		                        if($scope.term && $scope.term.length > 0) {
+
+		                            $scope.results = $filter('filter')($scope.datasource, $scope.filter);
+		                            if($scope.results && $scope.results.length > 0) {
+		                                $scope.showDropdown = true;
+		                            }
+		                            $scope.searching = false;
+		                            //$scope.$apply();
+		                        } else {
+		                            $scope.callback($scope.instance, $scope.instanceParent);
+		                        }
+
+
+		                        $scope.currentIndex = 0;
+		                        $scope.searching = false;
+		                        
+		                        if($scope.results && $scope.results.length < 1) {
+		                            $scope.showDropdown = false;
+		                        }
+		                    };
+		                    $scope.hideResults = function() {
+		                        $scope.Timer = $interval(function () {
+		                            $scope.showDropdown = false;
+		                            $interval.cancel($scope.Timer);
+		                        }, 200);
+		                    };
+
+		                    elem.on("keyup", function (event) {
+		                        event.preventDefault()
+		                        event.stopPropagation()
+		                        var strLength = $scope.term ? $scope.term.length : 0;
+		                        if($scope.results && $scope.results.length>0) {
+		                            if(event.which === 40) { 
+		                                if(!$scope.showDropdown && $scope.results.length>0) {
+		                                    $scope.showDropdown = true;
+		                                } else {
+		                                    if (($scope.currentIndex + 1) < $scope.results.length) {
+		                                        $scope.currentIndex ++;
+		                                    } else {
+		                                        $scope.currentIndex = 0;
+		                                    } 
+		                                }
+		                            } else if(event.which === 38) {
+		                                if ($scope.currentIndex >= 1) {
+		                                    $scope.currentIndex --;
+		                                } else {
+		                                    $scope.currentIndex = ($scope.results.length - 1);
+		                                }
+		                                event.target.setSelectionRange(strLength, strLength);
+		                            } else if(event.which === 13) {
+		                                $scope.setSelected($scope.currentIndex);
+		                                $scope.showDropdown = false;
+		                            } else if(event.which === 27) {
+		                                $scope.showDropdown = false;
+		                            }
+		                        } else if(event.which === 38) {
+		                            event.target.setSelectionRange(strLength, strLength);
+		                        }
+		                        $scope.$apply();
+		                    });
+		                }
+		            }
+		        })
+				.directive('ctcValidateCampus', function () {
+				    return {
+				        require: 'ngModel',
+				        scope: {
+				        	registered: '=ctcRegistered',
+				        	form: '=ctcForm',
+				        	instanceParent: '=ctcParent'
+				        },
+				        link: function ($scope, element, attr, ngModelCtrl) {
+		                    var fields = ['Plantel__c', 'Nivel__c', 'Programa__c'];
+
+				            function validateCampus(instance) {
+			                	var registered = {};
+			                	var isValid = true;
+			                	var invalids = {};
+				                if($scope.registered && $scope.registered.length > 1) {
+						                //console.log('\n\nin validateCampus...' + $scope.instanceParent.Id);
+						                //console.log(instance);
+				                	angular.forEach($scope.registered, function(v, key) {
+
+				                		if(v.opts && v.opts.Plantel__c && v.opts.Plantel__c.Id
+				                			&& v.opts.Nivel__c && v.opts.Nivel__c.Id
+				                			&& v.opts.Programa__c && v.opts.Programa__c.Id) {
+				                			var id = v.opts.Plantel__c.Id+'|'+v.opts.Nivel__c.Id+'|'+v.opts.Programa__c.Id;
+					                		if(!registered[id]) {
+					                			registered[id] = v.Id;
+					                			//isValid = true;
+					                		} else {
+					                			//is invalid
+					                			isValid = false;	
+					                			invalids[v.Id] = true;
+					                			invalids[registered[id]] = true;
+					                		}
+				                		}
+				                	});
+				                }
+				                angular.forEach($scope.registered, function(reg, index) {
+	                                angular.forEach(fields, function(field, idx) {
+	                                	if($scope.form && $scope.form[field+reg.Id]) {
+				                			$scope.form[field+reg.Id].$setValidity('rowValid', !invalids.hasOwnProperty(reg.Id));
+				                		}
+	                                });
+	                            });
+				                return instance;
+				            }            
+				            ngModelCtrl.$formatters.push(validateCampus);
+                            ngModelCtrl.$parsers.push(validateCampus);
+				        }
+				    };
+				});
+
+				angular.module("ctc.input.html", []).run(["$templateCache", function($templateCache) {
+
+				  $templateCache.put("ctc.input.html",
+				    '<input id="{{field.name}}" ng-class="validateClass(form, field.name)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name}}" ng-required="field.required" ng-maxlength="field.length">');
+
+				  $templateCache.put("ctc.number.html",
+				    '<input sf-field="field" ng-class="validateClass(form, field.name + instance.$$hashKey)" type="number" ng-model="instance[field.name]" class="form-control" name="{{field.name+instance.$$hashKey}}" ng-required="field.required"  ng-maxlength="field.length"/>');
+
+				  $templateCache.put("ctc.percent.html",
+				    '<input ctc-format-number sf-field="field" ng-class="validateClass(form, field.name + instance.$$hashKey)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name+instance.$$hashKey}}" ng-required="field.required" ng-maxlength="field.length"/>');
+
+				  $templateCache.put("ctc.textarea.html",
+				    '<textarea ng-class="validateClass(form, field.name)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name}}" ng-required="field.required" ng-maxlength="field.length"/>');
+
+				  $templateCache.put("ctc.select.html", '<select ng-class="validateClass(form, field.name)" class="form-control" ng-model="instance.opts[field.name]" name="{{field.name}}" ng-required="field.required" ng-options="opt as opt[label] for opt in opts"><option ng-if="opts.length > 0" value="" selected>-- Ninguno --</option></select>');
+
+				  $templateCache.put("ctc.checkbox.html", '<input type="checkbox" ng-model="instance[field.name]" name="{{field.name}}">');
+
+				  $templateCache.put("ctc.datebox.html", '<input datepicker="instance[field.name]" ng-pattern="/^((\\d{2})\\/(\\d{2})\\/(\\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="field.required" placeholder="dd/MM/aaaa" name="{{field.name}}" class="form-control" ng-model="instance[field.name]"></input>');
+
+				  $templateCache.put("ctc.multipicklist.html_old", '<div class="row"><div class="col-sm-6 text-left"><a ng-click="moveOptions(multiple[field.name+\'_Base\'], multiple[field.name+\'_Selected\'])" ng-class="{\'disabled\': multiple[field.name+\'_Base\'].length <= 0}"><span class="fa-stack"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-arrow-right fa-stack-1x fa-inverse"></i> </span></a> <select name="{{field.name}}" ng-required="{{field.required}}" ng-init="getOptions()" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in multiple[field.name+\'_Base\']" ng-model="selected.Base"> </select></div><div class="col-sm-6 text-right"><a ng-click="moveOptions(multiple[field.name+\'_Selected\'], multiple[field.name+\'_Base\'])" ng-class="{\'disabled\': multiple[field.name+\'_Selected\'].length > 0}"><span class="fa-stack"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-arrow-left fa-stack-1x fa-inverse"></i> </span></a><select name="{{field.name}}" ng-required="{{field.required}}" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in multiple[field.name+\'_Selected\']" ng-model="selected.Selected"> </select></div></div>');
+				}]);
+				$(document).ready(function() {
+					$('.modal').on('hidden.bs.modal', function () {var open = $('.modal-backdrop'); if(open && open.length > 0) {$('body').addClass('modal-open'); } }); 
+
+					$(document).on('show.bs.modal', '.modal', function (event) {var zIndex = 1040 + (10 * $('.modal:visible').length); $(this).css('z-index', zIndex); setTimeout(function() {$('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'); }, 0);
+		        	});
+				});
+			</script>
+			<style type="text/css">
+				.ctc-has-success {border-color: #3c763d; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;}
+				.ctc-has-success:focus {border-color: #2b542c; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 6px #67b168; }
+				.ctc-has-error {border-color: #a94442; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;}
+				.ctc-has-error:focus {border-color: #843534; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 6px #ce8483;}
+				.ctc-error-message {font-size: 9pt;position: absolute; right: 19px; bottom: -16px; color: #a94442;}
+				.ctc-btn {cursor: pointer; text-decoration: none;}
+				.table-scholarship>table>thead>tr>th,.table-scholarship>table>tbody>tr>td {max-width: 90px; min-width: 90px; white-space: normal; word-wrap: break-word;}
+		        .ctc-th-actions {max-width: 106px !important;min-width: 106px !important;}
+		        @media (min-width: 1300px) {.container {width: 1250px; } } @media (min-width: 1600px) {.container {width: 1500px; } } @media (min-width: 1900px) {.container {width: 1800px; } }
+                @media (min-width: 1300px) {.modal-lg {width: 1250px; } } @media (min-width: 1600px) {.modal-lg {width: 1500px; } } @media (min-width: 1900px) {.modal-lg {width: 1800px; } }
+			</style>
+			<script type="text/ng-template" id="ctc.multipicklist.html">
+				<div ng-if="instance" class="row">
+					<div class="col-sm-6 text-center">
+						<a uib-tooltip="Agregar" class="ctc-btn" ng-click="moveOptions('Base')" ng-class="{'disabled': multiple[field.name+'_Base'].length <= 0}">
+							<i class="fa fa-arrow-circle-right"></i>
+						</a>
+						<label class="label label-danger">Disponible</label>
+						<select multiple="true" class="form-control" ng-options="opt as opt[label] for opt in opts|filter: {isChecked: false}" ng-model="selected.Base" ng-dblclick="moveOptions('Base')"></select>
+					</div>
+					<div class="col-sm-6 text-center">
+						<label class="label label-success">Elegido</label>
+						<a uib-tooltip="Eliminar" class="ctc-btn" ng-click="moveOptions('Selected')" ng-class="{'disabled': multiple[field.name+'_Selected'].length > 0}">
+							<i class="fa fa-arrow-circle-left"></i>
+						</a>
+						<select name="{{field.name}}" ng-required="field.requiredM" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in opts|filter: {isChecked: true}" ng-model="selected.Selected"  ng-dblclick="moveOptions('Selected')"> </select>
+					</div>
+				</div>
+			</script>
+
+		</apex:component>

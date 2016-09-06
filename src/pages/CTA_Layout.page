@@ -1,0 +1,364 @@
+<apex:page standardController="Account" extensions="CTA_LayoutCtrl" docType="html-5.0" showHeader="true" sidebar="false" standardStylesheets="false" >
+    <!-- JQUERY -->
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'bootstrap-duallistbox.min.css')}" />
+    <apex:includeScript value="{!$Resource.jQueryblockUI}"/>
+    
+    <style>
+        h1,
+        h2,
+        
+        
+        h5,
+        h6 {
+        font-size: 1em;
+        }
+        .row{ 
+        padding: 1em 0 0 0 !important;
+        }
+        .has-error .form-control{
+        border-color: #CC090F;
+        }
+        .has-error .form-control:focus {
+        border-color: #CC090F;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 15px #CC090F;
+        box-shadow: inset 0 1px px rgba(0, 0, 0, 0.075), 0 0 15px #CC090F;
+        }
+        .error{
+        position: inherit !important;
+        }
+        .errorMsg{
+        color: #CC090F;
+        }
+        .lookupInput a {
+        width: 9%;
+        height: 100%;
+        position: absolute;
+        display: initial; 
+        top: 0%;
+        left: 86%;
+        border-left: none;
+        background-repeat: no-repeat;
+        background-position: center;
+        }
+        .inputField{
+        width: 90%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+        input.form-control {
+        height:1em !important;
+        padding:.8em !important;
+        }
+        
+    </style>
+    
+    
+    <script>
+    j$ = jQuery.noConflict();
+    </script>
+    <div class="container" id="contenedorPrincipal">
+        <h3 style="padding-top:2em;" class="row" >{!if(Account.Id==null,'Nueva cuenta',Account.Name)}</h3>
+        <apex:form id="forma">
+            <div class="row">
+                <div class="col-md-12" id="formaDiv">
+                    <section class="section">
+                        
+                        <apex:actionFunction action="{!save}" name="save" reRender="" status="validaId" />
+                        <apex:actionStatus onstart="onstart('contenedorPrincipal');"  onstop="onstop('contenedorPrincipal');" id="statusGuardar" /> 
+                        
+                        
+                        <div class="text-center row" style="margin-bottom:2em;" >
+                            <apex:commandButton id="btnGuardar1" value="Guardar" status="statusGuardar" styleClass="btn btn-success fa-input" action="{!save}" style="font-family: FontAwesome, Arial,Helvetica,sans-serif;" reRender="forma,JSpanel,JSpanel2" oncomplete="redirigir();" > </apex:commandButton>
+                            <button style="margin-left:auto;margin-right:2%;" type="button" onclick="redirigir();" class="btn btn-default">
+                                <span class="fa fa-reply"></span>
+                                Cancelar
+                            </button>
+                        </div>
+                        
+                        <c:PageMessages id="mensajes" closableErrors="true"/>
+                        
+                        <c:Panel title="Detalle de la cuenta" idCollapse="panelGeneral"  id="info" idParent="panelParent" expanded="true">
+                            <div class="row">
+                                <c:PanelCell label="Nombre"  color="{!IF((contacto.FirstName != ''),'has-success has-feedback','has-error')}" >
+                                    <apex:inputField styleClass="form-control" html-tabindex="1" required="true" value="{!contacto.FirstName}" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Account.fields.PersonEmail.Label}" color="{!IF((cuenta.PersonEmail != ''),'has-success has-feedback','has-error')}" >
+                                    <apex:inputField styleClass="form-control" required="true" html-tabindex="7" value="{!cuenta.PersonEmail}" />
+                                </c:PanelCell>
+                                
+                            </div>
+                            
+                            <div class="row">
+                                <c:PanelCell label="Apellido paterno" color="{!IF((contacto.LastName != ''),'has-success has-feedback','has-error')}" >
+                                    <apex:inputField styleClass="form-control" html-tabindex="2" required="true" value="{!contacto.LastName}"  />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Account.fields.Phone.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="8" value="{!cuenta.Phone}" html-pattern="[.0-9 #_ \-\\\/ () \+]+" html-maxlength="10"/>
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Account.fields.ApeMaterno__c.Label}" >
+                                    <apex:inputField styleClass="form-control" html-tabindex="3" value="{!cuenta.ApeMaterno__c}"/>
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Account.fields.PersonMobilePhone.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="9" value="{!cuenta.PersonMobilePhone }" html-pattern="[.0-9 #_ \-\\\/ () \+]+" html-maxlength="10" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Account.fields.FechaNacimiento__c.Label}" >
+                                    <apex:inputField styleClass="form-control " html-tabindex="4" style="width:100%;" value="{!cuenta.FechaNacimiento__c}" id="fechaDeNacimiento" showDatePicker="false"  />
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Account.fields.TelOficina_c__c.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="9" value="{!cuenta.TelOficina_c__c }" html-pattern="[.0-9 #_ \-\\\/ () \+]+" html-maxlength="10"/>
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Account.fields.Sexo__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" html-tabindex="5" value="{!cuenta.Sexo__c}" id="sexoCuenta" />
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Account.fields.Profesion__c.Label}" >
+                                    <apex:selectList id="profesion" size="1" tabindex="10" multiselect="false" styleClass="form-control" value="{!cuenta.Profesion__c}" >
+                                        <apex:selectOptions value="{!profesiones}"/>
+                                    </apex:selectList>
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Account.fields.EstadoCivil__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" html-tabindex="6" value="{!cuenta.EstadoCivil__c}" id="estadoCivilCuenta" />
+                                </c:PanelCell>
+                            </div>
+                            
+                        </c:Panel> <!--End of General panel-->
+                        
+                        
+                        
+                        <!-- MODULO DE DIRECCION -->
+                        <div id="contenedorDireccion" >
+                        <apex:actionRegion >
+                            <apex:actionFunction action="{!getEstados}" name="getEstados" status="statusDireccion" reRender="estado,municipio"  />
+                            <apex:actionFunction action="{!getMunicipios}" name="getMunicipios" status="statusDireccion" reRender="municipio" />
+                            
+                            <apex:actionStatus onstart="onstart('contenedorDireccion');"  onstop="onstop('contenedorDireccion');" id="statusDireccion" /> 
+                            
+                            <c:Panel title="Información de dirección" idCollapse="address"  id="adress" idParent="panelParent" expanded="true">
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.Pais__c.Label}" >
+                                        <apex:selectList id="pais" size="1" tabindex="11" multiselect="false" styleClass="form-control" value="{!cuenta.Pais__c}" onchange="getEstados()" >
+                                            <apex:selectOptions value="{!paises}"/>
+                                        </apex:selectList>
+                                    </c:PanelCell>
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.Calle__c.Label}" >
+                                        <apex:inputField html-tabindex="15" styleClass="form-control" value="{!cuenta.Calle__c}" />
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <apex:outputPanel id="estado">
+                                        <c:PanelCell label="{!$ObjectType.Account.fields.Estado__c.Label}" >
+                                            
+                                            <apex:outputPanel rendered="{!IF(estados.size >1,true,false)}">
+                                                <apex:selectList tabindex="12" size="1" multiselect="false" styleClass="form-control" value="{!cuenta.Estado__c}" onchange="getMunicipios()" >
+                                                    <apex:selectOptions value="{!estados}"/>
+                                                </apex:selectList>
+                                            </apex:outputPanel>
+                                            
+                                            <apex:outputPanel rendered="{!IF(estados.size >1,false,true)}">
+                                                <apex:inputField html-tabindex="12" styleClass="form-control" value="{!cuenta.EstadoOtro__c}" />
+                                            </apex:outputPanel>
+                                        </c:PanelCell>
+                                        
+                                    </apex:outputPanel>
+                                    
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.NumeroExterior__c.Label}" >
+                                        <apex:inputField html-tabindex="16" styleClass="form-control" value="{!cuenta.NumeroExterior__c}" html-maxlength="10"/>
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.Municipio__c.Label}" >
+                                        
+                                        <apex:selectList tabindex="13" id="municipio" size="1" multiselect="false" styleClass="form-control" value="{!cuenta.Municipio__c}" readonly="{!IF(estados.size >1,false,true)}" >
+                                            <apex:selectOptions value="{!municipios}"/>
+                                        </apex:selectList>
+                                    </c:PanelCell>
+                                    <c:PanelCell label="Número Interior" >
+                                        <apex:inputField html-tabindex="17" styleClass="form-control" value="{!cuenta.NumeroInterior__c}" html-maxlength="10" />
+                                    </c:PanelCell>
+                                </div>
+                                
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.Colonia__c.Label}" >
+                                        <apex:inputField html-tabindex="14" styleClass="form-control" value="{!cuenta.Colonia__c}" />
+                                    </c:PanelCell> 
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.CP__c.Label}" >
+                                        <apex:inputField html-tabindex="18" styleClass="form-control" value="{!cuenta.CP__c}" />
+                                    </c:PanelCell>
+                                </div>
+                                
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Account.fields.Ciudad__c.Label}" >
+                                        <apex:inputField html-tabindex="15" styleClass="form-control" value="{!cuenta.Ciudad__c }" />
+                                    </c:PanelCell> 
+                                    
+                                </div>
+                            </c:Panel> <!--End of Address panel-->
+                        </apex:actionRegion>
+                        </div>
+                        
+                        <c:PageMessages id="mensajes2" closableErrors="true"/>
+                        
+                        <div class="text-center row" style="margin-bottom:2em;" >
+                            <apex:commandButton id="btnGuardar2" value="Guardar" status="statusGuardar" styleClass="btn btn-success fa-input" action="{!save}"  style="font-family: FontAwesome, Arial,Helvetica,sans-serif;" reRender="forma,JSpanel,JSpanel2" oncomplete="redirigir();"> </apex:commandButton>
+                            
+                            <button style="margin-left:auto;margin-right:2%;" type="button" onclick="redirigir();" class="btn btn-default">
+                                <span class="fa fa-reply"></span>
+                                Cancelar
+                            </button>
+                        </div>
+                        
+                    </section>
+                </div>
+            </div>
+        </apex:form>
+    </div>
+    
+    <apex:outputPanel id="JSpanel" >
+        <script>
+        
+        j$(document).ready(function(){
+            aplicaEstilo = function(){
+                
+                j$("header.panel-heading a:first-child").css('color','white');
+                
+                //j$(".addPattern").attr("pattern","[.0-9 #_ \-\\\/ () \+]+").attr("onchange","try{setCustomValidity('')}catch(e){}").attr("oninvalid","setCustomValidity('El teléfono sólo puede contener números, espacios, guiones y paréntesis')");
+                j$(".addPattern").attr("pattern","[0-9]{0,10}").attr("onchange","try{setCustomValidity('')}catch(e){}").attr("oninvalid","setCustomValidity('El teléfono sólo puede contener 10 números máximo')");
+                
+                j$("[id*='SubOrigenCandidato__c']").addClass('form-control');
+                j$("[id*='SubOrigenCandidato__c']").attr('size','1');
+                j$("[id*='descuentoSolicitudPromocion']").attr('type','number');
+                
+                j$("[id*='btnGuardar']").attr('value','\uf0c7 Guardar');
+                
+                
+                
+                j$("div [id*='tablaGpos'][style='margin:2em 0;']").attr('class','panel panel-default');
+                j$("div [id*='tablaGpos'][style='margin:2em 0;'] a:first-child").css('color','#333');
+                
+            }
+            estiloListaDependiente = function(){
+                setTimeout(aplicaEstilo, 500);
+            }
+            estiloListaDependiente();
+            
+            redirigir = function (){
+                if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+                    if('{!cuenta.Id}'===''){
+                        sforce.one.navigateToSObject("00Q/o");
+                    }else{
+                        sforce.one.navigateToSObject("{!cuenta.Id}");
+                    }
+                }else{
+                    if('{!cuenta.Id}'===''){
+                        var dir="/"+"00Q/o";
+                    }else{
+                        var dir="/"+"{!cuenta.Id}";
+                    }
+                    
+                    window.location.href=dir;
+                } 
+            }
+            
+            
+        });
+        
+        </script>
+    </apex:outputPanel>    
+    
+    <apex:outputPanel id="JSpanel2">
+    <script>
+    j$(document).ready(function(){
+        if('{!cuenta.Sexo__c}'===''){
+            j$("[id*='sexoCuenta']").val(null);
+        }
+        if('{!cuenta.EstadoCivil__c}'===''){
+            j$("[id*='estadoCivilCuenta']").val(null);
+        }
+        
+        j$.datepicker.regional['es'] = {
+            closeText: 'Cerrar',
+            prevText: '<Ant',
+            nextText: 'Sig>',
+            currentText: 'Hoy',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+            dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+            weekHeader: 'Sm',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
+        };
+        j$.datepicker.setDefaults(j$.datepicker.regional['es']);
+        j$("[id*='fechaDeNacimiento']").datepicker();
+        
+        
+        
+        
+        j$("[id*='fechaDeNacimiento']").change(function(){
+            var fechaIniAct = new Date(j$(this).val());
+            
+            var fa = new Date();
+            var fechaActual1 = ( fa.getFullYear() + "-" + ("0" + (fa.getMonth() + 1)).slice(-2) + "-" + ("0" + fa.getDate()).slice(-2)); 
+            var f =new Date('{!fechaActual}');
+            
+            if(fechaIniAct >= f){ 
+                //alert('La fecha de nacimiento debe ser menor al día actual');
+                //j$(this).val(null);
+            }
+        });
+        
+        
+        
+        
+    });
+        
+        function onstart(contenedor){
+            j$('#'+ contenedor).block({ message: "<div> <span style='color:#333;' class='fa fa-spinner fa-2x fa-pulse fa-fw' aria-hidden='true'></span> </div>" ,
+                                       css: { backgroundColor: 'none', color: '#fff',border: 'none'},
+                                       overlayCSS: { backgroundColor: '#fff'}
+                                      }); 
+        }
+        
+        function onstop(contenedor){
+            j$('#'+ contenedor).unblock(); 
+        } 
+    
+    </script>
+    </apex:outputPanel>
+    
+    
+    
+</apex:page>

@@ -1,0 +1,685 @@
+<apex:component >
+	<div id="assingGroupCtrl" ng-controller="assingGroupCtrl">
+		<br/>
+		<div class="panel panel-default ieu-panel">
+			<div class="panel-heading">
+				<div class="row">
+                    <div class="col-sm-9">
+                        <h3 class="panel-title">Autorizar periodos</h3>
+                    </div>
+                    <div class="col-sm-3 text-right" ng-if="base.periods.selected && base.periods.selected.groups">
+                        <label class="label label-primary" ng-bind="base.periods.selected.groups.length + ' grupo(s)'"></label>
+                    </div>
+                </div>
+			</div>
+			<form name="formEditG">
+				<div class="panel-body">
+					<div ng-if="base.loading" class="alert alert-success" role="alert">
+						<i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+						<span ng-bind="base.messages.loading"/>
+					</div>
+					<div ng-if="!base.loading && base.groups.instances.length <= 0" class="alert alert-success" role="alert">
+						<span class="fa-stack fa-lg">
+						    <i class="fa fa-circle fa-stack-2x"></i>
+						    <i class="fa fa-users fa-stack-1x fa-inverse"></i>
+						</span>
+						<span ng-bind="base.messages.nodata"/>
+					</div>
+					<div class="form-horizontal" ng-if="!base.loading && base.groups.instances.length > 0">
+						<div class="row">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label class="control-label col-sm-4">Periodo</label>
+									<div class="col-sm-8">
+										<select class="form-control" ng-options="opt as opt.Name for opt in base.periods.instances" ng-model="base.periods.selected">
+								        </select>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3 text-right">
+								<div class="input-group">
+							        <span class="input-group-addon">Buscar</span>
+							        <input type="text" class="form-control" ng-model="base.groups.pag.sea" autofocus="true" />
+							    </div>
+							</div>
+							<div class="col-sm-3 form-horizontal">
+								<div class="form-group">
+									<label class="control-label col-sm-8">Elementos por página</label>
+									<div class="col-sm-4">
+										<select class="form-control" ng-options="opt as opt for opt in base.groups.pag.psi" ng-model="base.groups.pag.ipp">
+							                    <option value="" selected="true">-- Ninguno --</option>
+						                </select>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3 text-center">
+								<button ng-disabled="base.groups.saving" class="btn btn-success" ng-click="saveChanges()">
+									<span class="fa fa-save fa-fw" />
+				        			<span class="fa fa-spinner fa-pulse" ng-if="base.groups.saving"></span>
+									Guardar cambios
+								</button>
+							</div>
+						</div>
+						<div class="row" >
+                            <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="base.errors.length>0">
+                                <div class="alert alert-danger alert-dismissible fade in">
+                                	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									    <span aria-hidden="true">&times;</span>
+									</button>
+                                    <ul class="list-unstyled">
+                                         <li ng-repeat="err in base.errors"><span ng-bind="err"/></li>
+                                    </ul>
+                                  </div>
+                                </div>
+                                <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="base.success.length>0">
+                                 	<div class="alert alert-success alert-dismissible fade in">
+	                                	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										    <span aria-hidden="true">&times;</span>
+										</button>
+                                        <ul class="list-unstyled">
+                                            <li ng-repeat="msg in base.success"><span ng-bind="msg"/></li>
+                                        </ul>
+                                  </div>
+                            </div>
+                        </div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="table-responsive">
+									<table class="table table-bordered">
+										<thead>
+											<tr><th colspan="5" class="text-center">Oferta educativa</th><th colspan="8" class="text-center">Grupo</th></tr>
+											<tr>
+												<th> 
+													<a ng-click="setFieldSort('Periodo__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Periodo__c')"/>
+														<span ng-bind="base.obj.Grupo__c.k.Periodo__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Modalidad__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Modalidad__c')"/>
+														<span ng-bind="base.obj.OfertaEducativa__c.k.Modalidad__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Plantel__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Plantel__c')"/>
+														<span ng-bind="base.obj.OfertaEducativa__c.k.Plantel__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Nivel__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Nivel__c')"/>
+														<span ng-bind="base.obj.OfertaEducativa__c.k.Nivel__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Programa__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Programa__c')"/>
+														<span ng-bind="base.obj.OfertaEducativa__c.k.Programa__c.label"/>
+													</a>
+												</th>
+
+
+												<th> 
+													<a ng-click="setFieldSort('Name')" class="ctc-btn"> 
+														<span ng-class="iconSort('Name')"/>
+														<span ng-bind="base.obj.Grupo__c.k.Name.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Cupo__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Cupo__c')"/>
+														<span ng-bind="base.obj.Grupo__c.k.Cupo__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Inscritos__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Inscritos__c')"/>
+														<span ng-bind="base.obj.Grupo__c.k.Inscritos__c.label"/>
+													</a>
+												</th>
+												<th> 
+													<a ng-click="setFieldSort('Validados__c')" class="ctc-btn"> 
+														<span ng-class="iconSort('Validados__c')"/>
+														<span ng-bind="base.obj.Grupo__c.k.Validados__c.label"/>
+													</a>
+												</th>
+												<th ng-bind="base.obj.Grupo__c.k.Estatus__c.label"></th>
+												<th>Info</th>
+												<th>Leads / Oportunidades</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="gp in base.groups.filtered|orderBy:base.groups.pag.sfi:base.groups.pag.rev|filter:base.groups.pag.sea|startFrom:(base.groups.pag.cpa - 1) * base.groups.pag.ipp|limitTo: base.groups.pag.ipp">
+												<td ng-bind="base.periods.selected.Name"></td>
+												<td ng-bind="gp.Modalidad__c"></td>
+												<td ng-bind="gp.Plantel__c"></td>
+												<td ng-bind="gp.Nivel__c"></td>
+												<td ng-bind="gp.Programa__c"></td>
+												<td ng-bind="gp.Name"></td>
+												<td ng-bind="gp.Cupo__c"></td>
+												<td ng-bind="gp.Inscritos__c"></td>
+												<td ng-bind="gp.Validados__c"></td>
+												<td>
+													<ctc-input ctc-form="formEditG" ctc-field="base.obj.Grupo__c.k.Estatus__c" ctc-opts="base.obj.Grupo__c.k.Estatus__c.values" ctc-label="'label'" ctc-instance="gp">
+													</ctc-input>
+												</td>
+												<td>
+													<a class="btn btn-primary" uib-tooltip="Ver grupo" ng-click="editGroup(gp)" data-toggle="modal" data-target="#admGroupEditCtrl"> <span class="fa fa-users"/></a>
+												</td>
+												<td>
+													<a class="btn btn-primary" uib-tooltip="Ver Leads / Oportunidades" ng-click="editGroup(gp)" data-toggle="modal" data-target="#admGroupConfig"> <span class="fa fa-eye"/></a>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<uib-pagination 
+									ng-if="base.groups.filtered.length > base.groups.pag.ipp"
+									items-per-page="base.groups.pag.ipp" 
+									total-items="base.groups.pag.tit" 
+									ng-model="base.groups.pag.cpa" 
+									max-size="base.groups.pag.mpa" 
+									boundary-links="true" 
+									force-ellipses="true" 
+									first-text="{{base.groups.pag.fir}}" 
+									previous-text="{{base.groups.pag.pre}}" 
+									next-text="{{base.groups.pag.next}}" 
+									last-text="{{base.groups.pag.last}}"
+									>
+								</uib-pagination>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var logged = '{!$User.Id}'; 
+		var app = angular.module('appIEU');
+		app.controller('assingGroupCtrl', ['$scope', '$interval', 'sfUtils', 'filterFilter', function($scope, $interval, sfUtils, filterFilter) {
+
+			$scope.base = {
+				describe: ['Grupo__c', 'OfertaEducativa__c', 'Opportunity', 'Lead'],
+				obj: {},
+				groups: {
+					instances: [],
+					get: 'SELECT Id, Name, Estatus__c, Activo__c, AulaAsignada__c, Turno__c, HoraEntrada__c, HoraSalida__c, Dia__c, FechaApertura__c, FechaInicioClases__c, CondicionanteGrupo__c, Cupo__c, Sede__c, Periodicidad__c, Inscritos__c, Validados__c, OfertaEducativa__r.Id, OfertaEducativa__r.GrupoConfigurado__c, OfertaEducativa__r.PagoConfigurado__c, OfertaEducativa__r.Modalidad__r.Name, OfertaEducativa__r.Plantel__r.Id, OfertaEducativa__r.Plantel__r.Name, OfertaEducativa__r.Nivel__r.Name, OfertaEducativa__r.Programa__r.Name, OfertaEducativa__r.Periodo__c, Periodo__c, OfertaEducativa__r.Periodo__r.Id, (SELECT Id, OfertaEducativa__c, Grupo__c, Account.Name, Account.PersonEmail FROM Oportunidades__r), (SELECT Id, Name, Email, OfertaEducativa__c, GrupoAsignado__c FROM GrupoAsingado__r WHERE IsConverted=false) FROM Grupo__c WHERE Estatus__c =\'Planeado\' AND OfertaEducativa__r.GrupoConfigurado__c=true AND OfertaEducativa__r.PagoConfigurado__c=true AND PorcentajeInscritos__c>=80 AND Docente__c!=null AND Materia__c !=null',
+					pag: { //pagination
+						ipp: 10,  //items per page
+		            	mpa: 5, //max pages
+		            	tit: 0,  //total items
+		            	cpa: 1, //current page
+		            	tpa: 0, //total pages
+		            	fir: 'Primero', // first
+		            	pre: 'Ant', // previous
+		            	next: 'Sig',
+		            	last: 'Último',
+		            	psi : [5, 10, 15, 20, 25, 50, 100], //page sizes
+		            	sfi: 'EstatusBeca__c', //sort field
+		            	rev: false, //reverse
+		            	sea: ''//search
+					},
+					saving: false
+				},
+				periods: {
+					instances: [],
+					get: 'SELECT Id, Name FROM Periodo__c WHERE Activo__c=\'Planeado\'',
+					selected: {},
+				},
+				loading: true,
+				messages: {
+					loading: 'Cargando...',
+					nodata: 'No hay grupos por autorizar con al menos el 80% de inscritos respecto a su cupo'
+				},
+				error: [],
+				success:[],
+				Timer: null,
+				close: true,
+				delay: 300,
+				delayClose: 8000
+			};
+			$scope.paramId = '{!$CurrentPage.parameters.id}';
+			$scope.defaultSelected = {period: {}, group: {}};
+
+			//describe the objectes defined in $scope.base.describe
+			$scope.describeObjects = function(objs) {
+				if(objs && objs !== null) {
+	            	var a = objs.length;
+	            	var b = 0;
+	            	angular.forEach(objs, function(o, i) {
+	            		$scope.base.obj[o] = {a: [], k: {}};
+	            		sfUtils.describe(o, function(res) {
+							b++;
+	            			if(res.faultcode) { delete $scope.base.obj[o]; return console.error(res); }
+							$scope.base.obj[o].a = res;
+							angular.forEach($scope.base.obj[o].a, function(f, j){$scope.base.obj[o].k[f.name] = f; });
+						});
+	            	});
+	            	$scope.Timer = $interval(function () {
+	                    if(b === a) {
+	                        $interval.cancel($scope.Timer);
+	                        $scope.listInstancesGroup();
+	                        $scope.base.obj.Grupo__c.k. Estatus__c.required = true;
+	                        $scope.base.obj.Grupo__c.k.Estatus__c.hideDefault = true;
+	                        //share object Grupo__c
+	                        sfUtils.obj = {
+	                        	Grupo__c: {
+	                        		k: $scope.base.obj.Grupo__c.k,
+	                        		a: $scope.base.obj.Grupo__c.a
+	                        	}
+	                        }
+	                    }
+	                }, $scope.base.delay);
+	        	}
+	        };
+	        $scope.describeObjects($scope.base.describe);
+	        $scope.listInstancesGroup = function(period) {	
+	        	$scope.base.groups.instances = [];
+	        	$scope.base.groups.filtered = [];
+	        	if($scope.base && $scope.base.groups && $scope.base.groups.get && $scope.base.groups.get.length > 0) {
+	        		sfUtils.retrieve($scope.base.groups.get, function(res) {
+	        			//console.log('\n\n response listInstancesGroup...');
+	        			//console.log(res);
+	        			$scope.base.groups.instances = res || [];
+	        			if(!angular.isArray($scope.base.groups.instances)) {
+	        				$scope.base.groups.instances = [];
+	        			} else {
+		        			var periods = {};
+		        			angular.forEach($scope.base.groups.instances, function(v, key) {
+
+		        				if(v.Id.indexOf($scope.paramId) != -1) {
+		        					$scope.defaultSelected.period = {Id: v.OfertaEducativa__r.Periodo__c, Name: v.Periodo__c, groups: []};
+		        					$scope.defaultSelected.group = {Id: v.Id, Name: v.Name};
+		        				}
+
+		        				if(!periods[v.OfertaEducativa__r.Periodo__c]) {
+		        					periods[v.OfertaEducativa__r.Periodo__c] = {Id: v.OfertaEducativa__r.Periodo__c, Name: v.Periodo__c, groups: []};
+		        				}
+		        				if(v.Estatus__c && v.Estatus__c.length > 0) {
+			            			var Estatus__c = sfUtils.findElement('value', v.Estatus__c, $scope.base.obj.Grupo__c.k.Estatus__c.values);
+			            			if(Estatus__c && Estatus__c.value) {
+			            				v.Estatus__c__o = Estatus__c;
+			            			}
+			            		}
+			            		if(v.Turno__c && v.Turno__c.length > 0) {
+			            			var Turno__c = sfUtils.findElement('value', v.Turno__c, $scope.base.obj.Grupo__c.k.Turno__c.values);
+			            			if(Turno__c && Turno__c.value) {
+			            				v.Turno__c__o = Turno__c;
+			            			}
+			            		}
+			            		if(v.HoraEntrada__c && v.HoraEntrada__c.length > 0) {
+			            			var HoraEntrada__c = sfUtils.findElement('value', v.HoraEntrada__c, $scope.base.obj.Grupo__c.k.HoraEntrada__c.values);
+			            			if(HoraEntrada__c && HoraEntrada__c.value) {
+			            				v.HoraEntrada__c__o = HoraEntrada__c;
+			            			}
+			            		}
+			            		if(v.HoraSalida__c && v.HoraSalida__c.length > 0) {
+			            			var HoraSalida__c = sfUtils.findElement('value', v.HoraSalida__c, $scope.base.obj.Grupo__c.k.HoraSalida__c.values);
+			            			if(HoraSalida__c && HoraSalida__c.value) {
+			            				v.HoraSalida__c__o = HoraSalida__c;
+			            			}
+			            		}
+
+
+
+
+			            		if(v.FechaApertura__c && v.FechaApertura__c != null && v.FechaApertura__c.indexOf('-')) {
+									var str = v.FechaApertura__c.substring(v.FechaApertura__c.lastIndexOf('-') + 1, v.FechaApertura__c.length);
+									v.FechaApertura__c = sfUtils.parseDate(new Date(v.FechaApertura__c.substring(0, v.FechaApertura__c.lastIndexOf('-') + 1) + (parseInt(str) + 1)));
+								}
+								if(v.FechaInicioClases__c && v.FechaInicioClases__c != null && v.FechaInicioClases__c.indexOf('-')) {
+									var str = v.FechaInicioClases__c.substring(v.FechaInicioClases__c.lastIndexOf('-') + 1, v.FechaInicioClases__c.length);
+									v.FechaInicioClases__c = sfUtils.parseDate(new Date(v.FechaInicioClases__c.substring(0, v.FechaInicioClases__c.lastIndexOf('-') + 1) + (parseInt(str) + 1)));
+								}
+
+								if(v.GrupoAsingado__r && v.GrupoAsingado__r != null) {
+									if(v.GrupoAsingado__r.size === '1') {
+										var temp = angular.copy(v.GrupoAsingado__r.records);
+										v.GrupoAsingado__r = [];
+										v.GrupoAsingado__r.push(temp);
+									} else {
+										v.GrupoAsingado__r = angular.copy(v.GrupoAsingado__r.records);
+									}
+								}
+								if(v.Oportunidades__r && v.Oportunidades__r != null) {
+									if(v.Oportunidades__r.size === '1') {
+										var temp = angular.copy(v.Oportunidades__r.records);
+										v.Oportunidades__r = [];
+										v.Oportunidades__r.push(temp);
+									} else {
+										v.Oportunidades__r = angular.copy(v.Oportunidades__r.records);
+									}
+								}
+
+
+
+		        				periods[v.OfertaEducativa__r.Periodo__c].groups.push({
+		        					Id: v.Id, 
+		        					Name: v.Name, 
+		        					Estatus__c: v.Estatus__c,
+		        					Estatus__c__o: v.Estatus__c__o,
+		        					AulaAsignada__c: v.AulaAsignada__c,
+		        					Turno__c: v.Turno__c,
+		        					Turno__c__o : v.Turno__c__o,
+		        					HoraEntrada__c: v.HoraEntrada__c,
+		        					HoraEntrada__c__o: v.HoraEntrada__c__o,
+		        					HoraSalida__c: v.HoraSalida__c,
+		        					HoraSalida__c__o: v.HoraSalida__c__o,
+		        					Dia__c: v.Dia__c,
+		        					FechaApertura__c: v.FechaApertura__c,
+		        					FechaInicioClases__c: v.FechaInicioClases__c,
+		        					CondicionanteGrupo__c: parseInt(v.CondicionanteGrupo__c),
+		        					Sede__c: v.Sede__c,
+		        					Periodicidad__c: v.Periodicidad__c,
+		        					Activo__c: v.Activo__c,
+		        					Cupo__c: v.Cupo__c != null ? parseInt(v.Cupo__c) : '',
+		        					Inscritos__c: v.Inscritos__c != null ? parseInt(v.Inscritos__c) : '',
+		        					Validados__c: v.Validados__c != null ? parseInt(v.Validados__c): '',
+		        					OfertaEducativa__c: v.OfertaEducativa__r.Id, 
+		        					Modalidad__c: v.OfertaEducativa__r.Modalidad__r.Name,
+		        					Plantel__c: v.OfertaEducativa__r.Plantel__r.Name,
+		        					Plantel__c__Id: v.OfertaEducativa__r.Plantel__r.Id,
+		        					Nivel__c: v.OfertaEducativa__r.Nivel__r.Name,
+		        					Programa__c: v.OfertaEducativa__r.Programa__r.Name,
+		        					GrupoAsingado__r : v.GrupoAsingado__r || [],
+		        					Oportunidades__r: v.Oportunidades__r || []
+		        				});
+
+		        			});
+		        			angular.forEach(Object.keys(periods), function(p, key){
+		        				$scope.base.periods.instances.push(periods[p]);
+		        			});
+
+		        			if($scope.defaultSelected.period.Id) {
+		        				$scope.base.periods.selected = sfUtils.findElement('Id', $scope.defaultSelected.period.Id, $scope.base.periods.instances, false);
+		        				$scope.base.groups.pag.sea = $scope.defaultSelected.group.Name;
+		        			} else {
+			        			if(period && period.Id) {
+		        					$scope.base.periods.selected = sfUtils.findElement('Id', period.Id, $scope.base.periods.instances);
+			        			} else {
+			        				$scope.base.periods.selected = $scope.base.periods.instances[0];
+			        			}
+		        			}
+
+						}
+	        			$scope.base.loading = false;
+	        			$scope.$apply();
+	        		});
+	    		}
+	        };
+            $scope.$watch('[base.groups.pag.sea, base.periods.selected, base.groups.pag.ipp]', function (value) {
+		    	$scope.paginationGroups($scope.base.groups.pag.sea);
+		    }, true);
+		    $scope.paginationGroups = function(value) {
+            	if($scope.base.periods && $scope.base.periods.selected && $scope.base.periods.selected && $scope.base.periods.selected.groups && $scope.base.periods.selected.groups.length > 0) {
+            		//console.log('pagination ... ' + new Date());
+	            	$scope.base.groups.filtered = filterFilter($scope.base.periods.selected.groups, value);
+	            	$scope.base.groups.pag.tit = $scope.base.groups.filtered.length;
+	            	$scope.base.groups.pag.tpa = Math.ceil($scope.base.groups.pag.tit / $scope.base.groups.pag.ipp);
+	            	if($scope.base.groups.pag.cpa > $scope.base.groups.pag.tpa) {
+	            		$scope.base.groups.pag.cpa = 1;
+	            	}
+            	}
+            };
+            //save changes of groups
+            $scope.saveChanges = function() {
+            	$scope.base.groups.saving = true;
+            	$scope.base.errors = [];
+            	$scope.base.success = [];
+            	if($scope.base.periods.selected && $scope.base.periods.selected.groups && $scope.base.periods.selected.groups.length > 0) {
+            		var payload = [];
+            		angular.forEach($scope.base.periods.selected.groups, function(g, key) {
+            			var obj = new sforce.SObject('Grupo__c');
+            			obj.Id = g.Id;
+            			obj.Estatus__c = g.Estatus__c__o ? g.Estatus__c__o.value : g.Estatus__c;
+            			obj.UsuarioApertura__c = logged;
+            			payload.push(obj);
+            		});
+            		sfUtils.upsert(payload, function(res) {
+            			//console.log('\n\n response saveChanges...');
+	        			//console.log(res);
+            			$scope.base.groups.saving = false;
+            			if(res.faultcode) {
+            				$scope.base.errors.push("Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : ''));
+            			} else {
+            				$scope.base.success.push("Grupos actualizados correctamente");
+	            			angular.element($('#assingGroupCtrl')).scope().listInstancesGroup($scope.base.periods.selected);
+        					angular.element($('#assingGroupCtrlMin')).scope().listInstancesGroup($scope.base.periods.selected);
+	            			angular.element($('#historicalCtrl')).scope().listInstancesGroup($scope.base.periods.selected);
+            			}
+                        $scope.base.Timer = $interval(function () {
+                            if($scope.base.close) {
+	            				$scope.base.errors = [];
+	            				$scope.base.success = [];
+	            			}
+                            $interval.cancel($scope.base.Timer);
+                        }, $scope.base.delayClose);
+	        			$scope.$apply();
+            		});
+            	}
+            };
+            $scope.editGroup = function(group) {
+            	sfUtils.group = group;
+            	sfUtils.group.lastEdit = new Date();
+            	sfUtils.groups = $scope.base.periods.selected.groups;
+            };
+            $scope.setFieldSort = function(sortField) {$scope.base.groups.pag.sfi = sortField; $scope.base.groups.pag.rev = !$scope.base.groups.pag.rev;
+		            }
+            var isSortedBy = function (fieldName) {return $scope.base.groups.pag.sfi === fieldName; }; 
+            var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.base.groups.pag.rev; }; 
+            var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.base.groups.pag.rev; }; 
+            $scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; }; 
+		}]);
+		app.filter('startFrom', function () {
+		    return function (input, start) {
+		        if (input) {
+		            start = +start;
+		            return input.slice(start);
+		        }
+		        return [];
+		    };
+		});
+		var directives = angular.module('ctc.directives', ['ctc.input.html']);
+		directives.directive('ctcFormGroup',['$q', function($q) {
+			return {
+				scope: {
+					form: '=ctcForm',
+					field: '=ctcField',
+					instance: '=ctcInstance',
+					opts: '=ctcOpts',
+					label: '=ctcLabel'
+				},
+				replace: true,
+				template: '<div class="form-group" ng-class="validateClass(form, field.name)"><label class="control-label col-sm-{{cols.one}}"><span uib-tooltip="{{field.helpText}}" tooltip-append-to-body="true" ng-bind="field.label"/> <i ng-if="field.required"> *</i></label><div class="col-sm-{{cols.two}}" ><ctc-input ctc-form="form" ctc-field="field" ctc-type="{{field.type}}" ctc-instance="instance" ctc-opts="opts" ctc-label="label"></ctc-input><i class="ctc-error-message" ng-if="form[field.name].$invalid" >{{getErrorMessage(form, field.name)}}</i></div></div> ',
+
+				link: function($scope, element, attrs) {
+					$scope.cols = {one: '4', two: '8'};
+					$scope.fieldTypes = {string: 'string', textarea: 'textarea'};
+					if($scope.field && $scope.field.type === 'percent' || $scope.field.type === 'double' ) {
+						$scope.field.length = $scope.field.precision;
+					}
+					$scope.errors = {required: 'Requerido', maxlength: 'Máximo ' + $scope.field.length + ' caracteres', number: 'Debe ser numérico', minlength: 'Longitud mínima ' + $scope.field.length + ' caracteres', pattern: 'Formato requerido dd/MM/aaaa'};
+
+					$scope.validateClass = function(form, fieldName) {
+						if(form && fieldName && form[fieldName]) {
+							return form[fieldName].$valid ? 'has-success' : 'has-error';
+						}
+					};
+
+					$scope.getErrorMessage = function(form, fieldName) {
+						var err = '';
+						if(form && fieldName && form[fieldName]) {
+							//console.log(form[fieldName].$error);
+							for(key in form[fieldName].$error) {
+								err += $scope.errors[key];
+							}
+						}
+						return err;
+					}
+				}
+			}
+		}]);
+        directives.directive('ctcLabel', function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    field: '=ctcField',
+                    value: '=ctcValue',
+                    colClass: '=ctcColClass'
+                },
+                templateUrl: 'ctc-label.html',
+                link: function($scope, element, attrs) {
+                	$scope.cols = {one: ($scope.colClass && $scope.colClass[0] ? $scope.colClass[0] : '4'), two: ($scope.colClass && $scope.colClass[1] ? $scope.colClass[1] : '8')};
+                }
+            }
+        });
+        directives.directive('ctcInput',['$templateCache', 'sfUtils', function($templateCache, sfUtils) {
+			return {
+				scope: {
+					form: '=ctcForm',
+					field: '=ctcField',
+					instance: '=ctcInstance',
+					opts: '=ctcOpts',
+					label: '=ctcLabel'
+				},
+				replace: true,
+				template: '<ng-include src="getTemplateUrl()"/>',
+				link: function($scope, element, attrs) {
+					if($scope.field && $scope.field.type && $scope.field.type === 'multipicklist') {
+						$scope.selected = {};
+					}
+					$scope.validateClass = function(form, fieldName) {
+						if(form && fieldName && form[fieldName]) {
+							return form[fieldName].$valid ? 'ctc-has-success' : 'ctc-has-error';
+						}
+					};
+					$scope.getTemplateUrl = function() {
+						var url = 'ctc.input.html';
+						var type = $scope.field.type;
+
+						if (type === 'textarea') {
+							url = 'ctc.textarea.html';
+						} else if(type === 'double') {
+							url = 'ctc.number.html';
+						} else if(type === 'percent') {
+							url = 'ctc.percent.html';
+						} else if(type === 'picklist' || type === 'reference') {
+							url = 'ctc.select.html';
+						} else if(type === 'boolean') {
+							url = 'ctc.checkbox.html';
+						} else if(type === 'date') {
+							url = 'ctc.datebox.html';
+						} else if(type == 'multipicklist') {
+							url = 'ctc.multipicklist.html';
+						}
+						return url;
+					};
+					$scope.getOptions = function() {
+						var field = $scope.field;
+						$scope.selected = {};
+						var selected = $scope.instance[field.name];
+
+						angular.forEach($scope.opts, function(instance, key){instance.isChecked = false; });
+
+						if(selected && selected.length > 0 && $scope.opts) {
+							var opts = selected.split(';');
+							angular.forEach(opts, function(opt, key) {
+								if(opt && opt.length > 0) {
+									var instanceOpts = sfUtils.findElement('value', opt, $scope.opts);
+									if(instanceOpts) {
+										instanceOpts.isChecked = true;
+										$scope.field.requiredM = false;
+									}
+								}
+							});
+						}
+					};
+					$scope.moveOptions = function(source) {
+						if(source) {
+							angular.forEach($scope.selected[source], function(instance, index) {
+								var instanceOpts = sfUtils.findElement('value', instance.value, $scope.opts);
+								if(instanceOpts) {
+									instanceOpts.isChecked = source === 'Base';
+								}
+							});
+						}
+						var required = true;
+						angular.forEach($scope.opts, function(value, key){
+							if(required && value.isChecked) {
+								required = false;
+							}
+						});
+
+						$scope.field.requiredM = required;
+						$scope.selected = {};
+					};
+				}
+			}
+		}]);
+		angular.module("ctc.input.html", []).run(["$templateCache", function($templateCache) {
+
+		  $templateCache.put("ctc.input.html",
+		    '<input id="{{field.name}}" ng-class="validateClass(form, field.name)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name}}" ng-required="field.required" ng-maxlength="field.length">');
+
+		  $templateCache.put("ctc.number.html",
+		    '<input sf-field="field" ng-class="validateClass(form, field.name + instance.$$hashKey)" type="number" ng-model="instance[field.name]" class="form-control" name="{{field.name+instance.$$hashKey}}" ng-required="field.required"  ng-maxlength="field.length"/>');
+
+		  $templateCache.put("ctc.percent.html",
+		    '<input ctc-format-number sf-field="field" ng-class="validateClass(form, field.name + instance.$$hashKey)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name+instance.$$hashKey}}" ng-required="field.required" ng-maxlength="field.length"/>');
+
+		  $templateCache.put("ctc.textarea.html",
+		    '<textarea ng-class="validateClass(form, field.name)" type="text" ng-model="instance[field.name]" class="form-control" name="{{field.name}}" ng-required="field.required" ng-maxlength="field.length"/>');
+
+		  $templateCache.put("ctc.select.html", '<select ng-class="validateClass(form, field.name)" class="form-control" ng-model="instance[field.name+\'__o\']" name="{{field.name}}" ng-required="field.required" ng-options="opt as opt[label] for opt in opts"><option ng-if="opts.length > 0 && !field.hideDefault" value="" selected>-- Ninguno --</option></select>');
+
+		  $templateCache.put("ctc.checkbox.html", '<input type="checkbox" ng-model="instance[field.name]" name="{{field.name}}">');
+
+		  $templateCache.put("ctc.datebox.html", '<input datepicker="instance[field.name]" ng-pattern="/^((\\d{2})\\/(\\d{2})\\/(\\d{4}))$/" ng-minlength="10" ng-maxlength="10" maxlength="10" ng-required="field.required" placeholder="dd/MM/aaaa" name="{{field.name}}" class="form-control" ng-model="instance[field.name]"></input>');
+
+		  $templateCache.put("ctc.multipicklist.html_old", '<div class="row"><div class="col-sm-6 text-left"><a ng-click="moveOptions(multiple[field.name+\'_Base\'], multiple[field.name+\'_Selected\'])" ng-class="{\'disabled\': multiple[field.name+\'_Base\'].length <= 0}"><span class="fa-stack"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-arrow-right fa-stack-1x fa-inverse"></i> </span></a> <select name="{{field.name}}" ng-required="{{field.required}}" ng-init="getOptions()" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in multiple[field.name+\'_Base\']" ng-model="selected.Base"> </select></div><div class="col-sm-6 text-right"><a ng-click="moveOptions(multiple[field.name+\'_Selected\'], multiple[field.name+\'_Base\'])" ng-class="{\'disabled\': multiple[field.name+\'_Selected\'].length > 0}"><span class="fa-stack"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-arrow-left fa-stack-1x fa-inverse"></i> </span></a><select name="{{field.name}}" ng-required="{{field.required}}" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in multiple[field.name+\'_Selected\']" ng-model="selected.Selected"> </select></div></div>');
+		}]);
+	</script>
+	<!--script type="text/ng-template" id="sf-select.html">
+       <select ng-disabled="disabled" name="{{field.name+instance.$$hashKey}}" ng-required="{{field.required}}" class="form-control" ng-options="opt as opt[label] for opt in opts|orderBy: label" ng-model="instance[field.name+'__o']" 
+
+       sf-validate-offer="true" 
+       sf-validate-registered="registered" 
+       sf-validate-fields="fieldsValidate" 
+       sf-validate-instance="instance"
+       sf-has-validated="hasDuplicated"
+       >
+            <option ng-if="opts.length > 0" value="" selected>-- Ninguno --</option>
+        </select>
+    </script-->
+
+    <script type="text/ng-template" id="ctc-label.html">
+        <label class="control-label" ng-class="'col-sm-' + cols.one"><span uib-tooltip="{{field.helpText}}" ng-bind="field.label"/></label>
+        <div ng-class="'col-sm-'+cols.two">
+            <p class="form-control-static" ng-bind="value"></p>
+        </div>
+		</script>
+	<script type="text/ng-template" id="ctc.multipicklist.html">
+		<div ng-if="instance" class="row">
+			<div class="col-sm-6 text-center">
+				<a uib-tooltip="Agregar" class="ctc-btn" ng-click="moveOptions('Base')" ng-class="{'disabled': multiple[field.name+'_Base'].length <= 0}">
+					<i class="fa fa-arrow-circle-right"></i>
+				</a>
+				<label class="label label-danger">Disponible</label>
+				<select multiple="true" class="form-control" ng-options="opt as opt[label] for opt in opts|filter: {isChecked: false}" ng-model="selected.Base" ng-dblclick="moveOptions('Base')"></select>
+			</div>
+			<div class="col-sm-6 text-center">
+				<label class="label label-success">Elegido</label>
+				<a uib-tooltip="Eliminar" class="ctc-btn" ng-click="moveOptions('Selected')" ng-class="{'disabled': multiple[field.name+'_Selected'].length > 0}">
+					<i class="fa fa-arrow-circle-left"></i>
+				</a>
+				<select name="{{field.name}}" ng-required="field.requiredM" multiple="true" class="form-control" ng-options="opt as opt[label] for opt in opts|filter: {isChecked: true}" ng-model="selected.Selected"  ng-dblclick="moveOptions('Selected')"> </select>
+			</div>
+		</div>
+	</script>
+	<style type="text/css">
+		.ctc-alert-top {margin-top: 20px;}
+	</style>
+</apex:component>

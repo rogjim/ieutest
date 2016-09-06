@@ -1,0 +1,19 @@
+<apex:component id="cPanelCellPT">
+	<apex:attribute name="label" type="String" description="Title of the panel"/>
+	<apex:attribute name="for" type="String" description="For label"/>
+	<apex:attribute name="color" type="String" description="For input" default=""/>
+	<apex:attribute name="columnsL" type="String" description="columns label bootstrap" default="3"/>
+    <apex:attribute name="columnsD" type="String" description="columns div bootstrap" default="3"/>
+	<apex:attribute name="alineacion" type="String" description="columns bootstrap" default="right"/>
+    <apex:attribute name="offset" type="String" description="offset columns bootstrap" default="0"/>
+	<apex:attribute name="alineacionLabel" type="String" description="columns bootstrap" default="left"/>
+	<apex:attribute name="toggle" type="String" description=" bootstrap" default=""/>
+	<apex:attribute name="placement" type="String" description=" bootstrap" default=""/>
+	<apex:attribute name="title" type="String" description=" bootstrap" default=""/>
+    <apex:attribute name="classDiv" type="String" description="new class bootstrap" default=""/>
+	
+	<label for="{!for}"  style="text-align: {!alineacionLabel}" class="col-md-offset-{!offset} col-md-{!columnsL} control-label "  >{!label}</label>
+	<div class="col-md-{!columnsD} text-{!alineacion} {!color} {!classDiv}" data-toggle="{!toggle}" data-plascement="{!placement}" title="{!title}" >
+	  <apex:componentBody id="componentBody"></apex:componentBody>
+	</div>
+</apex:component>

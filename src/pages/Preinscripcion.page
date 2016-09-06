@@ -1,0 +1,1322 @@
+<apex:page controller="UtilsExternal" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false">
+    <head>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/-->
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        <!--Fancybox-->
+        <link rel="stylesheet" href="{!URLFOR($Resource.FancyBox215,'fancyapps-fancyBox-18d1712/source/jquery.fancybox.css')}" type="text/css" media="screen" />
+        <apex:includeScript value="{!URLFOR($Resource.FancyBox215,'fancyapps-fancyBox-18d1712/source/jquery.fancybox.pack.js')}" />
+        <!--IEU-->
+        <apex:includeScript value="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/site.min.js')}" />
+        
+        <!--link rel="stylesheet" href="{!$Resource.PreInscripcionEstilos}"/-->
+        <link rel="stylesheet" href="{!$Resource.estilosPreInscripcion}"/>
+        <link rel="stylesheet" href="{!$Resource.ProximaNovaA}"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.JQuery,'jquery-ui.css')}"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/site.min.css')}"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        
+    </head>
+    
+    <body>
+        <!--Styles 19/08/2016-->
+        <div id="phone-contact-wrapper"> 
+            <div id="phone-contact" class="content-block"> 
+                <div class="container"> 
+                    <span id="phone-contact-heading"> 
+                        <span id="phone-contact-title">Atención Telefónica Inmediata</span> 
+                        <span id="phone-contact-subtitle">Envíanos tu número y te llamamos en 5 minutos</span> 
+                    </span> 
+                  <!--  <form method="POST" action="http://ieu.edu.mx/contacto/phone-contact" accept-charset="UTF-8" autocomplete="off" id="phone-contact-form" class="phone-contact-form"-->
+                  <form accept-charset="UTF-8" autocomplete="off" id="phone-contact-form" class="phone-contact-form">      
+						                        <label for="phone_contact_name">Nombre:</label>
+                        <div class="phone-contact-name-wrapper"> 
+                            <input id="phone_contact_name" tabindex="1" maxlength="30" name="phone_contact_name" type="text"/> 
+                            <div class="phone-contact-name-tooltip"> 
+                                <div class="phone-contact-name-tooltip-caret"></div> Envíanos tu nombre / número y <div class="phone-contact-name-tooltip-big-text"> TE LLAMAMOS EN 5 MINUTOS </div> 
+                            </div> 
+                        </div> 
+                        <label id="phone-contact-phone-label" for="phone_contact_phone"> Teléfono: <small>(10 dígitos)</small> </label> 
+                        <input id="phone_contact_phone" pattern="[0-9]{0,10}" tabindex="2" maxlength="10" name="phone_contact_phone" type="text"/> 
+                        <input id="phone-contact-submit" class="sprite sprite-phone-contact-submit" type="button" onclick="validarAte()" data-no-disable="true" value=""/> 
+                    </form> 
+
+
+                     
+                </div> 
+            </div> 
+        </div>            
+        
+        <div id="navbar-mobile-header"> 
+            <span id="navbar-mobile-logo" class="sprite sprite-ieu-logo-horizontal">IEU Universidad</span> 
+            <a id="navbar-mobile-toggle-menu" class="sprite sprite-navbar-header-toggle-menu" href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#">Toggle Menu</a> 
+        </div> 
+        <div id="navbar-wrapper" style="position: absolute; top: 69px;"> 
+            <div class="content-block"> 
+                <div class="container"> 
+                    <a id="navbar-menu-logo" href="http://ieu.edu.mx/"> 
+                        <img src="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/ieu-logo.png')}" alt="IEU | Universidad"/> 
+                    </a> 
+                    <nav id="navbar-menu" class="navbar-menu"> 
+                        <ul> 
+                            <li class="mobile-show"><a href="http://ieu.edu.mx/">Home</a></li> 
+                            <li id="navbar-acerca-ieu"> <a href="http://ieu.edu.mx/conocenos">Conócenos</a> 
+                                <ul class="navbar-dropdown"> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/filosofia#filosofia" rel="canonical">FILOSOFÍA</a></li> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/rvoe#rvoe" rel="canonical">RVOE</a></li> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/historia#historia" rel="canonical">HISTORIA</a></li> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/acreditaciones-y-convenios#acreditaciones-y-convenios" rel="canonical">ACREDITACIONES Y CONVENIOS</a></li> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/cuerpo-academico#cuerpo-academico" rel="canonical">CUERPO ACADÉMICO</a></li> 
+                                    <li><a href="http://ieu.edu.mx/conocenos/opiniones#opiniones" rel="canonical">OPINIONES</a></li> 
+                                </ul> 
+                            </li>  
+                            <li id="navbar-modalidades" class="mobile-hide"> <a href="javascript:;">Modalidades</a> 
+                                <ul class="navbar-dropdown">  
+                                    <li><a href="http://ieu.edu.mx/modalidades/presencial">Presencial</a></li>  
+                                    <li><a href="http://ieu.edu.mx/modalidades/online">Online</a></li>  
+                                    <li><a href="http://ieu.edu.mx/modalidades/ejecutiva">Ejecutiva</a></li>  
+                                </ul> 
+                            </li>   
+                            <li id="navbar-oferta-academica" class="navbar-menu-multiline"> <a href="http://ieu.edu.mx/oferta-academica" data-navbar-toggle-dropdown="">Oferta <span>Académica</span></a> 
+                                <ul class="navbar-dropdown navbar-dropdown-oferta-academica"> 
+                                    <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>   
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/bachillerato" data-navbar-toggle-dropdown=""> Bachillerato <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/bachillerato/bachillerato">Bachillerato</a></li>    
+                                        </ul> 
+                                    </li>  
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/licenciaturas" data-navbar-toggle-dropdown=""> Licenciaturas <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-del-talento-humano">Licenciatura en  Administración del Talento Humano</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion">Licenciatura en Administración</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-de-empresas-de-la-hospitalidad">Licenciatura en Administración de empresas de la hospitalidad</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-publica-y-ciencias-politicas">Licenciatura en Administración Pública y Ciencias Políticas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-administracion-y-direccion-estrategica">Licenciatura en Administración y Dirección Estratégica</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ciencias-de-la-educacion">Licenciatura en Ciencias de la Educación</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-comunicacion-integrada-en-las-organizaciones">Licenciatura en Comunicación integrada en las organizaciones</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-contaduria-y-finanzas">Licenciatura en Contaduría y Finanzas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-creacion-e-innovacion-de-empresas">Licenciatura en Creación e Innovación de empresas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-criminologia-victimologia-y-politica-criminal">Licenciatura en Criminología, Victimología y Política Criminal</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-derecho">Licenciatura en Derecho</a></li> 
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-direccion-de-mercadotecnia">Licenciatura en Dirección de Mercadotecnia</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-diseno-y-comunicacion-grafica">Licenciatura en Diseño y Comunicación Gráfica</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ecoturismo-y-sustentabilidad">Licenciatura en Ecoturismo y Sustentabilidad</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-finanzas-y-administracion-bancaria">Licenciatura en Finanzas y Administración Bancaria</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-gastronomia">Licenciatura en Gastronomía</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-historia">Licenciatura en Historia</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-en-sistemas-computacionales">Licenciatura en Ingeniería en Sistemas Computacionales</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-en-sistemas-y-tecnologias-de-la-informacion">Licenciatura en Ingeniería en Sistemas y Tecnologías de la Información</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ingenieria-industrial-y-administrativa">Licenciatura en Ingeniería Industrial y Administrativa</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-lengua-y-literatura">Licenciatura en Lengua y Literatura</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-mercadotecnia-digital-y-community-manager">Licenciatura en Mercadotecnia Digital y Community Manager</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-mercadotecnia-y-publicidad">Licenciatura en Mercadotecnia y Publicidad</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-organizacion-y-relaciones-publicas-para-la-alta-direccion">Licenciatura en Organización y relaciones públicas para la alta dirección</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-psicologia">Licenciatura en Psicología</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-turismo">Licenciatura en Turismo</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/licenciaturas/licenciatura-en-ventas-y-comercializacion">Licenciatura en Ventas y Comercialización</a></li>    
+                                        </ul> 
+                                    </li>  
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/maestrias" data-navbar-toggle-dropdown=""> Maestrías <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion">Maestría en Administración</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-instituciones-de-la-salud">Maestría en Administración de Instituciones de la Salud</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-instituciones-educativas">Maestría en Administración de Instituciones Educativas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-de-negocios-de-alimentos-y-bebidas">Maestría en Administración de negocios de alimentos y bebidas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-administracion-publica">Maestría en Administración Pública</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-alta-direccion-e-inteligencia-estrategica">Maestría en Alta Dirección e Inteligencia Estratégica</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-apreciacion-y-creacion-literaria">Maestría en Apreciación y Creación Literaria</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ciencias-computacionales-y-telecomunicaciones">Maestría en Ciencias Computacionales y Telecomunicaciones</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ciencias-de-la-educacion">Maestría en Ciencias de la Educación</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-derecho-fiscal">Maestría en Derecho Fiscal</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-derecho-y-ciencias-penales">Maestría en Derecho y Ciencias Penales</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-desarrollo-y-gestion-de-marcas">Maestría en Desarrollo y Gestión de Marcas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-direccion-de-ingenieria-de-software">Maestría en Dirección de Ingeniería de Software</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-direccion-del-talento-humano">Maestría en Dirección del Talento Humano</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-finanzas">Maestría en Finanzas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-gerencia-administrativa-con-enfoque-en-direccion-general">Maestría en Gerencia Administrativa con Enfoque en Dirección General</a></li> 
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-gestion-de-la-industria-de-petroleo-y-gas">Maestría en Gestión de la Industria de Petróleo y Gas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-historia">Maestría en Historia</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-impuestos">Maestría en Impuestos</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-ingenieria-administrativa">Maestría en Ingeniería Administrativa</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-innovacion-y-tecnologia-educativa">Maestría en Innovación y Tecnología Educativa</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-logistica-y-cadena-de-suministro">Maestría en Logística y Cadena de Suministro</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-mercadotecnia">Maestría en Mercadotecnia</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-mercadotecnia-estrategica">Maestría en Mercadotecnia Estratégica</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-psicologia-organizacional">Maestría en Psicología Organizacional</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/maestrias/maestria-en-relaciones-publicas-y-procesos-directivos">Maestría en Relaciones públicas y procesos directivos</a></li>    
+                                        </ul> 
+                                    </li>  
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/especialidades" data-navbar-toggle-dropdown=""> Especialidades <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-calidad-en-el-servicio">Especialidad en Calidad en el Servicio</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-coaching-y-mentoring">Especialidad en Coaching y Mentoring</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-gestion-del-talento-humano-en-las-organizaciones">Especialidad en Gestión del Talento Humano en las Organizaciones</a></li>
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/especialidades/especialidad-en-imagen-y-relaciones-publicas">Especialidad en Imagen y Relaciones Públicas</a></li>    
+                                        </ul> 
+                                    </li>  
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/doctorados" data-navbar-toggle-dropdown=""> Doctorados <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-ciencias-administrativas">Doctorado en Ciencias Administrativas</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-direccion-e-innovacion-de-instituciones">Doctorado en Dirección e Innovación de Instituciones</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/doctorados/doctorado-en-educacion">Doctorado en Educación</a></li>    
+                                        </ul> 
+                                    </li>  
+                                    <li>  <a href="http://ieu.edu.mx/oferta-academica/educacion-continua" data-navbar-toggle-dropdown=""> Educación continua <span class="sprite sprite-navbar-menu-caret"></span> </a> 
+                                        <ul class="navbar-deep-dropdown"> 
+                                            <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li>    
+                                            <li><div class="navbar-subdegree-title">Cursos</div></li>   
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-certificacion-en-diseno-digital-con-photoshop-cs6">Curso de Certificación en Diseño Digital con Photoshop CS6</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-certificacion-en-sitios-web-con-dreamweaver-cs6">Curso de Certificación en Sitios Web con Dreamweaver CS6</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-panaderia-basica">Curso de Panadería Básica</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/cursos/curso-de-reposteria-basica">Curso de Repostería Básica</a></li>    
+                                            <li><div class="navbar-subdegree-title">Diplomados</div></li>   <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-cocina-oriental">Diplomado en Cocina Oriental</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-competencias-docentes">Diplomado en Competencias Docentes</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-executive-bar-manager">Diplomado en Executive Bar Manager</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-en-turismo-de-eventos">Diplomado en Turismo de Eventos</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-profesional-en-organizacion-de-eventos">Diplomado Profesional en Organización de Eventos</a></li>  
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/diplomados/diplomado-profesional-en-wedding-planning">Diplomado Profesional en Wedding Planning</a></li>    
+                                            <li><div class="navbar-subdegree-title">Talleres</div></li>   
+                                            <li><a href="http://ieu.edu.mx/oferta-academica/talleres/taller-de-cocteleria-internacional-y-flair">Taller de Coctelería Internacional y Flair</a></li>      
+                                        </ul> 
+                                    </li>   
+                                </ul> 
+                            </li>  
+                            <li class="mobile-show"><a href="http://ieu.edu.mx/calculador-de-mensualidades">Calcula tu Colegiatura</a></li>  
+                            <li id="navbar-admisiones"> <a data-navbar-toggle-dropdown="" href="javascript:;">Admisiones</a> 
+                                <ul class="navbar-dropdown"> 
+                                    <li class="navbar-close-dropdown"><a href="http://ieu.edu.mx/admisiones/preinscripcion/solicitud#" class="sprite sprite-navbar-close-dropdown"></a></li> 
+                                    <li><a id="idLinkPreinsc">Proceso de Preinscripción</a></li> 
+                                    <li><a href="http://ieu.edu.mx/admisiones/becas-y-apoyos">Becas y Apoyos</a></li> 
+                                    <li><a href="http://ieu.edu.mx/calendario">Calendario</a></li> 
+                                </ul> 
+                            </li> 
+                            <li id="navbar-campus"><a href="http://ieu.edu.mx/campus"><span class="mobile-show">Localiza Tu</span> Campus</a></li> 
+                            <li id="navbar-experiencias-ieu" class="mobile-hide"> <a href="http://ieu.edu.mx/experiencias">Experiencias IEU</a> 
+                                <ul class="navbar-dropdown"> 
+                                    <li><a href="http://ieu.edu.mx/practicas-profesionales#practicas-profesionales" rel="canonical">Prácticas profesionales</a></li> 
+                                    <li><a href="http://ieu.edu.mx/viajes#viajes" rel="canonical">Viajes</a></li> 
+                                    <li><a href="http://ieu.edu.mx/intercambios#intercambios" rel="canonical">Intercambios</a></li> 
+                                </ul> 
+                            </li> 
+                            <li id="navbar-experiencias-ieu" class="mobile-show"> <a href="http://ieu.edu.mx/contacto" contact-header-button="">Contacto</a> </li> 
+                        </ul> 
+                    </nav> 
+                    <nav id="navbar-submenu" class="navbar-menu"> 
+                        <ul> 
+                            <li id="navbar-submenu-acceso-portales" class="navbar-submenu-multiline"><a href="http://portales.ieu.edu.mx/">Acceso a <span>Portales</span></a></li> 
+                            <li id="navbar-submenu-preguntas-frecuentes" class="navbar-submenu-multiline"><a href="http://ieu.edu.mx/preguntas-frecuentes">Preguntas <span>Frecuentes</span></a></li> 
+                            <li id="navbar-submenu-contacto"><a href="http://ieu.edu.mx/contacto" contact-header-button="">Contacto</a></li>
+                            <li id="navbar-submenu-chat-online"><a href="/Preinscripcion#" data-open-chat="#">Chat Online</a></li> 
+                            <li id="navbar-submenu-form-search"> 
+                                <form method="GET" action="http://ieu.edu.mx/busqueda" accept-charset="UTF-8" id="navbar-form-search"> 
+                                    <label for="navbar-form-search-field">Buscador:</label> 
+                                    <input id="navbar-form-search-field" name="search" type="text"/> 
+                                    <button type="submit" data-no-disable="true"><i class="sprite sprite-navbar-search-submit"></i></button> 
+                                </form> 
+                            </li> 
+                        </ul> 
+                    </nav> 
+                    <nav id="navbar-social-networks"> 
+                        <ul> 
+                            <li><a href="https://www.facebook.com/pages/IEU-Instituto-de-Estudios-Universitarios/186246394744618" target="_blank" class="sprite sprite-navbar-facebook">Facebook</a></li> 
+                            <li><a href="https://twitter.com/IEU_Universidad" target="_blank" class="sprite sprite-navbar-twitter">Twitter</a></li> 
+                            <li><a href="https://www.youtube.com/IEUuniversidad" target="_blank" class="sprite sprite-navbar-youtube">YouTube</a></li> 
+                            <li><a href="https://plus.google.com/u/0/116258308312438600353" target="_blank" class="sprite sprite-navbar-google-plus">Google+</a></li> 
+                        </ul> 
+                    </nav> 
+                </div> 
+            </div> 
+        </div>  
+        
+        <!-- Header -->
+        <div id="preregistration-request-header">
+            <div class="content-block">
+                <div class="container under-header">
+                    <h1 class="page-title page-title-type2 page-title-with-subtitle">Proceso de preinscripción</h1>
+                    <h2 class="page-subtitle">Llena el siguiente formulario con la información solicitada en cada campo.</h2>
+                </div><!-- div.container -->
+            </div><!-- div.content-block -->
+        </div><!-- div#preregistration-request-header -->
+        <!-- / Header -->
+        <!--*****************-->
+        
+        <apex:remoteObjects >
+            <apex:remoteObjectModel name="Lead" jsShorthand="LeadGateway" fields="FirstName,LastName,ApeMaterno__c,Phone,Email,Nivel__c,Modalidad__c,Programa__c,Plantel__c,LeadSource,SubOrigenCandidato__c,AsignacionAutomatica__c,PorcentajeDescuento__c,PorcentajeBeca__c,Periodo__c,GrupoAsignado__c,Pais__c,Municipio__c,Estado__c,MedioDifusion__c,EstadoOtro__c,Promotor__c"/>
+            <apex:remoteObjectModel name="BecaCalculadora__c" jsShorthand="CalculadoraGateway" fields="Promedio__c,DescuentoInscripcion__c,CategoriaLetra__c"></apex:remoteObjectModel>
+            <apex:remoteObjectModel name="Ubicacion__c" jsShorthand="UbicacionGateway" fields="Id,IdUbicacion__c,TipoUbicacion__c"></apex:remoteObjectModel>
+            <apex:remoteObjectModel name="Catalogo__c" jsShorthand="ModalidadGateway" fields="Id,Name,TipoCatalogo__c"/>
+            <apex:remoteObjectModel name="OfertaEducativa__c" jsShorthand="OfertaGateway" fields="Id,Modalidad__c,Programa__c,Periodo__c"/>
+            <apex:remoteObjectModel name="Beca__c" jsShorthand="BecaGateway" fields="A__c,B__c,C__c,D__c,E__c,F__c,G__c,H__c,OfertaEducativa__c,TipoBeca__c"/>
+        </apex:remoteObjects>
+        
+        <apex:includeScript value="{!URLFOR($Resource.Handlebars)}" />        
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChained)}" />
+        <script id="templateOptions" type="text/x-handlebars-template">
+		  <option value="">--Seleccionar--</option>
+          {{#items}}
+				 <option value="{{IdUbicacion__c}}" class="{{IdEstadoPais__c}}"> {{Name}}</option>
+          {{/items}}
+	    </script>
+        <script id="templateOptionsOFE" type="text/x-handlebars-template">
+		  <option value="">-- Selecciona una opción --</option>
+          {{#items}}
+				 <option value="{{dataId}}" class="{{parent}}"> {{name}}</option>
+          {{/items}}
+	    </script>
+        <div id="root">
+            <div id="overlay" class="hidden">
+                <div id="cargando-datos" style="left:48%; top:45%; z-index: 999; position: absolute;">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <br/><br/><span>Guardando...</span>
+                </div>
+            </div>
+            <div class="content-block">
+                <div class="container">
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col col-odd">    
+                            <form id="formPreinscripcion" class="form-vertical clearfix" accept-charset="UTF-8" method="post" onSubmit="return validar()">        
+                                <div id="formulario" class="col-block no-space-on-top">
+                                    <h3 class="title-description no-margins">Información personal:</h3>
+                                    <div class="divider divider-type2"></div>
+                                    
+                                    <div class="clearfix">
+                                        
+                                        <!-- Nombre -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Nombre:</label>
+                                            <input class="form-control formPreInsc" maxlength="30" id="nombre" name="nombre" type="text"/>
+                                        </div>
+                                        
+                                        <!-- Apellido Paterno -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Apellido paterno:</label>
+                                            <input class="form-control formPreInsc" maxlength="30" id="aPaterno" name="aPaterno" type="text"/>
+                                        </div>
+                                        
+                                        <!-- Apellido Materno -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Apellido materno:</label>
+                                            <input class="form-control formPreInsc" maxlength="30" id="aMaterno" name="aMaterno" type="text"/>
+                                        </div>
+                                        
+                                        <!-- Fecha de Nacimiento -->
+                                        <div class="col-xs col-xs-large">
+                                            <label>
+                                                <span class="required">*</span>
+                                                Fecha de nacimiento: (día - mes - año)
+                                            </label><br/>
+                                            
+                                            <div class="clearfix">
+                                                <div class="birthday-control">
+                                                    <input type='text' name="FechaNac" class="form-control formPreInsc" id="datepicker" readonly='true' />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Sexo -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Sexo:</label>
+                                            <select class="form-control selectOn" id="sexo" name="sexo">
+                                                <option value="0">--Seleccionar--</option>
+                                                <option value="Femenino">Femenino</option>
+                                                <option value="Masculino">Masculino</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Estado Civil -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Estado civil:</label>
+                                            <select class="form-control selectOn" id="estado_civil" name="edocivil">
+                                                <option value="0">--Seleccionar--</option>
+                                                <option value="Soltero">Soltero(a)</option>
+                                                <option value="Casado">Casado(a)</option>
+                                                <option value="Divorciado">Divorciado(a)</option>
+                                                <option value="Viudo">Viudo(a)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- País -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>País:</label>
+                                            <select class="hidden" name="paisInput" id="pais_input">
+                                                <option value="pais" selected='true'>-pais-</option>
+                                            </select>
+                                            <select class="form-control country-selector-list selectOn" id="pais" name="pais">
+                                                <option value="0">--Seleccionar--</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Estado -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Estado:</label>
+                                            <select class="form-control country-selector-list selectOn" id="estado" name="estado">
+                                                <option value="0">-- Seleccionar --</option>
+                                            </select>
+                                            <input class="form-control" maxlength="30" id="estado_input" name="estado_input" type="hidden"/>
+                                        </div>
+                                        
+                                        <!-- Ciudad/Municipio -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Ciudad o Municipio:</label>
+                                            <select id="municipio" class="form-control country-selector-list selectOn" name="municipio">
+                                                
+                                            </select>
+                                            <input disabled='disabled' class="form-control formPreInsc" maxlength="30" id="municipio_input" name="municipio_input" type="hidden" value="No Disponible"/>
+                                        </div>
+                                        
+                                        <!-- Teléfono Fijo -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Tel. fijo:</label>
+                                            <input class="form-control formPreInsc" maxlength="10" id="telCasa" name="telCasa" type="text"/>
+                                        </div>
+                                        
+                                        <!-- Teléfono Móvil -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Tel. móvil:</label>
+                                            <input class="form-control formPreInsc" maxlength="10" id="telCelular" name="telCelular" type="text"/>
+                                        </div>
+                                        
+                                        <!-- email -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Correo electrónico:</label>
+                                            <input class="form-control formPreInsc" maxlength="50" id="mail" name="mail" type="text"/>
+                                        </div>
+                                        
+                                        <!-- Promedio -->
+                                        <div class="col-xs">
+                                            <label><span class="required">*</span>Promedio:</label>
+                                            <div id="average">
+                                                <select class="form-control selectOn" id="average_digit" name="average_digit"><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+                                                .
+                                                <select class="form-control selectOn" id="average_decimal" name="average_decimal"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                </div><!-- div.col-block -->
+                                
+                                <div class="col-block">
+                                    <h3 class="title-description no-margins">
+                                        Información del área de interés:
+                                    </h3>
+                                    
+                                    <div class="divider divider-type2"></div>
+                                    
+                                    <!-- Modalidad -->
+                                    <label>
+                                        <span class="required">*</span>
+                                        Selecciona la modalidad:
+                                    </label>
+                                    <select id="modalidad-remote" class="form-control career-selector-list selectOn" name="modalidad">
+                                        <option value="0">-- Selecciona una opci&oacute;n --</option>
+                                    </select> 
+                                    <!-- Nivel/Grado -->
+                                    <label>
+                                        <span class="required">*</span>
+                                        Selecciona el nivel que deseas estudiar:
+                                    </label>
+                                    <select id="nivel-remote" class="form-control career-selector-list selectOn" name="nivel">
+                                        <option value="0">-- Selecciona una opci&oacute;n --</option>
+                                    </select> 
+                                    <!-- Campus -->
+                                    <label>
+                                        <span class="required">*</span>
+                                        Selecciona el Campus IEU donde quieres estudiar:
+                                    </label>
+                                    <select class="form-control career-selector-list selectOn" id="plantel-remote" name="plantel">
+                                        <option value="0">-- Selecciona una opci&oacute;n --</option>
+                                    </select> 
+                                    <!-- Carrera/Programa -->
+                                    <label>
+                                        <span class="required">*</span>
+                                        Seleccionar carrera:
+                                    </label>
+                                    <select class="form-control career-selector-list selectOn" id="programa-remote" name="ofe">
+                                        <option value="0">-- Selecciona una opci&oacute;n --</option>
+                                    </select> 
+                                    <!-- Medio -->
+                                    <label>
+                                        <span class="required">*</span>
+                                        Medio por el cual te enteraste:
+                                    </label>
+                                    <select class="form-control career-selector-list selectOn" id="medio" name="medio">
+                                        <option value="0">-- Selecciona una opci&oacute;n --</option>
+                                    </select>
+                                </div><!-- div.col-block -->                                
+                                <div id="divBotonEnviar" class="row row-without-spaces">
+                                    <div class="xcol xcol-4">
+                                        <button class="btn btn-type-2" type="button" id="botonEnviar" onclick="save()">Enviar mi preinscripción</button>
+                                    </div>
+                                    <div class="xcol xcol-2">
+                                        <a class="btn btn-type-2" href="http://ieu.edu.mx/admisiones/preinscripcion">Regresar</a>
+                                    </div>
+                                    <br/>
+                                    <span class="required">*</span> Todos los campos marcados con asterisco son obligatorios.
+                                </div>  <!----Formulario-->  
+                            </form>  
+                        </div>
+                        <!-- Columna derecha -->
+                        <div class="col col-even">
+                            <div class="col-block text-center space-on-the-sides">
+                                <p><i class="sprite sprite-circle-phone-contact"></i></p>
+                                <p class="text-medium">
+                                    <strong>
+                                        ¿Quieres aclarar alguna duda o tener más información?<br/>
+                                        Solicita atención inmediata.
+                                    </strong>
+                                </p>
+                                <p> <a class="btn btn-type-2 btn-multiline" data-phone-contact="#" href="http://ieu.edu.mx/contacto">Atención Telefónica <span>Inmediata</span></a> </p>
+                            </div><!-- div.col-block text-center -->
+                            
+                            <div class="divider divider-type2"></div>
+                            
+                            <div class="col-block text-center space-on-the-sides">
+                                <p><i class="sprite sprite-circle-chat"></i></p>
+                                <p class="text-medium"> <strong>Chatea con nosotros y sigue en contacto.</strong> </p>
+                                <p> <a class="btn btn-type-2" href="javascript:;" data-open-chat="#">Chat Online</a> </p>
+                            </div><!-- div.col-block text-center -->
+                            
+                            <div class="divider divider-type2"></div>
+                            
+                            <div class="col-block text-center space-on-the-sides">
+                                <p><i class="sprite sprite-circle-phone"></i></p>
+                                <p class="text-medium"><strong>Si deseas más información y atención personalizada marca al:</strong></p>
+                                <p class="title-description">01 800 00 00 438</p>
+                            </div><!-- div.col-block -->
+                            
+                        </div><!-- div.col col-even -->
+                        <!-- / Columna derecha -->
+                    </div>
+                </div>
+            </div>
+            <footer id="footer"> 
+                <div class="content-block"> 
+                    <div class="container"> 
+                        <a id="footer-logo" class="mobile-hide" href="http://ieu.edu.mx/"> 
+                            <img src="{!URLFOR($Resource.PreinscripcionStyleIEU,'/PreinscripcionStyleIEU/ieu-logo-footer.png')}" alt="IEU | Universidad"/> 
+                        </a> 
+                        <div id="footer-top"> 
+                            <div id="footer-social-networks"> 
+                                <span id="footer-social-networks-title" class="mobile-hide">Síguenos:</span> 
+                                <ul> 
+                                    <li><a href="https://www.facebook.com/pages/IEU-Instituto-de-Estudios-Universitarios/186246394744618" target="_blank" class="sprite sprite-footer-facebook">Facebook</a></li>
+                                    <li><a href="https://twitter.com/IEU_Universidad" target="_blank" class="sprite sprite-footer-twitter">Twitter</a> </li> 
+                                    <li><a href="https://es.foursquare.com/ieu_universidad" target="_blank" class="sprite sprite-footer-foursquare">Foursquare</a></li> 
+                                    <li><a href="https://www.youtube.com/IEUuniversidad" target="_blank" class="sprite sprite-footer-youtube">YouTube</a> </li> 
+                                </ul> 
+                            </div> 
+                            <div id="footer-phone-wrapper"> 
+                                <i class="sprite sprite-footer-phone"></i> 
+                                <div id="footer-phone-text"> 
+                                    <div id="footer-phone-lada">LADA SIN COSTO</div> 
+                                    <div id="footer-phone-number">01 800 00 00 438</div> 
+                                </div> 
+                            </div> 
+                        </div> 
+                        <div id="footer-body" class="mobile-hide"> 
+                            <div class="footer-links-list"> <strong class="footer-links-list-title">QUIÉNES SOMOS</strong> 
+                                <nav> 
+                                    <ul> 
+                                        <li><a href="http://ieu.edu.mx/conocenos">Conócenos</a></li> 
+                                        <li><a href="http://ieu.edu.mx/acreditaciones">Validez oficial y acreditaciones</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos#opiniones">Opiniones</a></li> 
+                                        <li><a href="http://ieu.edu.mx/conocenos#cuerpo-academico">Cuerpo académico</a></li> 
+                                    </ul> 
+                                </nav> 
+                            </div> 
+                            <div class="footer-links-list"> <strong class="footer-links-list-title">MODALIDADES EDUCATIVAS</strong> 
+                                <nav> 
+                                    <ul>  
+                                        <li> <a href="http://ieu.edu.mx/modalidades/presencial">Presencial</a> </li>  
+                                        <li> <a href="http://ieu.edu.mx/modalidades/online">Online</a> </li> 
+                                        <li> <a href="http://ieu.edu.mx/modalidades/ejecutiva">Ejecutiva</a> </li> 
+                                    </ul> 
+                                </nav> 
+                            </div> 
+                            <div class="footer-links-list"> <strong class="footer-links-list-title">OFERTA ACADÉMICA</strong> 
+                                <nav> 
+                                    <ul>  
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/bachillerato">Bachillerato</a> </li> 
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/licenciaturas">Licenciaturas</a> </li>
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/maestrias">Maestrías</a> </li> 
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/especialidades">Especialidades</a> </li> 
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/doctorados">Doctorados</a> </li>  
+                                        <li> <a href="http://ieu.edu.mx/oferta-academica/educacion-continua">Educación continua</a> </li> 
+                                    </ul> 
+                                </nav> 
+                            </div>
+                            <div class="footer-links-list"> <strong class="footer-links-list-title">ADMISIONES</strong> 
+                                <nav>
+                                    <ul>
+                                        <li><a href="http://ieu.edu.mx/admisiones/preinscripcion">Proceso de admisión</a></li> 
+                                        <li><a href="http://ieu.edu.mx/admisiones/preinscripcion#requisitos">Requisitos</a></li> 
+                                        <li><a href="http://ieu.edu.mx/calculador-de-mensualidades">Colegiatura</a></li> 
+                                        <li><a href="http://ieu.edu.mx/admisiones/becas-y-apoyos">Becas y apoyos económicos</a></li> 
+                                    </ul> 
+                                </nav>
+                            </div> 
+                        </div>
+                        <i class="sprite sprite-footer-logo-mobile mobile-show"></i> 
+                    </div> 
+                </div> 
+                <div id="footer-footer"> 
+                    <div class="content-block"> 
+                        <div class="container">
+                            <div id="footer-footer-copyright"> Copyright © 2016 Instituto de Estudios Universitarios </div> 
+                            <div id="footer-footer-links" class="mobile-hide"> 
+                                <nav> <ul> 
+                                    <li><a href="http://espacio.ieu.edu.mx/" target="_blank" rel="nofollow">NOTICIAS</a></li>
+                                    <li><a href="http://ieu.edu.mx/publicidad">PUBLICIDAD</a></li> 
+                                    <li><a href="http://ieu.edu.mx/aviso-de-privacidad">AVISO DE PRIVACIDAD</a></li> 
+                                    </ul> 
+                                </nav> 
+                            </div> 
+                        </div> </div>
+                </div>
+            </footer> 
+            <a id="contact-footer-button" href="http://ieu.edu.mx/contacto" contact-footer-button=""></a>   
+            
+            <script id="alert-message-message" type="text/x-handlebars-template">
+            <div class="alert-message alert-message-message">
+                <div class="alert-message-header">
+                    <a id="cerrarAlert" href="#" class="sprite sprite-btn-alert-close" data-close-alert></a>
+                </div>
+                <div class="alert-message-body">{{text}}</div>
+                <div class="alert-message-footer">
+                	<a id="aceptarAlert" class="btn btn-type-1" href="#"  data-close-alert>Aceptar</a>
+                </div>
+            </div>                        
+            </script>
+            <script id="phone-contact-alert-body" type="text/x-handlebars-template">
+            <div class="title-description">¡Gracias!</div>
+            <p class="alert-message-featured">{{ name }}</p>
+            <strong>En un momento un asesor llamará al número:</strong>
+            <p class="alert-message-featured">{{ phone }}</p>
+            <strong>Nuestro horario de atención es de:</strong>
+            <br/>Lunes a sábado de 7:30 a 21:00 horas
+            </script>
+            
+            <script>
+            var ON_MOBILE   = false;
+            var ON_TABLET   = false;
+            var ON_HANDHELD = false;
+            var ON_DESKTOP  = true;
+            var CURRENT_URI = "/Preinscripcion";
+            </script>
+            <script>AverageSelector.init();</script>
+            <script>
+            CountrySelector.init(157);
+            CareerSelector.init();
+            PreRegistration.init();
+            </script>
+            
+        </div>
+        <style type="text/css">            
+            
+            .ProximaNovaA-Bold {
+            font-family: ProximaNovaA-Bold;
+            font-weight: normal;
+            font-style: normal;
+            }
+            .ProximaNovaA-Regular {
+            font-family: ProximaNovaA-Regular;
+            font-weight: normal;
+            font-style: normal;
+            }
+            
+            .ProximaNova-Regular {
+            font-family: ProximaNova-Regular;
+            font-weight: normal;
+            font-style: normal;
+            }
+            
+            
+            .birthday-control{
+            	width : 100%;
+            	border-radius: 5px;
+            }
+            .form-control{
+            	border-radius: 5px;
+            }
+            .form-control:disabled{
+                background-color: #fff;
+                color: #656565;
+            }
+            .ui-datepicker {
+            	font-size: .8em;
+            	color: #2e6e9e;
+            }
+            .ui-datepicker-year{
+            	color: #2e6e9e;
+            //background: #5c9ccc url("images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x; 
+            }
+            
+            .hidden{
+            	display: none!important;
+            }
+            .btn{
+            	font-size: 16px;
+            }
+            #overlay {
+            background-color: rgba(222,222,222, 0.8);
+            z-index: 998;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: middle;
+            }
+        </style>
+        <script>
+        var clientId;
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        
+        ga('create', 'UA-79829568-1', 'auto');
+        ga('send', 'pageview');
+        ga(function(tracker) {
+		  clientId = tracker.get('clientId');
+		});
+        
+        </script>
+        <script>
+        j$ = jQuery.noConflict();
+        var modalidades = {};
+        var promedios = [];
+        var ofertaEducativa = {};
+        var becasOferta = {};
+        var ubicacion = {'pais':'','estado':'','municipio':''};
+        var paisesResult={};
+        var estadosResult={};
+        var municipiosResult={};
+        j$(document).ready(function() {
+            (function (){
+                j$('#modalidad-remote option:eq(0)').prop('selected', true)
+                j$('#nivel-remote option:eq(0)').prop('selected', true)
+                j$('#plantel-remote option:eq(0)').prop('selected', true)
+                j$('#programa-remote option:eq(0)').prop('selected', true)
+                j$('#average_digit option:eq(0)').prop('selected', true)
+                j$('#average_decimal option:eq(0)').prop('selected', true)
+                j$('input').each(function(a,b){
+                    j$('input[type="text"]').each(function(a,b){
+                        j$(b).val('');
+                    });	
+                });
+            })();
+            
+            var linkPreinscripcion = 'https://' + window.location.hostname + '/Preinscripcion';
+            j$('#idLinkPreinsc').attr('href',linkPreinscripcion);
+            Chat.init(), Navbar.init(), Alert.init(), ContactButtons.init();            
+                        
+            modalidades = {'Online': '', 'Presencial': '', 'Ejecutiva': ''};  
+            var nombreMod;
+            new SObjectModel.ModalidadGateway().retrieve({where: { TipoCatalogo__c : {eq: 'Modalidad'}}}, function(err, records, event){          
+                if(err) {
+                    console.log(err.message);
+                }
+                else {
+                    records.forEach(function(record) {
+                        //j$('#modalidad-remote').append(j$('<option value=\''+record.get('Id')+'\'>'+record.get("Name")+'</option>'));                    
+                        modalidades[record.get("Name")] = record.get("Id");
+                    });
+                }
+            });
+			
+            var field;
+            new SObjectModel.LeadGateway().describe(function(a,b){
+                for(i=0;i<b.fields.length;i++){
+                    var f = b.fields[i];
+                    if(f.name == 'MedioDifusion__c'){
+                        field = f.picklistValues;
+                    }
+                }
+                for(i=0; i<field.length; i++){
+                    j$('#medio').append(j$('<option value=\''+field[i].value+'\'>'+field[i].label+'</option>'));  
+                } 
+            });
+            
+            /*******04/07/2016**************/
+            var OFE = j$('#templateOptionsOFE').html();
+	   		var template = Handlebars.compile(OFE); 
+        
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.UtilsExternal.getExternalOfertaAcademica}', 
+                function(result, event){
+                    if (event.status) {
+                        console.log(result);
+                        
+                        var renderedModalidades = template(result.modalidad);
+                        //var renderedModalidades = Mustache.render(template,result.modalidad);
+                        j$('#modalidad-remote').html(renderedModalidades);
+                        
+                        var renderedNiveles = template(result.nivel);
+                        //var renderedNiveles = Mustache.render(template,result.nivel );
+                        j$('#nivel-remote').html(renderedNiveles);
+                        
+                        var renderedPlanteles = template(result.plantel);
+                        //var renderedPlanteles = Mustache.render(template,result.plantel);
+                        j$('#plantel-remote').html(renderedPlanteles);
+                        
+                        var renderedProgramas = template(result.programa);
+                        //var renderedProgramas = Mustache.render(template,result.programa);
+                        j$('#programa-remote').html(renderedProgramas);
+                        
+                        j$("#nivel-remote").chained("#modalidad-remote");
+                        j$("#plantel-remote").chained("#nivel-remote");
+                        j$("#programa-remote").chained("#plantel-remote");
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("responseErrors").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrors").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+            /*********************/
+            /*-------------Ubicacion-----------*/
+            var myVar;
+            function myFunction() {
+                myVar = setInterval(loadContry, 1000);
+            }
+            myFunction();
+            function loadContry() {
+                if(j$('#pais option').length>2){
+                    j$('#pais option[value="157"]').attr("selected",true);
+                    setTimeout(function(){j$('#pais').trigger('change');},500);
+                    clearInterval(myVar);
+                }
+            	else{
+                	setTimeout(function(){j$('#pais_input').trigger('change');},500);
+                }
+            }
+            /***********04/07/2016*************/
+            var ubicacionT = j$('#templateOptions').html();
+	   		var templateUbi = Handlebars.compile(ubicacionT);
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.UtilsExternal.getExternalUbicacion}', 
+                function(result, event){
+                    if (event.status) {
+                        console.log(result);
+                        
+                        paisesResult = result.pais;
+						var dataSource = {items:result.pais};
+                        var renderedPaises = templateUbi(dataSource);
+                        j$('#pais').html(renderedPaises);
+                        
+                        estadosResult = result.estado;
+                        dataSource = {items:result.estado};
+                        var renderedEstados = templateUbi(dataSource);
+                        j$('#estado').html(renderedEstados);
+                        
+                        municipiosResult = result.municipio;
+                        dataSource = {items:result.municipio};
+                        var renderedMunicipios = templateUbi(dataSource);
+                        j$('#municipio').html(renderedMunicipios);	   		  			  	   
+                        
+                        j$("#estado").chained("#pais");
+                        j$("#municipio").chained("#estado");
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("responseErrors").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrors").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+            /**********************************/
+            var telefonoCasa = new soloNumeros(j$('#telCasa'));
+            var telefonoCel = new soloNumeros(j$('#telCelular'));
+            
+            j$('#pais').on('change',function(){
+            	if(j$('#pais option:selected').val() == '157' || j$('#pais option:selected').val() == '0'){
+                	j$('#estado_input').attr('type','hidden');                    
+                    j$('#estado_input').removeClass('formPreInsc');
+                    j$('#estado').removeClass('hidden');
+                    j$('#estado').addClass('selectOn');
+                    j$('#municipio_input').attr('type','hidden');
+                    j$('#municipio_input').removeClass('formPreInsc');
+                    j$('#municipio').removeClass('hidden');
+                    j$('#municipio').addClass('selectOn');
+                    
+                }
+                else{
+                	j$('#estado_input').removeAttr('type');
+                    j$('#estado_input').addClass('formPreInsc');
+                    j$('#estado').removeClass('selectOn');
+                    j$('#estado').addClass('hidden');
+                    j$('#municipio_input').removeAttr('type');
+                    j$('#municipio_input').addClass('formPreInsc');
+                    j$('#municipio').removeClass('selectOn');
+                    j$('#municipio').addClass('hidden');
+                    
+                }
+            });            
+            
+            j$(function() {
+                dateInput = j$( "#datepicker" ).datepicker({
+                    closeText: 'Cerrar',
+                    prevText: '<Ant',
+                    nextText: 'Sig>',
+                    currentText: 'Hoy',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+                    dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+                    weekHeader: 'Sm',
+                    dateFormat: 'dd/mm/yy',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    changeYear: true,
+                    yearRange: "1960:" + (parseInt(new Date().getFullYear())-15).toString(),
+                    defaultDate: "01/01/2000"
+                }).datepicker('setDate', "01/01/2000");
+            });
+            
+            j$('#average_digit').on('change',function(){
+                if(j$('#average_digit').val() == 10){
+                    j$('#average_decimal option').remove();
+                	j$('#average_decimal').append('<option value="0">0</option>');  
+                }
+                else if(j$('#average_digit').val() != 10 && j$('#average_decimal option').length == 1){
+                    j$('#average_decimal option').remove();
+                	for(i = 0 ; i< 10 ; i++){
+                    	j$('#average_decimal').append('<option value="'+i+'">'+i+'</option>');
+                    }
+                }
+            });
+            
+            j$('#programa-remote').on('change',function(){
+                //var ofertValue = j$('#programa-remote').val();
+                var ofertValueArr = j$('#programa-remote').val();
+                var ofertValueSplit = ofertValueArr.split('-');
+                var ofertValue = ofertValueSplit[0];
+                console.log(ofertValue);
+                if(ofertValue != '' && ofertValue != 0){
+                    var leadGT = new SObjectModel.OfertaGateway();
+                    leadGT.retrieve({where: {Id : {eq: ofertValue }}}, function(err,res,event) {
+                        if(err) {
+                            alert(err.message);
+                        }
+                        else {
+                            res.forEach(function(record) {
+                                ofertaEducativa['Periodo'] = record.get('Periodo__c');
+                                ofertaEducativa['Programa'] = record.get('Programa__c');
+                                console.log(ofertaEducativa)
+                            });
+                        }
+                    }); 
+                    
+                    var becaGT = new SObjectModel.BecaGateway();
+                    becaGT.retrieve({where:{TipoBeca__c:{eq:'Comercial'}, OfertaEducativa__c:{eq: ofertValue }}}, function(err,res,event) {
+                        if(err) {
+                            alert(err.message);
+                        }
+                        else {
+                            res.forEach(function(record) {
+                                becasOferta['A'] = record.get('A__c');
+                                becasOferta['B'] = record.get('B__c');
+                                becasOferta['C'] = record.get('C__c');
+                                becasOferta['D'] = record.get('D__c');
+                                becasOferta['E'] = record.get('E__c');
+                                becasOferta['F'] = record.get('F__c');
+                                becasOferta['G'] = record.get('G__c');
+                                becasOferta['H'] = record.get('H__c');
+                            });
+                        }
+                    }); 
+                }
+            });
+            new SObjectModel.CalculadoraGateway().retrieve({limit : 42}, function(err, records, event){
+                if(err) {
+                    alert(err.message);
+                }
+                else {
+                    records.forEach(function(record) {
+                        var promedio = {};
+                        promedio.LetraBeca__c= record.get("CategoriaLetra__c");
+                        promedio.PorcentajeBeca__c = record.get("DescuentoInscripcion__c");
+                        promedio.Promedio__c = record.get("Promedio__c");
+                        promedios.push(promedio);
+                    }); 
+                }
+            });
+        });
+        
+        function soloNumeros(el){
+            this.el = el;
+            this.numTelefono = function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                            56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                            37:true,38:true,39:true,40:true,96:true,97:true,98:true,99:true,100:true,
+                           101:true,102:true,103:true,104:true,105:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                } 
+            }
+            
+            this.el.on('keydown', j$(this), this.numTelefono);
+        }		
+        
+        function validar(){
+            j$('#overlay').removeClass('hidden'); 
+            j$('#botonEnviar').prop('disabled', true);
+            if(j$('#divDanger')){
+            	j$('#divDanger').remove();
+            }
+            var content = j$('<div id="divDanger"><ul id="content-list"></ul></div>');           
+            j$('#divBotonEnviar').before(content);
+            
+            var canCommit = true;
+            var fields = {nombre : 'El nombre es obligatorio',
+                          aPaterno : 'El apellido paterno es obligatorio',
+                          aMaterno : 'El apellido materno es obligatorio',
+                          telCasa : 'El teléfono de casa es obligatorio con al menos 7 dígitos',
+                          telCelular : 'El teléfono celular es obligatorio a 10 dígitos',
+                          mail : 'El correo electrónico es obligatorio con un formato válido',
+                          nacimiento_dia : 'Seleccione un día de nacimiento',
+                          nacimiento_mes : 'Seleccione un mes de nacimiento',
+                          nacimiento_anyo : 'Seleccione un año de nacimiento',
+                          sexo : 'Seleccione un género',
+                          edocivil : 'Seleccione un estado civil',
+                          pais : 'Seleccione un país',
+                          estado_select : 'Seleccione un estado',
+                          municipio : 'Seleccione un municipio',
+                          //average_digit : 'Seleccione un valor del promedio, '
+                          //average_decimal : 'Seleccione un valor del promedio, '
+                          modalidad : 'Seleccione una modalidad',
+                          nivel : 'Seleccione un nivel',
+                          plantel : 'Seleccione un campus',
+                          ofe : 'Seleccione una carrera',
+                          medio : 'Seleccione un medio de difusión',
+                          pais : 'Seleccione un país',
+                          estado : 'Seleccione un estado',
+                          estado_input : 'Seleccione un estado',
+                          municipio : 'Seleccione un municipio'
+                         
+                         };
+            j$('.formPreInsc').each(function(a,b){
+                //console.log(a);console.log(j$(b).attr('name'));
+                if(j$(b).val()===""){
+                    j$('#divDanger').addClass('message-box message-box-danger');
+                    j$('#content-list').append(j$('<li>'+fields[j$(b).attr('name')]+'</li>')); 
+                    canCommit = false;
+                }
+                else if(j$(b).attr('name') === 'telCasa'){
+                    if(j$(b).val().length < 7){
+                        j$('#divDanger').addClass('message-box message-box-danger');
+                        j$('#content-list').append(j$('<li>'+fields[j$(b).attr('name')]+'</li>')); 
+                        canCommit = false;
+                    }
+                }
+				else if(j$(b).attr('name') === 'telCelular'){
+                	if(j$(b).val().length != 10){
+                        j$('#divDanger').addClass('message-box message-box-danger');
+                        j$('#content-list').append(j$('<li>'+fields[j$(b).attr('name')]+'</li>')); 
+                        canCommit = false;
+                    }
+                }   
+                else if(j$(b).attr('name') === 'mail'){
+                	if(j$(b).val().indexOf('@', 0) == -1 || j$(b).val().indexOf('.', 0) == -1){
+                        j$('#divDanger').addClass('message-box message-box-danger');
+                        j$('#content-list').append(j$('<li>'+fields[j$(b).attr('name')]+'</li>')); 
+                        canCommit = false;
+                    }
+                }
+            });
+            
+            j$('.selectOn').each(function(a,b){
+                //console.log(a);console.log(j$(b).attr('name'));
+                if((j$(b).val()==="0" || j$(b).val()==="") && j$(b).attr('name')!=='average_decimal'){
+                    j$('#divDanger').addClass('message-box message-box-danger');
+                    j$('#content-list').append(j$('<li>'+fields[j$(b).attr('name')]+'</li>'));
+                    canCommit = false;
+                }
+            });            
+            return canCommit;
+        }
+        
+        function save(){
+            if(validar()){
+                addLead();
+            }else{
+                j$('#overlay').addClass('hidden');
+                j$('#botonEnviar').prop('disabled', false);
+            }
+        }
+        var addLead = function() {
+            for(i=0; i<paisesResult.length; i++){
+                if(paisesResult[i].IdUbicacion__c === j$('#pais').val()){
+                    ubicacion.pais = paisesResult[i].Id;
+                    break;
+                }
+            }
+            for(i=0; i<estadosResult.length; i++){
+                if(estadosResult[i].IdUbicacion__c === j$('#estado').val()){
+                    ubicacion.estado = estadosResult[i].Id;
+                    break;
+                }
+            }
+            for(i=0; i<municipiosResult.length; i++){
+                if(municipiosResult[i].IdUbicacion__c === j$('#municipio').val()){
+                    ubicacion.municipio = municipiosResult[i].Id;
+                    break;
+                }
+            }
+            
+            var lead = {};
+            lead.FirstName = j$('#nombre').val();  
+            lead.LastName = j$('#aPaterno').val(); 
+            lead.ApeMaterno__c = j$('#aMaterno').val();  
+            
+            var date = j$('#datepicker').val();
+            var dateS = date.split('/');
+            var fecha = new Date(Date.parse(dateS[1] +' '+ dateS[0]+', '+dateS[2]))
+            
+            lead.FechaNacimiento__c = fecha;  
+            lead.Sexo__c = j$('#sexo').val(); 
+            lead.EstadoCivil__c = j$('#estado_civil').val(); 
+            console.log(ubicacion);
+            lead.Pais__c = ubicacion.pais;
+            if(j$('#pais').val()!='157'){
+                lead.EstadoOtro__c = j$('#estado_input').val(); 
+            }
+            else{
+            	lead.Estado__c = ubicacion.estado;
+                lead.Municipio__c = ubicacion.municipio;
+            }
+            
+            //var contUbicacion = 0;
+            
+            lead.Phone = j$('#telCasa').val();
+            lead.MobilePhone = j$('#telCelular').val(); //
+            lead.Email = j$('#mail').val();
+            
+            var nivel = j$('#nivel-remote option:selected').val();
+            var nivelSplit = nivel.split('-');
+            lead.Nivel__c = nivelSplit[0];
+            
+            lead.Modalidad__c = j$('#modalidad-remote option:selected').val();
+            
+            if(j$('#modalidad-remote option:selected').val() == modalidades.Presencial){
+                lead.ModalidadPresencial__c = true;
+            }else if(j$('#modalidad-remote option:selected').val() == modalidades.Online){
+                lead.ModalidadOnline__c = true;
+            }else if(j$('#modalidad-remote option:selected').val() == modalidades.Ejecutiva){
+                lead.ModalidadEjecutiva__c = true;
+            }
+            
+            var dat = new Date();
+            var dateV = new Date(dat.setDate(dat.getDate() + 10));
+            
+            lead.VigenciaDescuento__c = dateV ;
+            lead.MedioDifusion__c = j$('#medio option:selected').val();
+            lead.ConceptoInscripcion__c = 'PreInscripción';
+            lead.Status = 'Lead';
+            
+            var plantel = j$('#plantel-remote option:selected').val();
+            var plantelSplit = plantel.split('-');
+            lead.Plantel__c = plantelSplit[0];
+            
+            lead.LeadSource = 'Marketing';					
+            lead.SubOrigenCandidato__c = 'PreInscripción';		
+            lead.AsignacionAutomatica__c = true;
+            lead.TipoBeca__c = "Comercial";
+            lead.Promedio__c = j$('#average_digit option:selected').val() + '.' + j$('#average_decimal option:selected').val();
+            lead.LetraBeca__c = '';
+            lead.PorcentajeDescuento__c = '0';
+            lead.PorcentajeBeca__c =  '0';
+            promedios.forEach(function(prom){
+                if(prom.Promedio__c == lead.Promedio__c){
+                    lead.LetraBeca__c = prom.LetraBeca__c;
+                    lead.PorcentajeDescuento__c = prom.PorcentajeBeca__c == undefined ? '0': prom.PorcentajeBeca__c ;
+                    lead.PorcentajeBeca__c = becasOferta[lead.LetraBeca__c] == undefined ? '0' : ''+becasOferta[lead.LetraBeca__c];
+                }
+            });
+            
+            lead.Periodo__c = ofertaEducativa['Periodo'];			
+            lead.Programa__c = ofertaEducativa['Programa'];
+            
+            //Se agrega el id de googleAnalitycs
+            lead.GACID__c = clientId;
+            var leadInsert = new SObjectModel.LeadGateway();
+                        
+            var nombreLead = j$('#nombre').val();
+            var apPaLead = j$('#aPaterno').val();
+            var apMaLead = j$('#aMaterno').val();
+            var emailLead = j$('#mail').val();
+            var modalidadLead = j$('#modalidad-remote option:selected').val();
+            var nivelLead = nivelSplit[0];;
+            var plantelLead = plantelSplit[0];
+            var programaLead = ofertaEducativa['Programa'];
+            console.log(lead);
+            leadInsert.create(lead,function(err,res){
+                if(err){
+                    console.log(err);
+                    if(j$('#divDanger')){
+                        j$('#divDanger').remove();
+                    }
+                    
+                    var idLead='', idPromotor='';
+                    console.log('No inserto ' + err);
+                    if(err == 'Error: Ya ha registrado el correo, para la modalidad y carrera seleccionada.'){
+                        leadAsignado(nombreLead, apPaLead, apMaLead, emailLead, modalidadLead, nivelLead, plantelLead, programaLead);
+                        timefunction();
+                    }
+                    else{
+                        var content = j$('<div id="divDanger"><ul id="content-list"></ul></div>');           
+                        j$('#divBotonEnviar').before(content);
+                        j$('#divDanger').addClass('message-box message-box-danger');
+                        j$('#content-list').append(j$('<li>'+err+'</li>')); 
+                        j$('#botonEnviar').prop('disabled', false);
+                        j$('#overlay').addClass('hidden');
+                    }
+                }            
+                else{
+                    var form = document.createElement("form"); // crear un form
+                    with(form) {
+                        setAttribute("name", "formM"); //nombre del form
+                        setAttribute("action", 'https://' + window.location.hostname + '/SolicitudRecibida'); // action por defecto
+                        setAttribute("method", "post"); // method POST 
+                    }
+                    
+                    var input = document.createElement("input"); // Crea un elemento input
+                    with(input) {
+                        setAttribute("name", "mail"); //nombre del input
+                        setAttribute("class", "hidden"); //nombre del input
+                        setAttribute("type", "text"); // tipo hidden
+                        setAttribute("value", j$('#mail').val()); // valor por defecto
+                    }
+                    
+                    form.appendChild(input); // añade el input al formulario
+                    document.getElementsByTagName("body")[0].appendChild(form); // añade el formulario al documento
+                      
+                    form.submit();
+                }
+            }); 
+        }
+        
+        var myVar;
+        var flag=0;
+        function timefunction() {
+            myVar = setInterval(checkId, 1000);
+        }
+        
+        function checkId() {
+            if(flag>0){
+                clearInterval(myVar);
+                var linkCita = 'https://' + window.location.hostname +'/apex/OFE_CalendarioPromotor?idPromotor='+idPromotor+'&folio='+idLead;
+                var content2 = j$('<a href='+linkCita+' id="linkCita" onclick="window.open(this.href, this.href); return false">aquí</a>');                       
+                var content = j$('<div id="divDanger"><ul id="content-list"></ul></div>');           
+                j$('#divBotonEnviar').before(content);
+                j$('#divDanger').addClass('message-box message-box-danger');
+                j$('#content-list').append(j$('<li id="liError">'+err+'</li>')); 
+                j$('#liError').append(content2); 
+                j$('#botonEnviar').prop('disabled', false);
+                j$('#overlay').addClass('hidden');
+            }
+        }
+        
+        function leadAsignado(nombreLead, apPaLead, apMaLead, emailLead, modalidadLead, nivelLead, plantelLead, programaLead){
+            err = 'Los datos proporcionados ya han sido registrados. Si desea agendar una cita da clic ';
+            var tamRes;
+            var leadExistente = new SObjectModel.LeadGateway();
+            leadExistente.retrieve({where: {
+                FirstName : {eq: nombreLead},
+                LastName : {eq: apPaLead},
+                ApeMaterno__c : {eq: apMaLead},
+                Email : {eq: emailLead},
+                Modalidad__c : {eq: modalidadLead},
+                Nivel__c : {eq: nivelLead}, 
+                Plantel__c : {eq: plantelLead},
+                Programa__c : {eq : programaLead}							                        
+            }}, function(err,res,event) {
+                if(err) {
+                    console.log(err.message);
+                }
+                else {
+                    tamRes = (res.length)-1;
+                    idLead = res[tamRes].get('Id');
+                    idPromotor = res[tamRes].get('Promotor__c');
+                    flag++;               
+                }
+            }); 
+        }
+        function validarAte(){   
+			j$('#phone-contact-submit').prop('disabled', true);
+            if(j$('#phone_contact_name').val()==''){
+                Alert.error('El nombre es requerido');
+                habilitarButtons();
+            }
+            else if(j$('#phone_contact_phone').val()==''){
+                Alert.error('El teléfono es requerido');
+                habilitarButtons();
+            }
+            else if(j$('#phone_contact_phone').val().length < 6){
+                Alert.error('El teléfono debe contener al menos 7 caracteres');
+                habilitarButtons();
+            }
+            else if(j$('#phone_contact_phone').val()!='' && isNaN(j$('#phone_contact_phone').val()) == true){
+                Alert.error('El teléfono solo debe contener números');
+                habilitarButtons();
+            }
+            else {
+                var i = j$('[name="phone_contact_name"]').val();
+                var r = j$('[name="phone_contact_phone"]').val();
+                PhoneContact.init(); 
+                var leadInsertAteInme = new SObjectModel.LeadGateway();
+                var leadAteInme = {};
+                leadAteInme.LastName = j$('#phone_contact_name').val();
+                leadAteInme.Phone = j$('#phone_contact_phone').val();
+                leadAteInme.LeadSource = 'Marketing';					
+            	leadAteInme.SubOrigenCandidato__c = 'Atención Inmediata';
+                
+                leadInsertAteInme.create(leadAteInme,function(err,res){
+                if(err){
+                    console.log(err);
+                    console.log('No inserto ' + err);
+                }            
+                else{
+					Alert.message(PhoneContact.alertBody({name: i,phone: r}));
+                    habilitarButtons();
+                }
+            }); 
+                
+                habilitarButtons();
+            }
+        }
+        
+        function habilitarButtons(){
+            j$('#cerrarAlert').on('click', function(){
+                j$('#phone-contact-submit').prop('disabled', false);
+            });
+            j$('#aceptarAlert').on('click', function(){
+                j$('#phone-contact-submit').prop('disabled', false);
+            });
+        }
+        </script>
+    </body>
+    
+</apex:page>

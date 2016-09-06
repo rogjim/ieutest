@@ -1,0 +1,1113 @@
+<apex:component >
+          <div ng-controller="gruposCtrl"  ng-cloak="" id="gruposCtrl">
+
+            <div class="modal fade" tabindex="-1" role="dialog" id="modalGrupos" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title text-center">
+                        <span class="fa fa-users fa-fw"></span>
+                        Configurar grupos de la oferta académica: <strong>{{offer.Name}}</strong> periodo <strong>{{offer.currentPeriod.Name}}</strong>
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-sm-4 text-right">
+                        <div class="input-group">
+                              <span class="input-group-addon">Buscar</span>
+                              <input type="text" class="form-control" ng-model="pagination.search" />
+                          </div>
+                      </div>
+                      <div class="col-sm-4 form-horizontal">
+                        <div class="form-group">
+                          <label class="control-label col-sm-8">Elementos por página</label>
+                          <div class="col-sm-4">
+                            <select class="form-control" ng-options="opt as opt for opt in pagination.pageSize" ng-model="pagination.itemsPerPage">
+                                          <option value="" selected="true">-- Ninguno --</option>
+                                    </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th ng-repeat="field in fieldsS.group">
+                              <a class="ctc-btn" ng-click="setFieldSort(field)" uib-tooltip="{{fieldsK[field].helpText}}">
+                                  <span ng-class="iconSort(field)"/>
+                                  <span ng-bind="fieldsK[field].label"/>
+                                  <span ng-if="fieldsK[field].helpText" class="fa fa-info-circle" />
+                              </a>
+                            </th>
+                            <th>
+                              <div class="checkbox">
+                                  <label>
+                                    <input type="checkbox" ng-model="status.allGroups" ng-change="checkAll()"/> Todos
+                                  </label>
+                              </div>
+                            </th>
+                            <th class="ctc-th-actions">
+                              Acciones
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="group in pagination.filtered|orderBy:pagination.sortField:pagination.reverse | filter:search | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage">
+                            <td ng-repeat="field in fieldsS.group" ng-bind="group[field]"></td>
+                            <td>
+                              <div class="checkbox">
+                                  <label>
+                                    <input type="checkbox" ng-model="group.isChecked"  ng-change="isSelectAll()"/> <span>Seleccionar</span>
+                                  </label>
+                              </div>
+                            </td>
+                            <td>
+                              <a uib-tooltip="Modificar" ng-click="editGroup(group)" class="btn btn-success">
+                                <span class="fa fa-edit"/>
+                              </a>
+                              <a uib-tooltip="Eliminar" ng-click="removeGroup(group)" class="btn btn-danger">
+                                <span class="fa fa-trash-o"/>
+                              </a>
+                              <a uib-tooltip="Duplicar" ng-click="cloneGroup(group)" class="btn btn-primary">
+                                <span class="fa fa-clone"/>
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <uib-pagination 
+                    ng-if="pagination.filtered.length > pagination.itemsPerPage"
+                    items-per-page="pagination.itemsPerPage" 
+                    total-items="pagination.totalItems" 
+                    ng-model="pagination.currentPage" 
+                    max-size="pagination.maxPages" 
+                    boundary-links="true" 
+                    force-ellipses="true" 
+                    first-text="{{pagination.first}}" 
+                    previous-text="{{pagination.previous}}" 
+                    next-text="{{pagination.next}}" 
+                    last-text="{{pagination.last}}"
+                    ></uib-pagination>
+
+                    <div class="row" ng-if="errors.length>0">
+                        <div class="col-sm-6 col-sm-offset-6 text-right">
+                            <div class="alert alert-danger">
+                                <ul class="list-unstyled">
+                                    <li ng-repeat="err in errors"><span ng-bind="err"/></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer text-center">
+                      <a ng-click="editGroup({})" class="btn btn-success" uib-tooltip="Agregar">
+                        <span class="fa fa-plus fa-fw"/>
+                        Nuevo
+                      </a>
+                      <a ng-click="cloneGroup({}, true)" ng-if="status.showDuplicate" class="btn btn-primary" uib-tooltip="Duplicar">
+                        <span class="fa fa-clone fa-fw"/>
+                        Duplicar
+                      </a>
+                      <a ng-click="removeGroup({}, true)" ng-if="status.showDuplicate" class="btn btn-danger" uib-tooltip="Eliminar">
+                        <span class="fa fa-trash-o fa-fw"/>
+                        Eliminar
+                      </a>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">
+                          <span class="fa fa-mail-reply fa-fw"/>
+                          Cancelar
+                      </button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+
+
+            <div class="modal fade" tabindex="-1" role="dialog" id="modalEditGroup" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title text-center">
+                        <span class="fa fa-users fa-fw"></span>
+                        <span ng-bind="titles.group"/>
+                    </h4>
+                  </div>
+                  <form class="form-horizontal" name="formEditGroup" novalidate="" ng-submit="saveGroup()">
+                      <div class="modal-body">
+
+                          <div class="row">
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                <!--sf-input sf-field="fieldsK.Activo__c" sf-opts="fieldsK.Activo__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input-->
+
+                                <sf-label sf-field="fieldsK.Activo__c" sf-value="currentGroup.Activo__c" sf-col-class="[4,8]"></sf-label>
+                            </div>
+                            <div class="col-sm-6" ng-if="offer.Id && catClassroom.length>0">
+                                <sf-input sf-field="fieldsK.AulaAsignada__c" sf-opts="catClassroom" sf-label-prop="'Name'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                <sf-input sf-field="fieldsK.Turno__c" sf-opts="fieldsK.Turno__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                <sf-input sf-field="fieldsK.HoraEntrada__c" sf-opts="fieldsK.HoraEntrada__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                <div class="form-group" ng-class="isValid()">
+                                    <label class="control-label col-sm-4">{{fieldsK.Dia__c.label}} *</label>
+                                    <div class="col-sm-8">
+                                        <ul class="list-inline">
+                                            <li ng-repeat="day in fieldsK.Dia__c.values">
+                                                <div class="checkbox"> 
+                                                    <label>
+                                                        <input type="checkbox" ng-model="day.isCheck" ng-change="hasDays()" name="{{fieldsK.Dia__c.name+'CH'}}" ng-required="!groupHasDays"></input> {{day.label}}
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <i class="help-block ctc-days" ng-show="formEditGroup.{{fieldsK.Dia__c.name+'CH'}}.$invalid">Campo requerido</i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                  <sf-input sf-field="fieldsK.HoraSalida__c" sf-opts="fieldsK.HoraSalida__c.values" sf-label-prop="'label'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-6" ng-if="offer.Id">
+                                  <sf-input sf-field="fieldsK.FechaApertura__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                              </div>
+                              <div class="col-sm-6" ng-if="offer.Id">
+                                  <sf-input sf-field="fieldsK.CondicionanteGrupo__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                              </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-6" ng-if="offer.Id">
+                                <sf-input sf-field="fieldsK.FechaInicioClases__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                            <div class="col-sm-6" ng-if="offer.Id">
+                              <sf-input sf-field="fieldsK.Cupo__c" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-sm-6" ng-if="offer.Id">
+                              <sf-input sf-field="fieldsK.Sede__c" sf-opts="catBased" sf-label-prop="'Name'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                            <div class="col-sm-6" ng-if="offer.Id">
+                              <sf-input sf-field="fieldsK.Periodicidad__c" sf-opts="catPeriodicity" sf-label-prop="'Name'" sf-instance="currentGroup" sf-form="formEditGroup"></sf-input>
+                            </div>
+                          </div>
+
+                          <div class="row" >
+                              <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="errors.length>0">
+                                  <div class="alert alert-danger">
+                                      <ul class="list-unstyled">
+                                          <li ng-repeat="err in errors"><span ng-bind="err"/></li>
+                                      </ul>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6 col-sm-offset-6 text-right" ng-if="messages.groupCreated.length>0">
+                                  <div class="alert alert-success">
+                                      <ul class="list-unstyled">
+                                          <li><span ng-bind="messages.groupCreated"/></li>
+                                      </ul>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button ng-disabled="formEditGroup.$invalid || actions.saving" type="submit" class="btn btn-success">
+                            <span class="fa fa-spinner fa-pulse" ng-if="actions.saving"></span>
+                            <span class="fa fa-save fa-fw"></span>Guardar
+                        </button>
+                        <button ng-click="duplicateGroup = true" ng-disabled="formEditGroup.$invalid || actions.saving" type="submit" class="btn btn-primary">
+                            <span class="fa fa-spinner fa-pulse" ng-if="actions.saving"></span>
+                            <span class="fa fa-save fa-fw"></span>Guardar y duplicar
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                      </div>
+                  </form>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- INIT remove scholarship -->
+            <div class="modal fade" id="modalRemoveGroup" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><span ng-bind="messages.remove"/></h4>
+                      </div>
+                    <div class="modal-body">
+                      <p> <span ng-bind="messages.removeGroup"/> <span ng-bind="current.scholarship.selected.Name"/></p>
+                    </div>
+                    <div class="modal-footer text-center">
+                      <button ng-click="confirmRemoveGroup()" class="btn btn-danger" ng-disabled="status.deleting">
+                        <span class="fa fa-spinner fa-pulse" ng-if="status.deleting"></span>
+                        <span class="fa fa-exclamation-triangle fa-fw"/>
+                        Eliminar
+                      </button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="fa fa-mail-reply fa-fw"/>
+                        Cancelar
+                      </button>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <!-- END remove scholarship -->
+        </div>
+         <script type="text/javascript">
+            var app = angular.module('appIEU');
+              
+
+            app.controller('gruposCtrl', ['$scope', '$filter', 'sfService', 'sfDB', 'filterFilter', '$interval', function($scope, $filter, sfService, sfDB, filterFilter, $interval) {
+                  try {
+                      $scope.sfService = sfService;
+                      $scope.offer = {};
+                      $scope.title = 'Agregra grupo';
+                      $scope.currentGroup = {opts: {}};
+                      $scope.fields = {group: []};
+                      $scope.fieldsK = {};
+                      $scope.catTurn = [];
+                      $scope.catClassroom = [];
+                      $scope.catTeacher = [];
+                      $scope.catBased = [];
+                      $scope.catMatter = [];
+                      $scope.fieldsCR = [];
+                      $scope.catPeriodicity = [];
+                      $scope.groupHasDays = false;
+                      $scope.actions = {saving: false};
+                      $scope.limit = 20;
+                      //$scope.periods = [];
+                      $scope.countries = [{id:1, name: 'México'}, {id:2, name: 'USA'}];
+                      $scope.selectedCountry = {};
+
+                      $scope.fieldsCat = {teacher: {}, matter: {}};
+                      $scope.fieldsBased = {keys: {}, fields: []};
+
+                      var groupGW = new sfService.gateway.group();
+                      var classroomGW = new sfService.gateway.classroom();
+                      var periodGW = new sfService.gateway.period();
+                      var teacherGW = new sfService.gateway.teacher();
+                      var matterGW = new sfService.gateway.matter();
+                      var basedGW = new sfService.gateway.based();
+
+       
+                      $scope.fieldsS = {group: ['Name', 'FechaApertura__c', 'FechaInicioClases__c', 'Turno__c', 'Dia__c', 'HoraEntrada__c', 'HoraSalida__c', 'Cupo__c', 'CondicionanteGrupo__c', 'AulaAsignada__c']};
+                      $scope.instances = {group: [], delete: []};
+                      $scope.titles = {group: 'Agregar grupo'};
+                      $scope.errors = [];
+                      $scope.status = {allGroups: false, showDuplicate: false, deleting : false};
+                      $scope.messages = {remove: 'Eliminar grupo', removeGroup: 'Se va a eliminar el grupo', cloning: false, groupCreated: ''};
+
+
+                      $scope.pagination = {
+                        itemsPerPage: 5,  
+                        maxPages: 5, 
+                        totalItems: 0, 
+                        currentPage: 1,
+                        totalPages: 0,
+                        first: 'Primero',
+                        previous: 'Ant',
+                        next: 'Sig',
+                        last: 'Último',
+                        filtered: [],
+                        pageSize : [5, 10, 15, 20, 25, 50, 100],
+                        sortField: '',
+                        reverse: false,
+                        search: ''
+                      };
+                      $scope.delay = 500;
+                      $scope.Timer = null;
+                      $scope.duplicateGroup = false;
+
+                      var listInstancesObject = function(gateway, criteria, fields, callback) {
+                        sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, gateway, function(err, res) {
+                            sfDB.parseFromDB(res, fields, function(err, data) {
+                                callback(err, data);
+                            });
+                        });
+                      };
+                      var removeObject = function(instance, gateway, callback) {
+                        sfDB.getRemoteAction({instance: instance, action: 'del'}, gateway, function(err, res) {
+                            callback(err, res);
+                        });
+                      };
+                      sfDB.getRemoteAction({action: 'describe'}, groupGW, function(err, res) {
+                          var fields = res || [];
+                          $scope.fields.group = res;
+                          angular.forEach(fields, function(item, index) {
+                              $scope.fieldsK[item.name] = item;
+                              $scope.fieldsK[item.name]['objParent'] = 'grupo';
+                          });
+                          $scope.fieldsK['Sede__c__Name'] = angular.copy($scope.fieldsK.Sede__c);
+                      });
+                      sfDB.getRemoteAction({action: 'describe'}, classroomGW, function(err, res) {
+                          $scope.fieldsCR = res || [];
+                      });
+                      sfDB.getRemoteAction({action: 'describe'}, teacherGW, function(err, res) {
+                          $scope.fieldsCat.teacher = res || [];
+                      });
+                      sfDB.getRemoteAction({action: 'describe'}, matterGW, function(err, res) {
+                          $scope.fieldsCat.matter = res || [];
+                      });
+                      sfDB.getRemoteAction({action: 'describe'}, basedGW, function(err, res) {
+                          $scope.fieldsBased.fields = res || [];
+                          angular.forEach($scope.fieldsBased.fields, function(item, index) {
+                            $scope.fieldsBased.keys[item.name] = item;
+                          });
+                          //$scope.listBased();
+                      });
+                      $scope.$watch('[pagination.search, pagination.itemsPerPage]', function (value) {
+                          $scope.viewPagination($scope.pagination.search, 1);
+                        }, true);
+                        /*define elements to pagination*/
+                      $scope.viewPagination = function(value, page) {
+                        $scope.pagination.filtered = filterFilter($scope.instances.group, value);
+                          $scope.pagination.totalItems  = $scope.pagination.filtered.length;
+                          $scope.pagination.totalPages  = Math.ceil($scope.pagination.totalItems / $scope.pagination.itemsPerPage);
+                          $scope.pagination.currentPage = page;
+                          //$scope.totalItems   = $scope.filtered.length;
+                      };
+                      $scope.listGroupsByOffer = function(offer) {
+                        $scope.instances.group = [];
+                        $scope.status.allGroups = false;
+                        $scope.messages = {remove: 'Eliminar grupo', removeGroup: 'Se va a eliminar el grupo', cloning: false};
+                        if(offer && offer.Id) {
+                          var criteria = {where: {OfertaEducativa__c: {eq: offer.Id}}, limit: 100};
+                          listInstancesObject(groupGW, criteria, $scope.fields.group, function(err, res) {
+                            if(!err) {
+                              $scope.instances.group = res;
+                              $scope.updateCofigureGroup($scope.instances.group.length > 0, offer);
+                              $scope.viewPagination($scope.pagination.search, 1);
+                              angular.forEach($scope.instances.group, function(value, key) {
+                                  //set name classroom
+                                  var instance = sfDB.findElementInArray('Id', value.AulaAsignada__c, $scope.catClassroom); if(instance) {value.AulaAsignada__c = instance.Name;
+                                    value.AulaAsignada__c__Id = instance.Id;
+                                  }
+                                  //separate days
+                                  if(value.Dia__c && value.Dia__c.length > 0) {
+                                    value['Dia__c_Val'] = value.Dia__c;
+                                    var strDays = '';
+                                    var days = value.Dia__c.split(';');
+                                    angular.forEach(days, function(day, key){if(day && day.length > 0) {if(strDays.length > 0) {strDays += ', '; } strDays += day; }
+                                    });
+                                    value.Dia__c = strDays;
+                                  }
+                                  var Sede__c__Name = sfDB.findElementInArray('Id', value.Sede__c, $scope.catBased);
+                                  if(Sede__c__Name.Id) {
+                                      value.Sede__c__Name = Sede__c__Name.Name;
+                                  }
+                                  
+                                  $scope.$apply();
+                              });
+                            } else {
+                              console.log('\nerr'); console.log(err);
+                            }
+                          });
+                        }
+                      };
+                      $scope.updateCofigureGroup = function(status, offer) {
+                        var toUpdate = new sforce.SObject("OfertaEducativa__c");
+                        toUpdate.Id = offer.Id;
+                        toUpdate.GrupoConfigurado__c = status;
+                        updateInstancesSforce([toUpdate], function(err, res) {
+                            //console.log('in updateCofigureGroup');
+                            //console.log(err);
+                            //console.log(res);
+                        });
+                      };
+                      $scope.saveGroup = function() {
+                          $scope.errors = [];
+                          $scope.actions.saving = true;
+                          var toStore = angular.copy($scope.currentGroup);
+                          //toStore.Activo__c = sfDB.getPropertyFromObj(toStore.opts.Activo__c, 'value');
+                          toStore.Activo__c =   'Inactivo';
+                          toStore.AulaAsignada__c = sfDB.getPropertyFromObj(toStore.opts.AulaAsignada__c, 'Id');
+                          toStore.Turno__c = sfDB.getPropertyFromObj(toStore.opts.Turno__c, 'value');
+                          toStore.HoraEntrada__c = sfDB.getPropertyFromObj(toStore.opts.HoraEntrada__c, 'value');
+                          toStore.Sede__c = sfDB.getPropertyFromObj(toStore.opts.Sede__c, 'Id');
+                          toStore.Periodicidad__c = sfDB.getPropertyFromObj(toStore.opts.Periodicidad__c, 'Id');
+                          toStore.Dia__c = '';
+                          toStore.Grupo__c = toStore.OfertaEducativa__c;
+                          angular.forEach($scope.fieldsK.Dia__c.values, function(item, key){if(item.isCheck) {if(toStore.Dia__c.length>0){toStore.Dia__c +=';';} toStore.Dia__c += item.value; }
+                          });
+                          toStore.HoraSalida__c = sfDB.getPropertyFromObj(toStore.opts.HoraSalida__c, 'value');
+                          toStore.FechaApertura__c = sfDB.createDate(toStore.FechaInicioClases__c); 
+                          toStore.FechaInicioClases__c = sfDB.createDate(toStore.FechaInicioClases__c);
+                          var Name = '';
+                          if($scope.offer.Modalidad__c && $scope.offer.Modalidad__c.length > 0) {
+                            Name += $scope.offer.Modalidad__c.substring(0, 1);
+                          }
+                          if($scope.offer.Nivel__c && $scope.offer.Nivel__c.length > 0) {
+                            Name += $scope.offer.Nivel__c.substring(0, 1);
+                          }
+                          if($scope.offer.Plantel__c__Abr && $scope.offer.Plantel__c__Abr.length > 2) {
+                            Name += $scope.offer.Plantel__c__Abr.substring(0, 3);
+                          }
+                          if($scope.offer.AbreviaturaPrograma__c && $scope.offer.AbreviaturaPrograma__c.length > 0) {
+                            Name += $scope.offer.AbreviaturaPrograma__c;
+                          } 
+                          if(toStore.opts.Sede__c && toStore.opts.Sede__c && toStore.opts.Sede__c.Nomenclatura__c && toStore.opts.Sede__c.Nomenclatura__c.length > 0) {
+                            Name += toStore.opts.Sede__c.Nomenclatura__c;
+                          }
+                          
+                          
+
+                          delete toStore.CreatedDate;
+                          delete toStore.AulaAsignada__c__Id;
+                          delete toStore.Sede__c__Name;
+                          delete toStore.opts;
+                          //delete toStore.Name;
+                          delete toStore.isChecked;
+                          delete toStore.Dia__c_Val;
+                          delete toStore.FechaRegistro__c;
+                          if(toStore.hasOwnProperty('Id')) {
+                              delete toStore.Activo__c;
+                              var numberGroup = $scope.instances.group.length;
+                              if(toStore.Name && toStore.Name.indexOf('-') !== -1) {
+                                var temp = toStore.Name.substring(toStore.Name.indexOf('-') + 1, toStore.Name.length);
+                                if(temp.length > 0) {
+                                  numberGroup = parseInt(temp);
+                                  if(isNaN(numberGroup) || numberGroup == 'NaN') {
+                                    numberGroup = $scope.instances.group.length;
+                                  }
+                                }
+                              }
+                              toStore.Name = Name + '-' + numberGroup;
+
+                              delete toStore.FechaRegistro__c;
+                              sfDB.getRemoteAction({action: 'update'}, new sfService.gateway.group(toStore), function(err, res, all) {
+                                if(err) {
+                                  angular.forEach(err, function(value, key){$scope.errors.push(value); });
+                                  $scope.actions.saving = false;
+                                  $scope.$apply();
+                                } else {
+                                  $scope.listGroupsByOffer($scope.offer);
+                                  $scope.actions.saving = false;
+                                  if($scope.duplicateGroup) {
+                                    var clone = angular.copy($scope.currentGroup);
+                                    clone.AulaAsignada__c__Id = toStore.AulaAsignada__c;
+                                    clone.Dia__c_Val = toStore.Dia__c;
+                                    clone.Turno__c = toStore.Turno__c;
+                                    clone.HoraEntrada__c = toStore.HoraEntrada__c;
+                                    clone.HoraSalida__c = toStore.HoraSalida__c;
+                                    clone.Sede__c = toStore.Sede__c;
+                                    clone.Periodicidad__c = toStore.Periodicidad__c;
+                                    delete clone.Id;
+                                    $scope.editGroup(clone);
+
+                                    $scope.messages.groupCreated = 'Se actualizó el grupo: ' + toStore.Name;
+
+                                    $scope.Timer = $interval(function () {
+                                        $scope.messages.groupCreated = '';
+                                        $interval.cancel($scope.Timer);
+                                    }, 2500);
+
+                                  } else {
+                                    $('#modalEditGroup').modal('hide');
+                                  }
+                                  $scope.$apply();
+                                }
+                              });
+                          } else {
+                            var numberGroup = 1;
+                            var long = 1;
+                            var lastCreated = {};
+                            angular.forEach($scope.instances.group, function(group, key) {
+                              if(group.CreatedDate.getTime() > long) {
+                                long = group.CreatedDate.getTime();
+                                lastCreated = group;
+                              }
+                            });
+                            if(lastCreated && lastCreated.Id && lastCreated.Name && lastCreated.Name.indexOf('-') !== -1) {
+                              var temp = lastCreated.Name.substring(lastCreated.Name.indexOf('-') + 1, lastCreated.Name.length);
+                              if(temp.length > 0) {
+                                numberGroup = parseInt(temp) + 1;
+                              }
+                            }
+                            toStore.Name = Name + '-' + numberGroup;
+
+                              sfDB.getRemoteAction({instance: toStore, action: 'create'}, groupGW, function(err, res) {
+                                if(err) {
+                                  angular.forEach(err, function(value, key){$scope.errors.push(value); });
+                                  $scope.actions.saving = false;
+                                  $scope.$apply();
+                                } else {
+                                  $scope.actions.saving = false;
+                                  $scope.currentGroup.Id = res[0];
+                                  $scope.listGroupsByOffer($scope.offer);
+                                  //$scope.instances.group.push($scope.currentGroup);
+                                  if($scope.duplicateGroup) {
+                                    var clone = angular.copy($scope.currentGroup);
+                                    clone.AulaAsignada__c__Id = toStore.AulaAsignada__c;
+                                    clone.Dia__c_Val = toStore.Dia__c;
+                                    clone.Turno__c = toStore.Turno__c;
+                                    clone.HoraEntrada__c = toStore.HoraEntrada__c;
+                                    clone.HoraSalida__c = toStore.HoraSalida__c;
+                                    clone.Sede__c = toStore.Sede__c;
+                                    clone.Periodicidad__c = toStore.Periodicidad__c;
+                                    delete clone.Id;
+                                    $scope.editGroup(clone);
+
+                                    $scope.messages.groupCreated = 'Se creó el grupo: ' + toStore.Name;
+
+                                    $scope.Timer = $interval(function () {
+                                      $scope.messages.groupCreated = '';
+                                      $interval.cancel($scope.Timer);
+                                    }, 4500);
+
+                                  } else {
+                                    $('#modalEditGroup').modal('hide');
+                                  }
+                                  $scope.$apply();
+                                  //$('#modalEditGroup').modal('hide');
+                                }
+                              });
+                          }
+                          //console.log('finish saveGroup->]');
+                      };
+                      $scope.editGroup = function(group, duplicate) {
+                        $scope.currentGroup = {};
+                        $scope.errors = [];
+                        $scope.duplicateGroup = false;
+                        $scope.actions.saving = false;
+                        angular.forEach($scope.fieldsK.Dia__c.values, function(value, key) {
+                          delete value.isCheck;
+                        });
+                        if(group) {
+                          $scope.currentGroup = group;
+                          $scope.currentGroup.OfertaEducativa__c = $scope.offer.Id;
+                          $('#modalEditGroup').modal('show');
+                          $scope.titles.group = 'Agregar grupo';
+                          if(group.Id) {
+                            $scope.titles.group = 'Editar grupo ' + $scope.currentGroup.Name;
+                          }
+
+                          if(!duplicate) {
+                            $scope.currentGroup.opts = {};
+                          }
+                          //if(group.Id || group.opts) {
+                            /*if(duplicate) {
+                              $scope.titles.group = 'Agregar grupo';
+                            } else {
+                              $scope.titles.group = 'Editar grupo';
+                            }*/
+                            if($scope.currentGroup.Activo__c) {
+                              var active = sfDB.findElementInArray('value', $scope.currentGroup.Activo__c, $scope.fieldsK.Activo__c.values);
+                              if(active.value) {
+                                $scope.currentGroup.opts.Activo__c = active;
+                              }
+                            }
+
+                            if($scope.currentGroup.AulaAsignada__c__Id) {
+                              var classroom = sfDB.findElementInArray('Id', $scope.currentGroup.AulaAsignada__c__Id, $scope.catClassroom);
+                              if(classroom.Id) {
+                                $scope.currentGroup.opts.AulaAsignada__c = classroom;
+                              }
+                            }
+                            if($scope.currentGroup.Turno__c) {
+                              //var turn = sfDB.findElementInArray('Name', $scope.currentGroup.Turno__c, $scope.catTurn);
+                              var turn = sfDB.findElementInArray('value', $scope.currentGroup.Turno__c, $scope.fieldsK.Turno__c.values);
+                              if(turn.value) {
+                                $scope.currentGroup.opts.Turno__c = turn;
+                              }
+                            }
+                            if($scope.currentGroup.HoraEntrada__c) {
+                              var init = sfDB.findElementInArray('value', $scope.currentGroup.HoraEntrada__c, $scope.fieldsK.HoraEntrada__c.values);
+                              if(init.value) {
+                                $scope.currentGroup.opts.HoraEntrada__c = init;
+                              }
+                            }
+                            if($scope.currentGroup.HoraSalida__c) {
+                              var finish = sfDB.findElementInArray('value', $scope.currentGroup.HoraSalida__c, $scope.fieldsK.HoraSalida__c.values);
+                              if(finish.value) {
+                                $scope.currentGroup.opts.HoraSalida__c = finish;
+                              }
+                            }
+                            if($scope.currentGroup.Sede__c) {
+                              var based = sfDB.findElementInArray('Id', $scope.currentGroup.Sede__c, $scope.catBased);
+                              if(based.Id) {
+                                $scope.currentGroup.opts.Sede__c = based;
+                              }
+                            }
+                            if($scope.currentGroup.Periodicidad__c) {
+                              var periodicity = sfDB.findElementInArray('Id', $scope.currentGroup.Periodicidad__c, $scope.catPeriodicity);
+                              if(periodicity.Id) {
+                                $scope.currentGroup.opts.Periodicidad__c = periodicity;
+                              }
+                            }
+
+                            var dayStr = $scope.currentGroup.Dia__c_Val;
+
+                            if(dayStr && dayStr.length > 0) {
+                                var days = dayStr.split(';');
+                                angular.forEach(days, function(day, index) {
+                                    if(day && day.length > 0) {
+                                        var findDay = sfDB.findElementInArray('value', day, $scope.fieldsK.Dia__c.values);
+                                        if(findDay) {
+                                            if(!$scope.currentGroup.opts.hasOwnProperty('Dia__c')) {
+                                                $scope.currentGroup.opts.Dia__c = [];
+                                            }
+                                            $scope.currentGroup.opts.Dia__c.push(findDay);
+                                            findDay.isCheck = true;
+                                        }
+                                    }
+                                });
+                            }
+                          /*} else {
+                            $scope.titles.group = 'Agregar grupo';
+                          }*/
+
+                          var length = $scope.fieldsK.Dia__c.values.length;
+                          angular.forEach($scope.fieldsK.Dia__c.values, function(value, key) {
+                              //if(dayStr.indexOf(value.value) !== -1) {
+                                //  value.isCheck = true;
+                              //}
+                              if(key === (length - 1)) {
+                                  $scope.hasDays();
+                              }
+                          });
+                        }
+                      };
+                      $scope.cloneGroup = function(group, isAll) {
+                        $scope.errors = [];
+                        if(group && !isAll) {
+                          var clone = angular.copy(group);
+                          clone.FechaInicioClases__c = sfDB.createDate(clone.FechaInicioClases__c);
+                          clone.FechaApertura__c = sfDB.createDate(clone.FechaApertura__c);
+                          clone.AulaAsignada__c = clone.AulaAsignada__c__Id;
+                          clone.Dia__c = clone.Dia__c_Val;
+                          var lastCreated = {};
+                          var long = 0;
+                          var numberGroup = 1;
+                          angular.forEach($scope.instances.group, function(group, key){
+                            if(group.CreatedDate.getTime() > long) {
+                                long = group.CreatedDate.getTime();
+                                lastCreated = group;
+                              }
+                          });
+                          if(lastCreated && lastCreated.Id && lastCreated.Name && lastCreated.Name.indexOf('-') !== -1) {
+                            var temp = lastCreated.Name.substring(lastCreated.Name.indexOf('-') + 1, lastCreated.Name.length);
+                            if(temp.length > 0) {
+                              numberGroup = parseInt(temp) + 1;
+                            }
+                          }
+                          if(clone.Name && clone.Name.indexOf('-') != -1) {
+                            clone.Name = clone.Name.substring(0, clone.Name.indexOf('-'));
+                          }
+                          clone.Name = clone.Name + '-' + numberGroup; 
+
+                          delete clone.isChecked;
+                          delete clone.Id;
+                          delete clone.FechaRegistro__c;
+                          delete clone.AulaAsignada__c__Id;
+                          delete clone.opts;
+                          delete clone.Dia__c_Val;
+                          delete clone.CreatedDate;
+                          delete clone.Sede__c__Name;
+                          sfDB.getRemoteAction({instance: clone, action: 'create'}, groupGW, function(err, res) {
+                            if(err) {
+                              angular.forEach(err, function(value, key){$scope.errors.push(value); });
+                              $scope.$apply();
+                            } else {
+                              clone.FechaInicioClases__c = group.FechaInicioClases__c;
+                              clone.FechaApertura__c = group.FechaApertura__c;
+                              clone.AulaAsignada__c = group.AulaAsignada__c;
+                              clone.AulaAsignada__c__Id = group.AulaAsignada__c__Id;
+                              clone.Dia__c = group.Dia__c;
+                              clone.Dia__c_Val = group.Dia__c_Val;
+                              clone.Sede__c__Name = group.Sede__c__Name;
+                              clone.opts = angular.copy(group.opts);
+                              clone.Id = res[0];
+                              $scope.instances.group.push(clone);
+                              $scope.isSelectAll();
+                              $scope.$apply();
+                              $scope.viewPagination($scope.pagination.search, 1);
+                            }
+                          });
+                        } else if(isAll) {
+                          //var clone = [];
+                          var length = $scope.instances.group.length;
+                          var counter = 0;
+                          angular.forEach($scope.instances.group, function(value, key){
+                            if(value.isChecked) {
+                              var clone = angular.copy(value);
+                              clone.FechaInicioClases__c = sfDB.createDate(clone.FechaInicioClases__c);
+                              clone.FechaApertura__c = sfDB.createDate(clone.FechaApertura__c);
+                              clone.AulaAsignada__c = clone.AulaAsignada__c__Id;
+                              clone.Dia__c = clone.Dia__c_Val;
+
+                              delete clone.isChecked;
+                              delete clone.Id;
+                              delete clone.FechaRegistro__c;
+                              delete clone.AulaAsignada__c__Id;
+                              delete clone.opts;
+                              delete clone.CreatedDate;
+                              delete clone.Sede__c__Name;
+                              delete clone.Dia__c_Val;
+                              sfDB.getRemoteAction({instance: clone, action: 'create'}, groupGW, function(err, res) {
+                                if(err) {
+                                  angular.forEach(err, function(value, key){$scope.errors.push(value); });
+                                  $scope.$apply();
+                                } else {
+                                  clone.Id = res[0];
+                                  $scope.instances.group.push(clone);
+
+                                  if(clone.Name && clone.Name && clone.Name.indexOf('-') !== -1) {
+                                    clone.Name = clone.Name.substring(0, clone.Name.indexOf('-'));
+                                  }
+                                  clone.Name = clone.Name + '-' + $scope.instances.group.length; 
+                                  console.log('---to clone');
+                                  console.log(clone);
+                                  sfDB.getRemoteAction({action: 'update'}, new sfService.gateway.group(clone), function(err, res, all) {
+                                    console.log('response... update');
+                                    console.log(err);
+                                    console.log(res);
+                                  });
+
+                                  clone.FechaInicioClases__c = value.FechaInicioClases__c;
+                                  clone.FechaApertura__c = value.FechaApertura__c;
+                                  clone.AulaAsignada__c = value.AulaAsignada__c;
+                                  clone.AulaAsignada__c__Id = value.AulaAsignada__c__Id;
+                                  clone.Dia__c = value.Dia__c;
+                                  clone.Dia__c_Val = value.Dia__c_Val;
+                                  clone.Sede__c__Name = value.Sede__c__Name;
+                                  clone.opts = angular.copy(value.opts);
+
+                                  $scope.isSelectAll();
+                                  $scope.$apply();
+                                  counter ++;
+                                }
+                              });
+                            } else {
+                              counter ++;
+                              $scope.isSelectAll();
+                            }
+                          });
+                          $scope.Timer = $interval(function () {
+                            if(counter === length) {
+                              $scope.viewPagination($scope.pagination.search, 1);
+                              $interval.cancel($scope.Timer);
+                            }
+                          }, 500);
+                        }
+                      };
+                      $scope.removeGroup = function(group, isAll) {
+                        $scope.errors = [];
+                        $scope.instances.delete = [];
+                        $('#modalRemoveGroup').modal('show');
+                        if(isAll) {
+                          var title = '';
+                          angular.forEach($scope.instances.group, function(value, key){
+                            if(value.isChecked) {
+                              $scope.instances.delete.push(value);
+                              if(title.length > 0) {
+                                title += ', ';
+                              }
+                              //title += value.Grupo__c;
+                              title += value.Name;
+                            }
+                          });
+                          $scope.messages = {remove: 'Eliminar grupos', removeGroup: 'Se van a eliminar los grupos: ' + title};
+                        } else {
+                          $scope.instances.delete.push(group);
+                          $scope.messages = {remove: 'Eliminar grupo', removeGroup: 'Se va a eliminar el grupo: ' + group.Name};
+                        }
+                      };
+                      $scope.confirmRemoveGroup = function() {
+                        $scope.errors = [];
+                          $scope.status.deleting = true;
+                          var ids = [];
+                          angular.forEach($scope.instances.delete, function(value, key){
+                              ids.push(value.Id);
+                          });
+                          removeObject(ids, groupGW, function(err, res) {
+                            $scope.status.deleting = false;
+                            if(err) {
+                              angular.forEach(err, function(value, key){$scope.errors.push(value); });
+                            } else {
+                              angular.forEach(res, function(value, key) {
+                                var toRemove = sfDB.findElementInArray('Id', value, $scope.instances.group);
+                                if(toRemove) {
+                                  var index = $scope.instances.group.indexOf(toRemove);
+                                  if(index !== -1) {
+                                    $scope.instances.group.splice(index, 1);
+                                  }
+                                }
+                              });
+                              $('#modalRemoveGroup').modal('hide');
+                              $scope.viewPagination($scope.pagination.search, 1);
+                            }
+                            $scope.isSelectAll();
+                            $scope.$apply();
+                          });
+                      };
+                      $scope.getGroup = function() {
+                          var criteria = {where: {OfertaEducativa__c: {eq: $scope.offer.Id}}};
+                          sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, groupGW, function(err, res) {
+                              sfDB.parseFromDB(res, $scope.fieldsK, function(err, data) {
+                                  if(!err && data && data.length > 0) {
+                                      $scope.title = 'Editar grupo';
+                                      $scope.currentGroup = data[0];
+                                      $scope.currentGroup.opts = {};
+                                      $scope.currentGroup.opts.Activo__c = $scope.findElementInArray('value', $scope.currentGroup.Activo__c, $scope.fieldsK.Activo__c.values);
+                                      $scope.currentGroup.opts.AulaAsignada__c = $scope.findElementInArray('Id', $scope.currentGroup.AulaAsignada__c, $scope.catClassroom);
+                                      $scope.currentGroup.opts.Materia__c = $scope.findElementInArray('Id', $scope.currentGroup.Materia__c, $scope.catMatter);
+                                      $scope.currentGroup.opts.Docente__c = $scope.findElementInArray('Id', $scope.currentGroup.Docente__c, $scope.catTeacher);
+                                      $scope.currentGroup.opts.Esquema__c = $scope.findElementInArray('value', $scope.currentGroup.Esquema__c, $scope.fieldsK.Esquema__c.values);
+                                      $scope.currentGroup.opts.PeriodoAperturaGrupo__c = $scope.findElementInArray('Id', $scope.currentGroup.PeriodoAperturaGrupo__c, $scope.fieldsK.PeriodoAperturaGrupo__c.values);
+
+                                      $scope.currentGroup.opts.Estatus__c = $scope.findElementInArray('value', $scope.currentGroup.Estatus__c, $scope.fieldsK.Estatus__c.values);
+                                      //$scope.currentGroup.opts.Turno__c = $scope.findElementInArray('Id', $scope.currentGroup.Turno__c, $scope.catTurn);
+                                      $scope.currentGroup.opts.Turno__c = $scope.findElementInArray('value', $scope.currentGroup.Turno__c, $scope.fieldsK.Turno__c.values);
+
+                                      $scope.currentGroup.opts.HoraEntrada__c = $scope.findElementInArray('value', $scope.currentGroup.HoraEntrada__c, $scope.fieldsK.HoraEntrada__c.values);
+                                      $scope.currentGroup.opts.HoraSalida__c = $scope.findElementInArray('value', $scope.currentGroup.HoraSalida__c, $scope.fieldsK.HoraSalida__c.values);
+                                      var dayStr = $scope.currentGroup.Dia__c;
+
+                                      if(dayStr && dayStr.length > 0) {
+                                          var days = dayStr.split(';');
+                                          angular.forEach(days, function(day, index) {
+                                              if(day && day.length > 0) {
+                                                  var findDay = $scope.findElementInArray('value', day, $scope.fieldsK.Dia__c.values);
+                                                  if(findDay) {
+                                                      if(!$scope.currentGroup.opts.hasOwnProperty('Dia__c')) {
+                                                          $scope.currentGroup.opts.Dia__c = [];
+                                                      }
+                                                      $scope.currentGroup.opts.Dia__c.push(findDay);
+                                                  }
+                                              }
+                                          });
+                                          var length = $scope.fieldsK.Dia__c.values.length;
+                                          angular.forEach($scope.fieldsK.Dia__c.values, function(value, key){
+                                              if(dayStr.indexOf(value.value) !== -1) {
+                                                  value.isCheck = true;
+                                              }
+                                              if(key === (length - 1)) {
+                                                  $scope.hasDays();
+                                              }
+                                          });
+                                      }
+                                      $scope.$apply();
+                                  }
+                              });
+                          });
+                      };
+                      $scope.getClassroom = function() {
+                          var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: 100, where: {Plantel__c: {eq: $scope.offer.Plantel__c}}};
+                          sfDB.getRemoteAction({criteria: {}, action: 'retrieve'}, classroomGW, function(err, res) {
+                              sfDB.parseFromDB(res, $scope.fieldsCR, function(err, data) {
+                                  if(!err && data && data.length > 0) {
+                                      $scope.catClassroom = data;
+                                      $scope.$apply();
+                                  }
+                              });
+                          });
+                      };
+                      $scope.getTeachers = function() {
+                          var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: 100};
+                          sfDB.getRemoteAction({criteria: {}, action: 'retrieve'}, teacherGW, function(err, res) {
+                              sfDB.parseFromDB(res, $scope.fieldsCat.teacher, function(err, data) {
+                                  if(!err && data && data.length > 0) {
+                                      $scope.catTeacher = data;
+                                      $scope.$apply();
+                                  }
+                              });
+                          });
+                      };
+                      $scope.getMatters = function() {
+                          var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: 100, where: {Programa__c: {eq: $scope.offer.Programa__c}}};
+                          sfDB.getRemoteAction({criteria: {}, action: 'retrieve'}, matterGW, function(err, res) {
+                              sfDB.parseFromDB(res, $scope.fieldsCat.matter, function(err, data) {
+                                  if(!err && data && data.length > 0) {
+                                      $scope.catMatter = data;
+                                      $scope.$apply();
+                                  }
+                              });
+                          });
+                      };
+                      $scope.getPeriods = function() {
+                          var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: parseInt($scope.limit)};
+                          if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+                          sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, periodGW, function(err, res) {
+                              sfDB.parseFromDB(res, $scope.offer.currentPeriod.fields, function(err, data) {
+                                  if(!err) {
+                                      //$scope.periods = data;
+                                      $scope.fieldsK.PeriodoAperturaGrupo__c.values = data;
+                                      $scope.$apply();
+                                  }
+                              });
+                          });
+                      };
+                      $scope.checkAll = function() {
+                        angular.forEach($scope.instances.group, function(value, key){
+                          value.isChecked = $scope.status.allGroups;
+                        });
+                        $scope.isSelectAll();
+                      };
+
+                      $scope.isSelectAll = function() {
+                        //var length = $scope.instances.group.length;
+                        var length = $scope.pagination.filtered.length;
+                        var checked = 0;
+                        angular.forEach($scope.pagination.filtered, function(instance, index) {
+                          if(instance.isChecked) {
+                            checked ++;
+                          }
+                        });
+                        $scope.status.showDuplicate = checked > 0;
+                        $scope.status.allGroups = length >0 && checked === length;
+                      };
+                      $scope.findElementInArray = function(field, value, datasource) {
+                          var ret = {};
+                          if(field && value && datasource) {
+                              var res = $filter('filter')(datasource, {[field]: value});
+                              if(res && res.length > 0) {
+                                  ret = res[0];
+                              }
+                          }
+                          return ret;
+                      };
+                      $scope.listBased = function(offer) {
+                        var query = 'SELECT Id, Name, Nomenclatura__c, Plantel__c FROM Sede__c WHERE Plantel__c=\''+ offer.Plantel__c__Id + '\'';
+                        listInstancesSforce(query, function(res) {
+                          console.log('\n\n responnse listBased');
+                          console.log(res);
+                          $scope.catBased = res;
+                        });
+
+                        /*
+                        var criteria = {orderby: [{Name: 'ASC'}], limit: 100};
+                          listInstancesObject(basedGW, criteria, $scope.fields.group, function(err, res) {
+                            if(err) {
+                              console.log(err);
+                            } else {z
+                              $scope.catBased = res;
+                            }
+                          });*/
+                      };
+
+                      $scope.hasDays = function() {
+                          var hasDays = false;
+                          angular.forEach($scope.fieldsK.Dia__c.values, function(item, index){
+                              if(item.isCheck && !hasDays) {
+                                  hasDays = true;
+                              }
+                          });
+                          $scope.groupHasDays = hasDays;
+                      };
+                      $scope.isValid = function() {
+                          return sfDB.fieldIsValid($scope.fieldsK.Dia__c.name+'CH', $scope.formEditGroup);
+                      };
+                      $scope.$watch('sfService.offer', function () {
+                          $scope.offer = $scope.sfService.offer;
+                          if($scope.sfService.groupDep) {
+                              $scope.catTurn = $scope.sfService.groupDep.catTurn;
+                          }
+                          if($scope.offer && $scope.offer.hasOwnProperty('Id')) {
+                            $scope.listBased($scope.offer);
+
+                              $scope.currentGroup = {opts: {}, OfertaEducativa__c: $scope.offer.Id, PeriodoAperturaGrupo__c: $scope.offer.Periodo__c};
+                              //$scope.getClassRoom();
+                              $scope.fieldsK.Dia__c.required = true;
+                              $scope.fieldsK.HoraEntrada__c.required = true;
+                              $scope.fieldsK.HoraSalida__c.required = true;
+                              if($scope.offer && $scope.offer.currentPeriod && $scope.offer.currentPeriod.fields) {
+                                  $scope.resetDays();
+                                  $scope.getDetail();
+                              }
+                          }
+                      }, true);
+                      $scope.resetDays = function() {
+                          $scope.groupHasDays = false;
+                          if($scope.fieldsK && $scope.fieldsK.Dia__c && $scope.fieldsK.Dia__c.values) {
+                              angular.forEach($scope.fieldsK.Dia__c.values, function(value, key){
+                                  delete value.isCheck;
+                              });
+                          }
+                      };
+                      $scope.getDetail = function() {
+                          $scope.getPeriods();
+                          $scope.getClassroom();
+                          $scope.getTeachers();
+                          $scope.getMatters();
+                          //$scope.getGroup();
+                          $scope.listGroupsByOffer($scope.offer);
+                      };
+
+
+                      //Utils
+                      var listInstancesSforce = function(query, callback) {
+                          sforce.connection.query(query, function(res) {
+                            var result = [];
+                            if(res.size === '1') {
+                              result.push(res.records);
+                            } else if(res.records && res.records.length > 0) {
+                              result = res.records;
+                            }
+                            callback(result);
+                          });
+                      };
+                      var updateInstancesSforce = function(instances, callback) {
+                        sforce.connection.update(instances, callback);
+                      };
+
+
+
+                      //Catalogs
+                      $scope.getPeriodicity = function() {
+                        var query = 'SELECT Id, Name FROM Catalogo__c WHERE TipoCatalogo__c =\'Periodicidad\' ORDER BY Name ASC';
+                        listInstancesSforce(query, function(res) {
+                          $scope.catPeriodicity = res;
+                        });
+                      }
+                      $scope.getPeriodicity();
+
+
+
+                      $scope.setFieldSort = function(sortField) {
+                          $scope.pagination.sortField = sortField;
+                          $scope.pagination.reverse = !$scope.pagination.reverse;
+                      }
+                      var isSortedBy = function (fieldName) {return $scope.pagination.sortField === fieldName; }; 
+                      var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.pagination.reverse; }; 
+                      var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.pagination.reverse; }; 
+                      $scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; }; 
+                  }catch(e){
+                      throw "An error occurs when you run the gruposCtrl";
+                  }
+            }]);
+
+            app.filter('startFrom', function () {
+                return function (input, start) {
+                    if (input) {
+                        start = +start;
+                        return input.slice(start);
+                    }
+                    return [];
+                };
+            });
+
+            $(document).ready(function() {
+              $('.modal').on('hidden.bs.modal', function () {var open = $('.modal-backdrop'); if(open && open.length > 0) {$('body').addClass('modal-open'); } }); 
+
+              $(document).on('show.bs.modal', '.modal', function (event) {var zIndex = 1040 + (10 * $('.modal:visible').length); $(this).css('z-index', zIndex); setTimeout(function() {$('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack'); }, 0);
+              });
+            });
+
+         </script>
+      </apex:component>

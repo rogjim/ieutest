@@ -1,0 +1,324 @@
+<apex:page controller="OFE_CalendarioPromotorCtrl" showHeader="false" sidebar="false" standardStylesheets="false" action="{!pageLoad}">
+    
+    <!-- JQuery and Bootstrap js -->
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    <link href="{!URLFOR($Resource.fullCalendar,'fullcalendar.print.css')}" rel='stylesheet' media='print' />
+    <apex:includeScript value="{!URLFOR($Resource.fullCalendar,'moment.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.fullCalendar,'fullcalendar.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.fullCalendarLang)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.fullCalendar,'fullcalendar.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    
+    <script>
+    var vista;
+    $(document).ready(function() {
+        document.getElementById("{!$Component.idhora}").style.display="none";
+        $('#calendar').fullCalendar({
+            editable: false,
+            unselectAuto:true,
+            lang: 'es',
+            eventLimit: true, // allow "more" link when too many events
+            businessHours:
+            {
+                start: '11:00',
+                end:   '12:00',
+                dow: [ 1, 2, 3, 4, 5]
+            },
+            events:
+            [
+                //At run time, this APEX Repeat will reneder the array elements for the events array
+                <apex:repeat value="{!events}" var="e">
+                {
+                title: "{!e.title}",
+                start: '{!e.startString}',
+                end: '{!e.endString}',
+                //url: '{!e.url}',
+                allDay: {!e.allDay},
+                className: '{!e.className}'
+                },
+                </apex:repeat>
+            ],
+            
+            dayRender: function( date, cell ) {
+                
+            },
+            
+            dayClick: function(date, jsEvent, view) {
+                vista = $(jsEvent.target);
+                if(!$(jsEvent.target).hasClass("fc-sun") && !$(jsEvent.target).hasClass("fc-sat") && !$(jsEvent.target).hasClass("fc-nonbusiness")){
+                    $('#calendar').find('.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    var today = new Date();
+                    
+                    var todayAux = new Date();
+                    todayAux= today.setDate(today.getDate() -1);
+                    
+                    if(date < todayAux){
+                        $('#msgDay').css('display','inline');
+                        var appElement = document.querySelector('[ng-app=appAgenda]');
+                        var $scope = angular.element(appElement).scope();                
+                        $scope.$apply(function() {
+                             $('#selectedDay').val(formattedDate(date));  
+                            $scope.IsVisible =  false;
+                            document.getElementById("{!$Component.idhora}").style.display="none";
+                            
+                            $scope.true = !$scope.true;
+                        });
+                    }else{
+                        $('#msgDay').css('display','none');
+                        $('#msgContacto').css('display','inline');
+                        
+                        $('#selectedDay').val(formattedDate(date));  
+                        enviaFecha(selectedDay.value);
+                    }
+                }
+            }
+        });
+    });
+    
+    function enviaFecha( fecha ){
+        paraFunction(fecha);
+    } 
+    
+    function formattedDate(date) {
+        var d = new Date(date || Date.now()),
+            month = '' + (d.getMonth() + 1),
+            dday = d.getDate() + 1,
+            day = '' + dday,
+            year = d.getFullYear();
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;   
+        
+        if(month==1||month==3||month==5||month==7||month==8||month==10||month==12 ){
+            limiteDias=31;
+        }else if(month==4||month==6||month==9||month==11 ){
+            limiteDias=30;
+        }else if(month==2){
+            if ((((year%100)!=0)&&((year%4)==0))||((year%400)==0)){
+                limiteDias=29;
+            }
+            else{
+                limiteDias=28;
+            }
+        }
+        var diaAux =day;
+        
+        if( (limiteDias==31 && diaAux==32)||(limiteDias==30 && diaAux==31)||(limiteDias==29 && diaAux==30) ||(limiteDias==28 && diaAux==29) ){
+            if(month==12){
+                day=1;
+                day=day.toString();
+                month=1;
+                month=month.toString();
+                year=parseInt(year)+1
+            }else{
+                day=1;
+                day=day.toString();
+                month=parseInt(month)+1;
+                month=month.toString();
+            }
+        }
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        
+        return [day, month, year].join('/');
+    }
+    </script>
+    <style>
+        body {
+        margin: 0% 10%;
+        padding: 0;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        font-size: 14px;
+        }
+        
+        #calendar {
+        max-width: 900px;
+        margin: 0 auto;
+        }
+        .selected {
+        background-color: #d9d9d9;
+        }
+        .green{
+        width:50%;
+        background-color: #00a300;
+        color: #FFFFFF;
+        }
+        .red{
+        width:50%;
+        background-color: #b91d47;
+        color: #FFFFFF;
+        }
+    </style>
+    <body ng-app='appAgenda'  > 
+        
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js">
+        </script>
+        <script type="text/javascript" src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.min.js">
+        </script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.js">
+        </script>
+        <div class="container" ng-controller='agendaCtrl' id='agendaCtrl'>
+            <center><apex:image url="{!$Resource.IEUImageCalendar}"/></center>
+            <div style="border-radius: 25px; border: 2px solid #F37D01; padding: 20px;">
+                <div class="panel panel-primary" style="display:{!haveDate}">
+                    <div class="panel-heading" style="color:#F37D01">
+                        <h2>
+                            Agenda una cita.
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <br/><br/>
+                        <table>
+                            <tr>
+                                <td colspan="2" ng-hide="!saving" ng-class="class">
+                                    <center>
+                                        <br/>
+                                        {{msg}}&nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-default" style="background-color:#FFF; color:#999999;" ng-click="exit()">
+                                            Salir
+                                        </button>
+                                        <br/>
+                                    </center>
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="70%">
+                                    <br/><br/>
+                                    <div id='calendar'>
+                                    </div>
+                                </td>
+                                <td>
+                                    <center>
+                                        <div bgcolor="#d9d9d9">
+                                            <img src="{!leadInform.UrlFotoGrande__c}"/>
+                                        </div>
+                                        <br/><br/>
+                                        Dia seleccionado: <input disabled="true" type="text" id="selectedDay" value="" />
+                                        <br/><br/>
+                                        
+                                        <apex:outputPanel id="idhora"  > 
+                                            Selecciona el horario: &nbsp;  
+                                            <!--<select ng-init="somethingHere" onchange ="getval(this);" id='date_options' > -->
+                                            <select ng-init="somethingHere" onchange ="getval(this);" id='date_options' ng-show = "IsVisible2"  >
+                                                <apex:repeat value="{!horario}" var="hora">                                                
+                                                    <option value="{!hora}">{!hora}</option> 
+                                                </apex:repeat>  
+                                            </select>   
+                                        </apex:outputPanel>    
+                                        <apex:form >   
+                                            
+                                            <apex:actionFunction name="paraFunction" action="{!GeneraHorario}" rerender="idhora,idhora2" immediate="true" >      
+                                                <apex:param id="anode" name="node" value="" />
+                                            </apex:actionFunction>                                               
+                                        </apex:form>
+                                        <br/><br/>
+                                        <span id="msgDay" style="display:none; color:#b91d47;">El día seleccionado es menor al día actual
+                                        </span>
+                                        <span id="msgContacto" style="display:none; font-size:12px"><b>SI DESEA SER ATENDIDO EN UN HORARIO DIFERENTE, POR FAVOR COMUNICATE AL 01 800 0000 IEU</b>
+                                        </span>
+                                        <br/><br/>
+                                        <button id="agendarCita" ng-hide="true" ng-show = "IsVisible"  type="button"  class="btn" style="color:#FFFFFF; background-color:#F37D01;" ng-click='save()' >
+                                            Agendar cita
+                                        </button>
+                                    </center> 
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div style="display:{!IF(haveDate = 'none','inline', 'none')}">
+                    <center>
+                        Ya se ha registrado una cita el día {!haveDateStart}  con {!haveDateOwner}.
+                        <br/>
+                        <br/>
+                        <button class="btn btn-success"  ng-click="exit()">
+                            Salir
+                        </button>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../../soap/ajax/36.0/connection.js"/>
+    <script type="text/javascript">
+        function getval(fecha){
+        var IndexHorario =document.getElementById("date_options").selectedIndex;
+        var fecha=fecha.value;   
+        var appElement = document.querySelector('[ng-app=appAgenda]');
+        var $scope = angular.element(appElement).scope();
+        if(IndexHorario ==0 ){
+            $scope.$apply(function() {
+                $scope.hourDate = fecha;
+                $scope.IsVisible =  false;
+                $scope.true = !$scope.true;
+            });   
+        }else{
+            $scope.$apply(function() {
+                $scope.hourDate = fecha;
+                $scope.IsVisible =  true;
+            });   
+        }
+    }
+    
+    var app = angular.module('appAgenda',[]);             
+    app.controller('agendaCtrl',['$scope',function($scope){
+        $scope.saving = false;            
+        var userID = '{!userID}';
+        var leadID = '{!leadID}';    
+        
+        
+        $scope.save = function(){
+            $scope.IsVisible = false;
+            try{
+                sforce.connection.sessionId='{!sessionID}';
+            }catch(error){
+                alert(error);
+            }
+            
+            $scope.saving = true;            
+            var dayDate = $('#selectedDay')[0].value.split('/');
+            var dateFormmated = new Date (dayDate[2]+'-'+dayDate[1]+'-'+dayDate[0]+' '+$scope.hourDate+':00');
+            var dateEnd = new Date(dayDate[2]+'-'+dayDate[1]+'-'+dayDate[0]+' '+$scope.hourDate+':00');
+            dateEnd.setMinutes(dateEnd.getMinutes() + 30);
+            var user = sforce.connection.getUserInfo();
+            var event1 = new sforce.SObject("Event");
+            event1.subject = 'Cita Prospecto';
+            event1.ActivityDate = dateFormmated;
+            event1.ActivityDateTime = dateFormmated;
+            event1.EndDateTime  = dateEnd;
+            event1.StartDateTime = dateFormmated;
+            event1.Description = "Prueba de inserción";
+            event1.OwnerId = userID;
+            event1.WhoId = leadID;
+            
+            var result = sforce.connection.create([event1]);
+            
+            if (result[0].getBoolean("success")) {
+                $scope.processResult(false, true, result[0].id);
+            } else {
+                $scope.processResult(true, false, result[0]);
+            }
+        }
+        
+        $scope.processResult = function(err, res, action) {
+            if(err){
+                $scope.msg = action;
+                $scope.class = 'red';
+            }else{
+                $scope.msg = "Se ha guardado correctamente el registro";https://cs2.salesforce.com/_ui/common/apex/debug/ApexCSIPage#
+                $scope.class = 'green';
+            }
+        }	
+        
+        $scope.exit = function(){
+            //window.close();
+            //location.reload();
+            window.location.href = "http://ieu.edu.mx";
+        }
+    }])
+    </script>
+</apex:page>

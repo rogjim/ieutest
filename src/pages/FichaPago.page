@@ -1,0 +1,8 @@
+<apex:page standardController="Lead" extensions="FichaPagoCtrl" action="{!createPayToken}">
+	<apex:form rendered="{!existApproval}">
+    	<apex:pageBlock >
+        	<apex:outputLabel > Existen registros de solicitudes de beca un no autorizados.</apex:outputLabel>
+            
+        </apex:pageBlock>
+    </apex:form>    
+</apex:page>

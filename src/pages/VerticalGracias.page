@@ -1,0 +1,95 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false">
+    <head>
+       <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>-->
+      <!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryChainedRemote)}" />
+        <!--  <link rel="stylesheet" href="{!URLFOR($Resource.VerticalEstilos, 'estilo.css')}"/>   -->
+         <link rel="stylesheet" href="{!URLFOR($Resource.Vertical , '/VerticalFinal/css/newStyle.css')}"/> 
+ 
+    </head>
+    <body>
+        
+        <div id="main-wrapper" class="main-wrapper">
+            
+            <container>
+                
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="barrita" style="height: 10px;  background-color: #ff4801;   position: relative;    margin-top: -2px;"></div>
+                    </div>
+                </nav>
+                
+                <div id="header-section">
+                    <!--<img src="Images/logo.png" alt="log">-->
+                    <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/logo.png')}" alt="log"/> 
+                </div>
+                
+                
+                <div style="margin: 0 auto; display: block; font-family: arial;     font-size: 1em;   color: white; " ><p id="graciass" style="font-family: 'ProximaNovaS-Bold',sans-serif;
+    padding-top: 20%;
+    margin-top: 10%;
+    padding-bottom: 20%;
+    padding-left: 10%;
+    font-size: 2em;     width: 50%;align-content: center; position: relative; background-color: ; ">Pronto recibirás noticias de tu beca al siguiente correo <span id="mail"></span>.</p></div>
+                
+                <!----Formulario-->          
+                
+                
+                
+                <footer class="footer-class">
+                    <div id="footer-rights">
+                        <p> Copyright © 2016 Instituto de Estudios Universitarios </p>
+                    </div>
+                    
+                    <div id="footer-lada">
+                       <!-- <img src="Images/tel.png" alt="lada image">-->
+                        <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/tel.png')}" alt="lada image"/> 
+                        <span> Lada sin costo 01 800 00 00 438 </span> 
+                    </div>
+                    
+                    <div id="footer-sponsor">
+                       <!-- <img src="Images/adsd.png" alt="sponsor">-->
+                        <img src="{!URLFOR($Resource.Vertical,'/VerticalFinal/Images/adsd.png')}" alt="sponsor"/> 
+                    </div>
+                </footer>
+                
+            </container>
+        </div>
+        
+        
+        <style type="text/css">
+            .inputColor{
+            background-color:#06a1ab; 
+            padding:2px;
+            }
+            #gracias{
+            width: 300px;
+            color: #ffffff;
+            font-family: 'afta_sansregular', sans-serif;
+            font-size: 17px;
+            background-color: #ec6c00;
+            padding: 20px;
+            border-color: #ec6c00;
+            border-style: solid;
+            box-shadow: 2px 2px 5px #003E3D;
+            }
+            #mensaje {
+            font-family: 'afta_sansregular', sans-serif;
+            color: #ffffff;
+            font-size: 20px;
+            margin-top: 20px;
+            }
+        </style>
+        <script type="text/javascript">
+        j$ = jQuery.noConflict();
+        j$(document).ready(function(){
+            var urlRecordType = '{!$CurrentPage.parameters.mail}'; 
+            j$('#mail').text(urlRecordType);
+        });
+        </script>
+    </body>    
+</apex:page>

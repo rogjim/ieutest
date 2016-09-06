@@ -1,0 +1,88 @@
+<apex:page standardController="Opportunity" showHeader="false" sidebar="false" showChat="false"  extensions="DescuentosByOpportunityCtrl" language="es-es" >
+ 	<head>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    </head>
+   
+    <div class="table-responsive col-md-offset-2 col-md-7">
+        <apex:dataTable value="{!descuentos}" rendered="{!IF(descuentos.size > 0, true, false)}" var="obj" id="table-descuento" rowClasses="odd,even" styleClass="table table-striped tableAplicaPara">
+            <apex:column >
+                <apex:outputLink value="https://cs2.salesforce.com/{!obj.Id}" target="_blanck">Mostrar</apex:outputLink>
+            </apex:column>
+             <apex:column >
+                <apex:facet name="header">Nombre</apex:facet>
+                <apex:outputText value="{! obj.Name }"/>
+             </apex:column> 
+             <apex:column >
+                <apex:facet name="header">Descuento</apex:facet>
+             	<apex:outputText value="{! obj.PorcentajeDescuento__c }"/>
+             </apex:column>                
+             <apex:column >
+                <apex:facet name="header">Fecha de creación</apex:facet>
+                <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                    <apex:param value="{!obj.CreatedDate}" /> 
+                </apex:outputText>
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">Estatus</apex:facet>
+                <apex:outputText value="{! obj.Estatus__c }"/>
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">Tipo</apex:facet>
+                <apex:outputText value="Descuento"/>
+             </apex:column>
+             
+         </apex:dataTable>
+     </div>
+    
+     <div class="table-responsive col-md-offset-2 col-md-7">
+        <apex:dataTable value="{!becas}" rendered="{!IF(becas.size > 0, true, false)}" var="obj" id="table-beca" rowClasses="odd,even" styleClass="table table-striped tableAplicaPara">
+             <apex:column >
+                    <apex:outputLink value="https://cs2.salesforce.com/{!obj.Id}" target="_blanck">Mostrar</apex:outputLink>
+            </apex:column>                
+             <apex:column >
+               <apex:facet name="header">Nombre</apex:facet>
+                <apex:outputText value="{! obj.Name }"/>
+             </apex:column>           
+             <apex:column >
+                <apex:facet name="header">Descuento</apex:facet>
+             	<apex:outputText value="{! obj.Porcentaje__c }"/>
+             </apex:column>               
+             <apex:column >
+                <apex:facet name="header">Fecha de creación</apex:facet>
+                <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                    <apex:param value="{!obj.CreatedDate}" /> 
+                </apex:outputText>
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">Estatus</apex:facet>
+                <apex:outputText value="{! obj.Estatus__c }"/>
+             </apex:column>          
+             <apex:column >
+                <apex:facet name="header">Tipo</apex:facet>
+                <apex:outputText value="Beca"/>
+             </apex:column>
+             
+         </apex:dataTable>
+      </div>
+    <center>
+        <apex:outputLabel rendered="{!AND(becas.size = 0, descuentos.size = 0)}">
+            No existen registros de becas o descuentos	
+        </apex:outputLabel>
+    </center>
+     <style>
+    	.tableAplicaPara thead{
+        	font-size:80%;
+        }
+        .tableAplicaPara tbody{
+        	font-size:88%;
+        }
+        .hidden{
+        	display: none!important;
+        }
+    </style>
+</apex:page>

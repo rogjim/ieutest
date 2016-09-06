@@ -1,0 +1,72 @@
+<apex:page standardController="Lead" extensions="FichaPagoEspecialCtrl" language="es-es">
+    <head>
+    	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />    
+    </head>
+    
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="both">
+                <apex:commandButton action="{!saveToken}" value="Guardar" id="save"/>
+                <apex:commandButton action="{!exit}" value="Cancelar" id="cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="false" title="Ficha de pago especial" >
+                <apex:inputText label="Lead" id="idLead" disabled="true" value="{!ficha.RecibimosDe__c}"/>
+                <apex:inputHidden />
+                <apex:pageBlockSectionItem >	
+                    <apex:outputLabel value="Concepto" for="concepto"/>
+                    <apex:define name="requiredInputDiv">
+                        <div class="requiredInput" >
+                            <apex:define name="requiredInputDiv">
+                                <div class="requiredBlock"/>
+                            </apex:define>
+                            <apex:inputTextArea value="{!ficha.ConceptoEspecial__c}" required="true" id="concepto"></apex:inputTextArea>
+                        </div>
+                    </apex:define>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:pageBlockSectionItem >	
+                    <apex:outputLabel value="Nota" for="nota"/>
+                    <apex:define name="requiredInputDiv">
+                        <div class="requiredInput" >
+                            <apex:define name="requiredInputDiv">
+                                <div class="requiredBlock"/>
+                            </apex:define>
+                            <apex:inputTextArea value="{!ficha.NotaEspecial__c}" required="true" id="nota"></apex:inputTextArea>
+                        </div>
+                    </apex:define>
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputField required="true" label="Descuento" id="descuento" value="{!ficha.Descuento__c}"/>
+                <apex:inputField required="true" label="Importe" id="importe" value="{!ficha.Importe__c}"/>
+                <apex:inputField showDatePicker="true" required="true" label="Vigencia" id="Vigencia" value="{!ficha.Hasta__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <script>
+    j$ = jQuery.noConflict();
+    	j$(document).ready(function() {
+            j$('input[id$=descuento]').on('keydown',function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                            56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                            37:true,38:true,39:true,40:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                    //event.stopPropagation();
+                }         
+            });
+            j$('input[id$=importe]').on('keydown',function(event){
+                var code = event.keyCode;
+                var keys = {48:true,49:true,50:true,51:true,52:true,53:true,54:true,55:true,
+                           56:true,57:true,8:true,9:true,13:true,189:true,46:true,36:true,35:true,
+                           37:true,38:true,39:true,40:true};
+                if(!keys[code]){
+                    event.preventDefault();
+                    //event.stopPropagation();
+                }         
+            });
+        });
+    </script>
+</apex:page>

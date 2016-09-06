@@ -1,0 +1,1197 @@
+<apex:page id="paginaLead" standardController="Lead" extensions="LEAD_LayoutCtrl" docType="html-5.0" showHeader="true" sidebar="false" standardStylesheets="false">
+    
+    <!-- JQUERY -->
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="{!URLFOR($Resource.BootstrapSF)}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    
+    <!-- DATA TABLES -->
+    <apex:includeScript value="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/js/jquery.dataTables.js')}" />
+    <!---
+    <link rel="stylesheet" href="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/css/jquery.dataTables.min.css')}"/>
+    -->
+    <apex:includeScript value="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/js/dataTables.bootstrap.min.js')}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.DataTable, 'DataTables-1.10.12/media/css/dataTables.bootstrap.min.css')}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'jquery-ui.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQuery,'bootstrap-duallistbox.min.css')}" />
+    <apex:includeScript value="{!$Resource.jQueryblockUI}"/>
+    
+    <style>
+        h1,
+        h2,
+        
+        
+        h5,
+        h6 {
+        font-size: 1em;
+        }
+        .row{ 
+        padding: 1em 0 0 0 !important;
+        }
+        .has-error .form-control{
+        border-color: #CC090F;
+        }
+        .has-error .form-control:focus {
+        border-color: #CC090F;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 15px #CC090F;
+        box-shadow: inset 0 1px px rgba(0, 0, 0, 0.075), 0 0 15px #CC090F;
+        }
+        .error{
+        position: inherit !important;
+        }
+        .errorMsg{
+         color: #CC090F;
+        }
+        .lookupInput a {
+        width: 9%;
+        height: 100%;
+        position: absolute;
+        display: initial; 
+        top: 0%;
+        left: 86%;
+        border-left: none;
+        background-repeat: no-repeat;
+        background-position: center;
+        }
+        .inputField{
+        width: 90%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+        input.form-control {
+        height:1em !important;
+        padding:.8em !important;
+        }
+        header.panel-heading a:first-child{
+        color:white;
+        }
+        .panel-heading .panel-title:after {
+		    /* symbol for "opening" panels */
+		    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+		    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+		    float: right;        /* adjust as needed */
+		    color: white;         /* adjust as needed */
+		}
+		.panel-heading .panel-title.collapsed:after {
+		    /* symbol for "collapsed" panels */
+		    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+		}
+    </style>
+    <script>
+    j$ = jQuery.noConflict();
+    </script>
+    <div class="container" id="contenedorPrincipal">
+        <apex:form id="forma">
+            <div class="row">
+                <div class="col-md-12" id="formaDiv">
+                    <section class="section">
+                         <c:PageMessages id="mensajes" closableErrors="true"/>
+                        <div class="text-center row">
+                            <apex:commandButton id="btnGuardar1" value="Guardar" status="statusGuardar" styleClass="btn btn-success fa-input" action="{!guardar}" style="margin:1em;font-family: FontAwesome, Arial,Helvetica,sans-serif;" reRender="forma,JSpanel,formaSolicitudPromocion,JSpanel2" oncomplete="redirigirSiGuardo();" > </apex:commandButton>
+                            <apex:actionStatus onstart="onstart('contenedorPrincipal');"  onstop="onstop('contenedorPrincipal');" id="statusGuardar" /> 
+                            
+                            <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" onclick="redirigir();" class="btn btn-default">
+                                <span class="fa fa-reply"></span>
+                                Cancelar
+                            </button>
+                        </div>
+                        <c:Panel title="Detalle de candidato:{!if(Lead.Id==null,'Nuevo',Lead.Name)}" idCollapse="panelGeneral"  id="info" idParent="panelParent" expanded="true">
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Folio__c.Label}" >
+                                    <apex:outputField styleClass="form-control" value="{!candidato.Folio__c}" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Email.Label}" color="{!IF((candidato.Email != ''),'has-success has-feedback','has-error')}"  >
+                                    <apex:inputField styleClass="form-control" html-tabindex="1" value="{!candidato.Email}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.FirstName.Label}" color="{!IF((candidato.FirstName != ''),'has-success has-feedback','has-error')}" >
+                                    <apex:inputField styleClass="form-control" value="{!candidato.FirstName}" html-tabindex="2" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Phone.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="8" value="{!candidato.Phone}" type="tel" html-pattern="[.0-9 #_ \-\\\/ () \+]+" />
+                                </c:PanelCell>
+                            </div>
+                            
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.LastName.Label}" color="{!IF((candidato.LastName != ''),'has-success has-feedback','has-error')}" >
+                                    <apex:inputField styleClass="form-control" value="{!candidato.LastName}" html-tabindex="3" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.MobilePhone.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="9" value="{!candidato.MobilePhone}" type="tel" html-pattern="[.0-9 #_ \-\\\/ () \+]+" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ApeMaterno__c.Label}" >
+                                    <apex:inputField styleClass="form-control" html-tabindex="4" value="{!candidato.ApeMaterno__c}" />
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.TelOficina__c.Label}" >
+                                    <apex:inputField styleClass="form-control addPattern" html-tabindex="9" value="{!candidato.TelOficina__c}" type="tel" html-pattern="[.0-9 #_ \-\\\/ () \+]+" />
+                                </c:PanelCell>
+                                
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.FechaNacimiento__c.Label}" >
+                                    <apex:inputField styleClass="form-control date" html-tabindex="5" style="width:100%;" value="{!candidato.FechaNacimiento__c}" id="fechaDeNacimiento" showDatePicker="false" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Profesion__c.Label}" >
+                                    <apex:selectList id="profesion" size="1" tabindex="10" multiselect="false" styleClass="form-control" value="{!candidato.Profesion__c}" >
+                                        <apex:selectOptions value="{!profesiones}"/>
+                                    </apex:selectList>
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Sexo__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" html-tabindex="6" value="{!candidato.Sexo__c}" id="sexoCandidato" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.EstadoCivil__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" html-tabindex="7" value="{!candidato.EstadoCivil__c}" id="estadoCivilCandidato" />
+                                </c:PanelCell>
+                            </div>
+                            
+                        </c:Panel> <!--End of General panel-->
+                        
+                        <apex:actionRegion id="calificacionLead" >
+                            <apex:actionFunction name="actualizaStatus" reRender="calificacionLead,JSpanel" />
+                            
+                            <c:Panel title="Calificación Lead" idCollapse="calificacion"  id="calificacion" idParent="panelParent" expanded="true">
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.Status.Label}" color="{!IF((candidato.Status != ''),'has-success has-feedback','has-error')}" >
+                                        <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.Status}" onchange="actualizaStatus();" />
+                                    </c:PanelCell>
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.MotivoNoInteresado__c.Label}" >
+                                        <apex:inputField html-size="1" styleClass="form-control" id="motivoNoInteresado" value="{!candidato.MotivoNoInteresado__c}"  />
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.MotivoNoContactado__c.Label}" >
+                                        <apex:inputField html-size="1" styleClass="form-control" id="motivoNoContactado" value="{!candidato.MotivoNoContactado__c}" />
+                                    </c:PanelCell>
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.PotencialFuturo__c.Label}" >
+                                        <div class="text-left">
+                                            <apex:inputField styleClass="form-control-static" value="{!candidato.PotencialFuturo__c}" />
+                                        </div>
+                                    </c:PanelCell>
+                                </div>
+                            </c:Panel>
+                        </apex:actionRegion>
+                        
+                        
+                        
+                        
+                        <!-- MODULO DE DIRECCION -->
+                        
+                        <apex:actionRegion >
+                            <apex:actionFunction action="{!getEstados}" name="getEstados" reRender="estado,municipio" status="statusDireccion" />
+                            <apex:actionFunction action="{!getMunicipios}" name="getMunicipios" reRender="municipio" status="statusDireccion" />
+                            <apex:actionStatus onstart="onstart('contenedorDireccion');"  onstop="onstop('contenedorDireccion');" id="statusDireccion" /> 
+                            
+                            <c:Panel title="Información de dirección" idCollapse="address"  id="adress" idParent="panelParent" expanded="true">
+                                <div id="contenedorDireccion">
+                                    <div class="row">
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Pais__c.Label}" >
+                                            <apex:selectList id="pais" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Pais__c}" onchange="getEstados()" >
+                                                <apex:selectOptions value="{!paises}"/>
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Calle__c.Label}" >
+                                            <apex:inputField styleClass="form-control" value="{!candidato.Calle__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <apex:outputPanel id="estado">
+                                            <c:PanelCell label="{!$ObjectType.Lead.fields.Estado__c.Label}" >
+                                                
+                                                <apex:outputPanel rendered="{!IF(estados.size >1,true,false)}">
+                                                    <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!candidato.Estado__c}" onchange="getMunicipios()" >
+                                                        <apex:selectOptions value="{!estados}"/>
+                                                    </apex:selectList>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!IF(estados.size >1,false,true)}">
+                                                    <apex:inputField styleClass="form-control" value="{!candidato.EstadoOtro__c}" />
+                                                </apex:outputPanel>
+                                            </c:PanelCell>
+                                            
+                                        </apex:outputPanel>
+                                        
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.NumeroExterior__c.Label}" >
+                                            <apex:inputField styleClass="form-control" value="{!candidato.NumeroExterior__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Municipio__c.Label}" >
+                                            <apex:selectList id="municipio" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Municipio__c}" readonly="{!IF(estados.size >1,false,true)}" >
+                                                <apex:selectOptions value="{!municipios}"/>
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.NumeroInterior__c.Label}" >
+                                            <apex:inputField styleClass="form-control" value="{!candidato.NumeroInterior__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.Colonia__c.Label}" >
+                                        <apex:inputField styleClass="form-control" value="{!candidato.Colonia__c}" />
+                                    </c:PanelCell> 
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.CP__c.Label}" >
+                                        <apex:inputField styleClass="form-control" value="{!candidato.CP__c}" />
+                                    </c:PanelCell>
+                                </div>
+                                <div class="row">
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.Ciudad__c.Label}" >
+                                        <apex:inputField styleClass="form-control" value="{!candidato.Ciudad__c}" />
+                                    </c:PanelCell>
+                                </div>
+                            </c:Panel> <!--End of Address panel-->
+                        </apex:actionRegion>
+                        
+                        <c:Panel title="Marketing" idCollapse="marketing"  id="marketing" idParent="panelParent" expanded="true">
+                            <div class="row">
+                                <apex:outputPanel rendered="{!IF(AND(candidato.SubOrigenCandidato__c!='Preinscripción',candidato.SubOrigenCandidato__c!='Calcula tu colegiatura',candidato.SubOrigenCandidato__c!='Verticales IEU (por programa)',candidato.SubOrigenCandidato__c!='Vertical IEU'),true,false)}" >
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.LeadSource.Label}" >
+                                        <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.LeadSource}" id="origenCandidato" onchange="estiloListaDependiente();" />
+                                    </c:PanelCell>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!IF(OR(candidato.SubOrigenCandidato__c=='Preinscripción',candidato.SubOrigenCandidato__c=='Calcula tu colegiatura',candidato.SubOrigenCandidato__c=='Verticales IEU (por programa)',candidato.SubOrigenCandidato__c=='Vertical IEU'),true,false)}" >
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.LeadSource.Label}" >
+                                        <apex:outputField styleClass="form-control-static" value="{!candidato.LeadSource}"/>
+                                    </c:PanelCell>
+                                </apex:outputPanel>
+                                
+                                
+                                <apex:outputPanel rendered="{!IF(candidato.FolioCalculadora__c!=null,true,false)}">
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.FolioCalculadora__c.Label}"  >
+                                        <apex:outputField styleClass="form-control" value="{!candidato.FolioCalculadora__c}" id="folioCalc" />
+                                    </c:PanelCell>
+                                </apex:outputPanel>
+                            </div>
+                            <div class="row">
+                                <apex:outputPanel rendered="{!IF(AND(candidato.SubOrigenCandidato__c!='Preinscripción',candidato.SubOrigenCandidato__c!='Calcula tu colegiatura',candidato.SubOrigenCandidato__c!='Verticales IEU (por programa)',candidato.SubOrigenCandidato__c!='Vertical IEU'),true,false)}" >
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.SubOrigenCandidato__c.Label}" >
+                                        <apex:inputField html-size="1" styleClass="form-control-static" id="SubOrigenCandidato__c" value="{!candidato.SubOrigenCandidato__c}" />
+                                    </c:PanelCell>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!IF(OR(candidato.SubOrigenCandidato__c=='Preinscripción',candidato.SubOrigenCandidato__c=='Calcula tu colegiatura',candidato.SubOrigenCandidato__c=='Verticales IEU (por programa)',candidato.SubOrigenCandidato__c=='Vertical IEU'),true,false)}" >
+                                    <c:PanelCell label="{!$ObjectType.Lead.fields.SubOrigenCandidato__c.Label}" >
+                                        <apex:outputField styleClass="form-control-static" value="{!candidato.SubOrigenCandidato__c}" />
+                                    </c:PanelCell>
+                                </apex:outputPanel>
+                                
+                                
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ModalidadOnline__c.Label}" >
+                                    <div class="text-left">
+                                        <apex:inputField styleClass="form-control-static" value="{!candidato.ModalidadOnline__c}" html-disabled="true" />
+                                    </div>
+                                </c:PanelCell>
+                                
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.MedioDifusion__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.MedioDifusion__c}" id="medioPorElCualSeEntero" />
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ModalidadEjecutiva__c.Label}" >
+                                    <div class="text-left">
+                                        <apex:inputField styleClass="form-control-static" value="{!candidato.ModalidadEjecutiva__c }" html-disabled="true" />
+                                    </div>
+                                </c:PanelCell>
+
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="" >
+                                    
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ModalidadPresencial__c.Label}" >
+                                    <div class="text-left">
+                                        <apex:inputField styleClass="form-control-static" value="{!candidato.ModalidadPresencial__c }" html-disabled="true" />
+                                    </div>
+                                </c:PanelCell>
+                            </div>
+                        </c:Panel> <!--End of Marketing panel-->
+                         
+                        
+                        <!-- MODULO DE OFERTA -->
+                        <div id="contenedorOferta" >
+                        
+                        <apex:actionRegion >
+                            <apex:actionFunction action="{!getPlanteles}" status="statusOfertaEducativa" name="getPlanteles" reRender="plantel,niveles,periodo,programa,renderedTablaGrupos"  oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}}); changeSelectPlantel(); changeSelectModalidad();" />
+                            <apex:actionFunction action="{!getNiveles}" status="statusOfertaEducativa" name="getNiveles" reRender="niveles,periodo,programa,renderedTablaGrupos" oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}}); changeSelectNivel(); changeSelectPlantel()" />
+                            <apex:actionFunction action="{!getProgramas}" status="statusOfertaEducativa" name="getProgramas" reRender="periodo,programa,renderedTablaGrupos" oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}}); changeSelectProgramas(); changeSelectNivel()" />
+                            <apex:actionFunction action="{!getPeriodos}" status="statusOfertaEducativa" name="getPeriodos" reRender="periodo,renderedTablaGrupos" oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}}); changeSelectProgramas()" />
+                            <apex:actionFunction action="{!getGrupos}" status="statusOfertaEducativa" name="getGrupos" reRender="tablaGrupos,renderedTablaGrupos" oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}});" />
+                            <apex:actionFunction action="{!modificaRadio}" status="statusOfertaEducativa" name="modificaRadio" reRender="ofertaEducativaFichaMovil,grupoAsignadoFichaMovil,grupoAsignado,ofertaEducativa,payment,becasDescuentos" oncomplete="seleccionaBeca()" >
+                                <apex:param assignTo="{!IdGrupoSeleccionado}" name="valor" value="" />
+                            </apex:actionFunction>
+                            <apex:actionFunction action="{!getModalidadesMovil}" status="statusOfertaEducativa" name="getModalidadesMovil" reRender="modalidadFichaMovil,renderedTablaGrupos" oncomplete="j$('#seleccionGpo').dataTable(configura);    j$(document).find('input:radio').each(function(){if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){j$(this).prop('checked',true);}}); changeSelectProgramasMovil()" />
+                            <apex:actionFunction action="{!isFichaMovil}" status="statusOfertaEducativa" name="fichaMovil" reRender="offer,JSpanel, becasDescuentos, mensajesFichaMovil"/>
+                            
+                            <apex:actionStatus onstart="onstart('contenedorOferta');"  onstop="onstop('contenedorOferta');" id="statusOfertaEducativa"/>
+                            
+                            <c:Panel title="Oferta educativa y grupo asignado" idCollapse="offer"  id="offer" idParent="panelParent" expanded="true">
+                                <div class="row">
+                                    <c:PanelCell label="¿Cuenta con ficha móvil?" >
+                                        <apex:inputCheckbox id="tieneFichaMovil" value="{!tieneFichaMovil}" onclick="validacionFichaPago();" disabled="{!IF(candidato.FichaMovil__c != null, true, false)}"/>
+                                    </c:PanelCell>
+                                    <div id="seleccionFichaMovil" >
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.FichaMovil__c.Label}" >
+                                            <apex:inputField value="{!candidato.FichaMovil__c}"  styleClass="form-control" onchange="fichaMovil()" rendered="{!IF(candidato.FichaMovil__c==null,true,false)}" />
+                                            <apex:outputField value="{!candidato.FichaMovil__c}" rendered="{!IF(candidato.FichaMovil__c==null,false,true)}" />
+                                            
+                                        </c:PanelCell>
+                                        <br/><br/>
+                                        <c:PageMessages id="mensajesFichaMovil" closableErrors="true"/>
+                                    </div>
+                                </div>
+                                
+                                <!--- OPCIONES DE SELECCION ESTÁNDAR --->
+                                <apex:outputPanel id="estandarOfe" rendered="{!IF(candidato.FichaMovil__c==null,true,false)}" >
+                                    <div class="row">
+                                        <c:PanelCell id="modalidad" label="{!$ObjectType.Lead.fields.Modalidad__c.Label}" color="{!IF((candidato.Modalidad__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectModalidad" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Modalidad__c}" onchange="getPlanteles()"  >
+                                                <apex:selectOptions value="{!modalidades}"  />
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                        <c:PanelCell id="periodo" label="{!$ObjectType.Lead.fields.Periodo__c.Label}" color="{!IF((candidato.Periodo__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectPeriodo" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Periodo__c}" onchange="getGrupos()"  readonly="{!IF(periodos.size >1,false,true)}"  >
+                                                <apex:selectOptions value="{!periodos}"  />
+                                            </apex:selectList>
+                                            
+                                        </c:PanelCell>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <c:PanelCell id="plantel" label="{!$ObjectType.Lead.fields.Plantel__c.Label}" color="{!IF((candidato.Plantel__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectPlantel" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Plantel__c}" onchange="getNiveles('{!candidato.Plantel__c}')" readonly="{!IF(planteles.size >1,false,true)}" >
+                                                <apex:selectOptions value="{!planteles}"/>
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                        <c:PanelCell id="ofertaEducativa" label="{!$ObjectType.Lead.fields.OfertaEducativa__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.OfertaEducativa__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <c:PanelCell id="niveles" label="{!$ObjectType.Lead.fields.Nivel__c.Label}" color="{!IF((candidato.Nivel__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectNivel" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Nivel__c}" onchange="getProgramas()" readonly="{!IF(niveles.size >1,false,true)}" >
+                                                <apex:selectOptions value="{!niveles}"/>
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                        <c:PanelCell id="grupoAsignado" label="{!$ObjectType.Lead.fields.GrupoAsignado__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.GrupoAsignado__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Programa__c.Label}" id="programa" color="{!IF((candidato.Programa__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectProgramas" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Programa__c}" onchange="getPeriodos();" readonly="{!IF(programas.size >1,false,true)}" >
+                                                <apex:selectOptions value="{!programas}"/>
+                                            </apex:selectList>                                        
+                                        </c:PanelCell>
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Numero_Mensualidades__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.Numero_Mensualidades__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                </apex:outputPanel>
+                                
+                                
+                                <!--- OPCIONES DE SELECCION CUANDO EXISTE UNA FICHA MOVIL --->
+                                <apex:outputPanel id="movilOfe" rendered="{!IF(candidato.FichaMovil__c!=null,true,false)}" >
+                                    <div class="row">
+                                        <c:PanelCell id="periodoFichaMovil" label="{!$ObjectType.Lead.fields.Periodo__c.Label}" color="{!IF((candidato.Periodo__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:outputField value="{!candidato.Periodo__c}" />
+                                        </c:PanelCell>
+                                        <c:PanelCell id="modalidadFichaMovil" label="{!$ObjectType.Lead.fields.Modalidad__c.Label}" color="{!IF((candidato.Modalidad__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectModalidad" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Modalidad__c}" onchange="getGrupos()">
+                                                <apex:selectOptions value="{!modalidades}"  />
+                                            </apex:selectList>
+                                        </c:PanelCell>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <c:PanelCell id="plantelFichaMovil" label="{!$ObjectType.Lead.fields.Plantel__c.Label}" color="{!IF((candidato.Plantel__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:outputField value="{!candidato.Plantel__c}" />
+                                        </c:PanelCell>
+                                        <c:PanelCell id="ofertaEducativaFichaMovil" label="{!$ObjectType.Lead.fields.OfertaEducativa__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.OfertaEducativa__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <c:PanelCell id="nivelesFichaMovil" label="{!$ObjectType.Lead.fields.Nivel__c.Label}" color="{!IF((candidato.Nivel__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:outputField value="{!candidato.Nivel__c}" />
+                                        </c:PanelCell>
+                                        <c:PanelCell id="grupoAsignadoFichaMovil" label="{!$ObjectType.Lead.fields.GrupoAsignado__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.GrupoAsignado__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                    <div class="row">
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Programa__c.Label}" id="programaFichaMovil" color="{!IF((candidato.Programa__c != ''),'has-success has-feedback','has-error')}" >
+                                            <apex:selectList id="selectProgramasFichaMovil" size="1" multiselect="false" styleClass="form-control" value="{!candidato.Programa__c}" onchange="getModalidadesMovil();" readonly="{!IF(programas.size >1,false,true)}" >
+                                                <apex:selectOptions value="{!programas}"/>
+                                            </apex:selectList>                                        
+                                        </c:PanelCell>
+                                        <c:PanelCell label="{!$ObjectType.Lead.fields.Numero_Mensualidades__c.Label}" >
+                                            <apex:outputField styleClass="form-control" value="{!candidato.Numero_Mensualidades__c}" />
+                                        </c:PanelCell>
+                                    </div>
+                                </apex:outputPanel>
+                                
+                                <c:Panel title="Grupos disponibles" idCollapse="tablaGpos"  id="tablaGpos" idParent="tablaGpos" expanded="{!IF(candidato.OfertaEducativa__c==null,true,false)}" >
+                                    <apex:outputPanel id="renderedTablaGrupos" >
+                                        <apex:outputPanel rendered="{!IF(listaGrupos.size>0,true,false)}" >
+                                            <div class="tab-content" >
+                                                <div id="panelGrupos" class="tab-pane active table-responsive">
+                                                    <apex:outputPanel id="tablaGrupos">
+                                                        <table id="seleccionGpo" class="table table-bordered table-striped " >
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Seleccionar</th>
+                                                                    <th>Fecha de apertura</th>
+                                                                    <th>Fecha de inicio</th>
+                                                                    <th>Turno</th>
+                                                                    <th>Día(s)</th>
+                                                                    <th>Hora de entrada</th>
+                                                                    <th>Hora de salida</th>
+                                                                    <th>Aula asignada</th>
+                                                                    <th>Docente</th>
+                                                                    <th>Materia</th>
+                                                                    <apex:repeat id="conceptosRepeat" value="{!conceptosPagos}" var="concepto" >
+                                                                        <th><apex:outputText value="{!concepto.Name }"></apex:outputText></th>
+                                                                    </apex:repeat>
+                                                                </tr>
+                                                            </thead>
+                                                            
+                                                            <script>
+                                                            j$(document).ready(function(){
+                                                                j$(document).find('input:radio').each(function(){
+                                                                    if(j$(this).attr('value') == '{!candidato.GrupoAsignado__c}'){
+                                                                        j$(this).prop('checked',true);
+                                                                    }
+                                                                });
+                                                            });
+                                                            </script>
+                                                            <apex:repeat id="gruposRepeat" value="{!listaGrupos}" var="grupoWP" >
+                                                                <tr>
+                                                                    <td id="asignacionGrupos" class="text-center" >
+                                                                        <input id="radio_{!grupoWP.grupo.Id}" value="{!grupoWP.grupo.Id}" type="radio" name="idGrupoElegido" onclick="modificaRadio(j$(this).attr('value'));"/>
+                                                                        
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                                            <apex:param value="{!grupoWP.grupo.FechaApertura__c}" /> 
+                                                                        </apex:outputText>
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                                            <apex:param value="{!grupoWP.grupo.FechaInicioClases__c}" /> 
+                                                                        </apex:outputText>
+                                                                    </td>
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.Turno__c }"></apex:outputText></td>
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.Dia__c }"></apex:outputText></td>
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.HoraEntrada__c}"></apex:outputText></td> 
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.HoraSalida__c }"></apex:outputText></td> 
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.AulaAsignada__r.Name }"></apex:outputText></td> 
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.Docente__r.Name }"></apex:outputText></td> 
+                                                                    <td><apex:outputText value="{!grupoWP.grupo.Materia__r.Name }"></apex:outputText></td> 
+                                                                    <apex:repeat value="{!conceptosPagos}" var="concepto" >
+                                                                        <td><apex:outputText rendered="{!IF(grupoWP.pagos[concepto.Id]>0,true,false)}" value=" $ {!grupoWP.pagos[concepto.Id] }"></apex:outputText></td>
+                                                                    </apex:repeat>
+                                                                </tr>    
+                                                            </apex:repeat>
+                                                        </table>
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </c:Panel>
+                                    
+                                    
+                            </c:Panel> <!--End of Offer panel-->
+                        </apex:actionRegion>
+                        </div>
+                        
+                        <!-- COMPONENTE DE PRUEBA 
+                        <c:LEAD_Becas candidatoCopia="{!candidato}" ></c:LEAD_Becas>
+                        --->
+                        
+                        <div id="ContenedorBecas">
+                        
+                        <apex:outputPanel id="becasDescuentos">
+                            <apex:outputPanel rendered="{!IF(candidato.FichaMovil__c==null,true,false)}" >
+                                <div class="row">
+                                    <apex:actionFunction action="{!seleccionaBeca}" name="seleccionaBeca" status="statusBecasDescuentos" reRender="cuerpoBeca,mensajesBecasDescuentos,seleccionBecaConvenio,discount,autorizaciones,payment,requisitos"/>
+                                    <apex:actionFunction action="{!setBecaAplicada}" name="setBecaAplicada" status="statusBecasDescuentos" reRender="cuerpoBeca,seleccionBecaConvenioAsig,mensajesBecasDescuentos,seleccionBecaConvenio,requisitos,autorizaciones, payment" />
+                                    <apex:actionFunction action="{!setBecaConvenioRango}" name="setBecaConvenioRango" status="statusBecasDescuentos" reRender="seleccionBecaConvenioAsig,mensajesBecasDescuentos,seleccionBecaConvenio,requisitos,autorizaciones, payment" />
+                                    <apex:actionFunction action="{!guardaSolicitudBeca}" name="guardaSolicitudBeca" status="statusBecasDescuentos" reRender="cuerpoBeca, mensajesBecasDescuentos, payment,requisitos,scholarship,autorizaciones" />
+                                    <apex:actionFunction action="{!seleccionBecaConvenioAsignacion}" name="seleccionBecaConvenioAsignacion" status="statusBecasDescuentos" reRender="cuerpoBeca,mensajesBecasDescuentos,seleccionBecaConvenio,becaSelect,becaSelect1,autorizaciones,requisitos,payment" />
+                                    
+                                    <apex:actionFunction action="{!actualizaImporteTotal}" name="actualizaImporteTotal" status="statusBecasDescuentos" reRender="payment,requisitos" />
+                                    
+                                    <apex:actionStatus onstart="onstart('ContenedorBecas');"  onstop="onstop('ContenedorBecas');" id="statusBecasDescuentos" /> 
+                                    
+                                    
+                                    <div class="col-md-6">
+                                        <c:Panel title="Beca" idCollapse="scholarship"  id="scholarship" idParent="panelParent" expanded="true" >
+                                            
+                                            <div class="row">
+                                                <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.Promedio__c.Label}" >
+                                                    <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.Promedio__c}" />
+                                                </c:PanelCell>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.TipoBeca__c.Label}" >
+                                                    <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.TipoBeca__c}" onchange="seleccionaBeca()" rendered="{!IF(AND(solicitudBeca.id!=null,solicitudBeca.Estatus__c=='Inactivo'),false,true)}"/>
+                                                    <apex:outputField html-size="1" styleClass="form-control" value="{!candidato.TipoBeca__c}" rendered="{!IF(AND(solicitudBeca.id!=null,solicitudBeca.Estatus__c=='Inactivo'),true,false)}"/>
+                                                </c:PanelCell>
+                                            </div>
+                                            
+                                            <apex:outputPanel id="cuerpoBeca" >
+                                                
+                                                <apex:outputPanel rendered="{!IF(candidato.TipoBeca__c =='Comercial',true,false)}" styleClass="row" >
+                                                    <c:PanelCell columns="6" id="porcentajeBeca" label="{!$ObjectType.Lead.fields.PorcentajeBeca__c.Label}"  >
+                                                        <!--   <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!PorcentajeBecaString}" onchange="setBecaAplicada()" disabled="{!IF(porcentajeBeca.size >0,false,true)}" >-->
+                                                        <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!LetraBecaStringA}" onchange="setBecaAplicada()" disabled="{!IF(OR(porcentajeBeca.size ==0, AND(solicitudBeca.id!=null,solicitudBeca.Estatus__c=='Inactivo')),true,false)}" > 
+                                                            <apex:selectOptions value="{!porcentajeBeca}"/>
+                                                        </apex:selectList>
+                                                    </c:PanelCell>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!IF(candidato.TipoBeca__c =='Convenio',true,false)}" styleClass="row" >
+                                                    <c:PanelCell columns="6" id="seleccionBeca" label="Nombre de convenio"  >
+                                                        <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!candidato.Beca__c}" onchange="setBecaAplicada()" disabled="{!IF(listaBecasConvenio.size >1,false,true)}" >
+                                                            <apex:selectOptions value="{!listaBecasConvenio}"/>
+                                                        </apex:selectList>
+                                                    </c:PanelCell>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!IF(candidato.TipoBeca__c =='Convenio',true,false)}" styleClass="row" >
+                                                    <c:PanelCell columns="6" id="seleccionBecaConvenioAsig" label="Beca"  >
+                                                        <apex:selectList size="1" multiselect="false" styleClass="form-control" value="{!candidato.BecaConvenioAsignacion__c }" onchange="seleccionBecaConvenioAsignacion()" disabled="{!IF(listaBecasConvenioAsignacion.size >1,false,true)}" >
+                                                            <apex:selectOptions value="{!listaBecasConvenioAsignacion}"/>
+                                                        </apex:selectList>
+                                                    </c:PanelCell>
+                                                </apex:outputPanel>
+                                                
+                                                <!-- Selección en caso de que la Beca sea de tipo Convenio -->
+                                                <apex:outputPanel id="seleccionBecaConvenio" rendered="{!IF(candidato.TipoBeca__c =='Convenio',true,false)}" styleClass="row" >
+                                                    <c:PanelCell id="becaSelect" columns="6" label="{!$ObjectType.Lead.fields.PorcentajeBeca__c.Label}"  >
+                                                        <apex:selectList id="becaSelect"  size="1" multiselect="false" styleClass="form-control" value="{!PorcentajeBecaRango}" rendered="{!IF(tipoBecaConvenio=='Rango',true,false)}" onchange="setBecaConvenioRango()" >
+                                                            <apex:selectOptions value="{!becaRango}"/>
+                                                        </apex:selectList>
+                                                        
+                                                        <apex:outputText value="{!porcentajeSolicitadoBeca}" rendered="{!IF(tipoBecaConvenio=='Fijo',true,false)}" />
+                                                    </c:PanelCell>
+                                                </apex:outputPanel>
+                                                
+                                                
+                                                <div  style="margin:2em;" class="text-center" >
+                                                    <apex:outputPanel id="autorizaciones" >
+                                                        <apex:outputPanel rendered="{!IF(AND(solicitudBeca.id!=null,solicitudBeca.Estatus__c=='Activo'),true,false)}" >
+                                                            <div style="padding-bottom:2em;" >
+                                                                <h5>La solicitud para aplicar esta beca fue autorizada</h5>
+                                                                <c:PanelCell columns="6" label="Beca autorizada"  >
+                                                                    <apex:outputLink target="_blank" value="/{!solicitudBeca.id}">{!solicitudBeca.Name}</apex:outputLink>
+                                                                </c:PanelCell>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel rendered="{!IF(AND(solicitudBeca.id!=null,solicitudBeca.Estatus__c=='Inactivo'),true,false)}">
+                                                            <div style="padding-bottom:2em;" >
+                                                                <h5 style="color:red;">La solicitud para aplicar esta beca requiere de autorización</h5>
+                                                                <c:PanelCell columns="6" label="Beca por autorizar"  >
+                                                                    <apex:outputLink target="_blank" value="/{!solicitudBeca.id}">{!solicitudBeca.Name}</apex:outputLink>
+                                                                </c:PanelCell>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel rendered="{!IF(AND(solicitudBeca.Estatus__c!=null,solicitudBeca.id==null),true,false)}">
+                                                            <h5 style="color:red;">Se requiere autorización para aplicar esta beca</h5>
+                                                            <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" class="btn btn-primary" onclick="guardaSolicitudBeca();"  >
+                                                                <span class="fa fa-hand-paper-o"></span>
+                                                                Solicitar autorización
+                                                            </button>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                </div>
+                                                
+                                                <div  style="margin:2em;" >
+                                                    <apex:outputPanel id="requisitos" >
+                                                        <apex:outputPanel rendered="{!IF(tieneRequisitos,true,false)}">
+                                                            <h4 style="" >Requisitos de Beca:</h4>
+                                                            
+                                                            <div class="bs-example simple-ul" style="padding:.5em;" >
+                                                                
+                                                                <ul >
+                                                                    <apex:repeat id="requisitosBeca" value="{!requisitosBecas}" var="requisito" >
+                                                                        <li>{!requisito.Name}</li>
+                                                                    </apex:repeat>
+                                                                </ul>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </c:Panel>
+                                    </div>
+                                    
+                                    
+                                    
+                                    
+                                    <div class="col-md-6">
+                                        <c:Panel title="Descuento" idCollapse="discount"  id="discount" idParent="panelParent" expanded="true" >
+                                            <!---<apex:outputPanel rendered="{!IF(AND(mayorDescuentoGeneral>0,descuentoVigente.Id==null,mayorDescuentoGeneral<=descuentoIndividualVigente,solicitudPromocion.Estatus__c!='Activo'),true,false)}">-->
+                                            <apex:outputPanel rendered="{!IF(AND(mayorDescuentoGeneral>0,solicitudPromocion.Estatus__c!='Activo',mayorDescuentoGeneral>descuentoIndividualVigente),true,false)}">
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="Descuento asignado"  >
+                                                        <apex:outputText value="{!mayorDescuentoGeneral}"/>
+                                                    </c:PanelCell>
+                                                </div>
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="Vigente hasta"  >
+                                                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                            <apex:param value="{!candidato.VigenciaDescuento__c}" /> 
+                                                        </apex:outputText>
+                                                    </c:PanelCell>
+                                                </div>
+                                            </apex:outputPanel>
+                                            
+                                            
+                                            <apex:outputPanel rendered="{!IF(AND(descuentoVigente.Id!=null,solicitudPromocion.Estatus__c!='Activo',mayorDescuentoGeneral<=descuentoIndividualVigente),true,false)}">
+                                                
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="Descuento individual vigente"  >
+                                                        <apex:outputLink target="_blank" value="/{!descuentoVigente.Descuento__r.id}">{!descuentoVigente.Descuento__r.Name}</apex:outputLink>
+                                                    </c:PanelCell>
+                                                </div>
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="% Descuento aplicable"  >
+                                                        <apex:outputText value="{!descuentoVigente.Descuento__r.PorcentajeDescuento__c}"/>
+                                                    </c:PanelCell>
+                                                </div>
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="Vigente hasta"  >
+                                                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                            <apex:param value="{!descuentoVigente.Descuento__r.FechaFinVigencia__c}" /> 
+                                                        </apex:outputText>
+                                                    </c:PanelCell>
+                                                </div>
+                                            </apex:outputPanel>
+                                            
+                                            
+                                            <apex:outputPanel rendered="{!IF(solicitudPromocion.Id!=null,true,false)}">
+                                                <div class="row" style="margin-top:2em;"  >
+                                                    <c:PanelCell columns="6" label="Promoción solicitada"  >
+                                                        <apex:outputLink target="_blank" value="/{!solicitudPromocion.id}">{!solicitudPromocion.Name}</apex:outputLink>
+                                                    </c:PanelCell>
+                                                </div>
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="% Descuento aplicable"  >
+                                                        <apex:outputText value="{!solicitudPromocion.PorcentajeDescuento__c}"/>
+                                                    </c:PanelCell>
+                                                </div>
+                                                <div class="row" >
+                                                    <c:PanelCell columns="6" label="Vigente hasta"  >
+                                                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                            <apex:param value="{!solicitudPromocion.FechaFinVigencia__c}" /> 
+                                                        </apex:outputText>
+                                                    </c:PanelCell>
+                                                </div>
+                                            </apex:outputPanel>
+                                            
+                                            <apex:outputPanel rendered="{!IF(OR(candidato.Id==null,solicitudPromocion.Id!=null),false,true)}">
+                                                <div class="row text-center" >
+                                                    <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" class="btn btn-primary" id="modalPromocionBtn" >
+                                                        <span class="fa fa-usd"></span>
+                                                        Solicitar promoción
+                                                    </button>
+                                                </div>
+                                            </apex:outputPanel>
+                                            
+                                            <apex:outputPanel id="leyendaSolicitud" styleClass="row text-center" >
+                                                <apex:outputPanel rendered="{!IF(leyendaSolicitudPromocion!='',true,false)}" >
+                                                    <div class="alert alert-info" style="margin-top:-2em;" >
+                                                        <apex:outputText styleClass="alert alert-info "   >
+                                                            <strong>{!leyendaSolicitudPromocion}</strong>
+                                                        </apex:outputText>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </apex:outputPanel>
+                                            
+                                            
+                                            
+                                            <div class="row" style="margin-top:-2em;">
+                                                <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.SolicitudPromocion__c.Label}"   >
+                                                    <apex:inputCheckbox value="{!candidato.SolicitudPromocion__c}" disabled="true" />
+                                                </c:PanelCell>
+                                            </div>
+                                            
+                                            <div class="row" >
+                                                <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.DisponiblePromocionCero__c.Label}"   >
+                                                    <apex:inputCheckbox value="{!candidato.DisponiblePromocionCero__c}" disabled="true" />
+                                                </c:PanelCell>
+                                            </div>
+                                            
+                                            <div class="row" >
+                                                <c:PanelCell columns="6" label="{!$ObjectType.Lead.fields.AplicaPromocionCero__c.Label}"   >
+                                                    <apex:inputCheckbox value="{!candidato.AplicaPromocionCero__c}" disabled="{!IF(candidato.DisponiblePromocionCero__c,false,true)}" onchange="actualizaImporteTotal();" />
+                                                </c:PanelCell>
+                                            </div>
+                                            
+                                        </c:Panel>
+                                    </div>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <c:PageMessages id="mensajesBecasDescuentos" closableErrors="true"/>
+                        </div>
+                        
+                        <c:Panel title="Costo y forma de pago" idCollapse="payment"  id="payment" idParent="panelParent" expanded="true">
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Colegiatura__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static"  value="${!IF(candidato.Colegiatura__c==null,0,ROUND(candidato.Colegiatura__c,2))}" />
+                                </c:PanelCell>
+                                
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.InscripcionDescuento__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!ROUND(inscripcionConDescuento,2)}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Inscripcion__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!IF(candidato.Inscripcion__c==null,0,ROUND(candidato.Inscripcion__c,2))}" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ColegiaturaDescuento__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!ROUND(colegiaturaConDescuento,2)}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ExamenAdmision__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!IF(candidato.ExamenAdmision__c==null,0,ROUND(candidato.ExamenAdmision__c,2))}" />
+                                </c:PanelCell>
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.ImporteTotal__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!ROUND(importeTotal,2)}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Antologia__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!IF(candidato.Antologia__c==null,0,ROUND(candidato.Antologia__c,2))}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Propedeutico__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!IF(candidato.Propedeutico__c==null,0,ROUND(candidato.Propedeutico__c,2))}" />
+                                </c:PanelCell>
+                                
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.Uniforme__c.Label}" >
+                                    <apex:outputText styleClass="form-control-static" value="${!IF(candidato.Uniforme__c==null,0,ROUND(candidato.Uniforme__c,2))}" />
+                                </c:PanelCell>
+                            </div>
+                            <div class="row">
+                                <c:PanelCell label="{!$ObjectType.Lead.fields.FormaPago__c.Label}" >
+                                    <apex:inputField html-size="1" styleClass="form-control" value="{!candidato.FormaPago__c}" />
+                                </c:PanelCell>
+                            </div>
+                        </c:Panel> <!--End of payment panel-->
+                        
+                        <c:PageMessages id="mensajes2" closableErrors="true"/>
+                        
+                        <div class="text-center row">
+                            <apex:commandButton id="btnGuardar2" value="Guardar" status="statusGuardar" styleClass="btn btn-success fa-input" action="{!guardar}" style="margin:1em;font-family: FontAwesome, Arial,Helvetica,sans-serif;" reRender="forma,JSpanel,formaSolicitudPromocion,JSpanel2" oncomplete="redirigirSiGuardo();" > </apex:commandButton>
+                            <button style="margin-left:auto;margin-right:2%;margin:1em;" type="button" onclick="redirigir();" class="btn btn-default">
+                                <span class="fa fa-reply"></span>
+                                Cancelar
+                            </button>
+                        </div>
+                        
+                    </section>
+                </div>
+            </div>
+        </apex:form> 
+    </div>
+    
+    
+    
+    
+    <div class="modal fade" id="modalSolicitudPromocion" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content" id="contenedorSolicitudPromo" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span>Solicitud de promoción</span></h4>
+                </div>
+                <div class="modal-body " style="padding:5%;" >
+                    
+                    <apex:form id="formaSolicitudPromocion" >
+                        
+                        <apex:actionFunction action="{!guardaSolicitudPromocion}" status="statusGuardarSolicitudPromocion" name="guardaSolicitudPromocion" reRender="JSpanel,formaSolicitudPromocion,leyendaSolicitud,discount,mensajes3" oncomplete="bloqueaSolicitudPromocion();" />
+                        <apex:actionStatus onstart="onstart('contenedorSolicitudPromo');"  onstop="onstop('contenedorSolicitudPromo');" id="statusGuardarSolicitudPromocion" /> 
+                        
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="% Descuento"  color="{!IF((solicitudPromocion.PorcentajeDescuento__c != null),'has-success has-feedback','has-error')}" >
+                                <apex:inputText id="descuentoSolicitudPromocion" value="{!importeSolicitud}" styleClass="form-control" html-type="number" />
+                            </c:PanelCell>
+                        </div>
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="Del:"  color="{!IF((solicitudPromocion.FechaInicioVigencia__c != null),'has-success has-feedback','has-error')}" >
+                                <apex:inputField id="fechaInicialSolicitudPromocion" value="{!solicitudPromocion.FechaInicioVigencia__c}" styleClass="form-control" showDatePicker="false" style="width:100%;" />
+                            </c:PanelCell>
+                        </div>
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="Al:" color="{!IF((solicitudPromocion.FechaFinVigencia__c != null),'has-success has-feedback','has-error')}" >
+                                <apex:inputField id="fechaFinalSolicitudPromocion" value="{!solicitudPromocion.FechaFinVigencia__c}"  styleClass="form-control" showDatePicker="false" style="width:100%;" />
+                            </c:PanelCell>
+                        </div>
+                        
+                        <div class="row" >
+                            <c:PanelCell columns="6" label="Comentario"  color="{!IF((solicitudPromocion.Comentarios__c != null),'has-success has-feedback','has-error')}" >
+                                <apex:inputField id="comentariosSolicitudPromocion" value="{!solicitudPromocion.Comentarios__c }"  styleClass="form-control"/>
+                            </c:PanelCell>
+                        </div>
+                    </apex:form>                    
+                    <div style="margin-top:2em" >
+                        <c:PageMessages id="mensajes3" closableErrors="true" />
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="guardaSolicitudPromocion();" >
+                        <span class="fa fa-save fa-fw"/>
+                        Guardar
+                    </button>
+                    <button type="button" class="btn btn-default" html-class="close" data-dismiss="modal" >
+                        <span class="fa fa-mail-reply fa-fw"/>
+                        Cancelar
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <apex:outputPanel id="JSpanel" >
+        <script>
+        
+        var dialogoPromocion;
+        var bloqueaSolicitudPromocion= function(){
+            if('{!solicitudPromocionRegistrada}'==='true'){
+                j$("[id*='descuentoSolicitudPromocion']").attr('disabled','true');
+                j$("[id*='fechaInicialSolicitudPromocion']").attr('disabled','true');
+                j$("[id*='fechaFinalSolicitudPromocion']").attr('disabled','true');
+                j$("[id*='comentariosSolicitudPromocion']").attr('disabled','true');
+            }
+        }
+        
+        j$.datepicker.regional['es'] = {
+            closeText: 'Cerrar',
+            prevText: '<Ant',
+            nextText: 'Sig>',
+            currentText: 'Hoy',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+            dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+            weekHeader: 'Sm',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
+        };
+        j$.datepicker.setDefaults(j$.datepicker.regional['es']);
+        j$("[id*='fechaDeNacimiento']").datepicker();
+        j$("[id*='fechaInicialSolicitudPromocion']").datepicker();
+        j$("[id*='fechaFinalSolicitudPromocion']").datepicker();
+        
+        
+        
+        
+        var bloqueaStatus = function(){
+            console.log('{!candidato.Status}');
+            if('{!candidato.Status}'==='No contactado'){
+                j$("[id*='motivoNoContactado']").removeAttr('disabled');
+                j$("[id*='motivoNoContactado']").parent("div").addClass('has-error');
+                j$("[id*='motivoNoInteresado']").attr('disabled','true');
+                j$("[id*='motivoNoInteresado']").parent("div").removeClass('has-error');
+                j$("[id*='motivoNoInteresado']").val(null);
+            }else {
+                if('{!candidato.Status}'==='No interesado'){
+                    j$("[id*='motivoNoContactado']").attr('disabled','true');
+                    j$("[id*='motivoNoContactado']").parent("div").removeClass('has-error');
+                    j$("[id*='motivoNoContactado']").val(null);
+                    j$("[id*='motivoNoInteresado']").removeAttr('disabled');
+                    j$("[id*='motivoNoInteresado']").parent("div").addClass('has-error');
+                }else{
+                    j$("[id*='motivoNoContactado']").attr('disabled','true');
+                    j$("[id*='motivoNoInteresado']").attr('disabled','true');
+                    j$("[id*='motivoNoInteresado']").val(null);
+                    j$("[id*='motivoNoContactado']").val(null);
+                }
+            }
+        }
+        
+        /*Configuración del lenguaje dentro de dataTable*/
+        var configura = {"language": {
+            "lengthMenu": "Mostrar _MENU_ registros por p&aacute;gina",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "P&aacute;gina _PAGE_ de _PAGES_",
+            "infoEmpty": "Sin registros que mostrar",
+            "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+            "processing": "Cargando información...",
+            "search": "Buscar:",
+            // searchPlaceholder: "Id, nombre, prof, referencia",
+            "paginate": {
+                "first": "Primero",
+                "last": "&Uacute;ltimo",
+                "next": "Sig",
+                "previous": "Ant"
+            }
+        }};
+        
+        j$(document).ready(function(){
+            
+            aplicaEstilo = function(){
+                //j$(".addPattern").attr("pattern","[.0-9 #_ \-\\\/ () \+]+").attr("onchange","try{setCustomValidity('')}catch(e){}").attr("oninvalid","setCustomValidity('El teléfono sólo puede contener números, espacios, guiones y paréntesis')");
+                j$(".addPattern").attr("pattern","[0-9]{0,10}").attr("onchange","try{setCustomValidity('')}catch(e){}").attr("oninvalid","setCustomValidity('El teléfono sólo puede contener 10 números máximo')");
+                
+                j$("[id*='SubOrigenCandidato__c']").addClass('form-control');
+                j$("[id*='SubOrigenCandidato__c']").attr('size','1');
+                
+                j$('span.lookupInput a span').remove();
+                j$('span.lookupInput a').addClass('btn-success').css('padding','0 .5em').append('<span style="display:block;margin-top:-1.3em;" class="fa fa-search"></span>');
+                
+                j$("[id*='SubOrigenCandidato__c'] [value='Calcula tu colegiatura']").remove()
+                j$("[id*='SubOrigenCandidato__c'] [value='Preinscripción']").remove()
+                j$("[id*='SubOrigenCandidato__c'] [value='Verticales IEU (por programa)']").remove()
+                j$("[id*='SubOrigenCandidato__c'] [value='Vertical IEU']").remove()
+                
+                j$("[id*='descuentoSolicitudPromocion']").attr('type','number');
+                
+                j$("[id*='btnGuardar']").attr('value','\uf0c7 Guardar');
+                
+                j$("div[id*='tablaGpos'][style='margin:2em 0;']").attr('class','panel panel-default');
+                j$("div[id*='tablaGpos'][style='margin:2em 0;']:first-child a:first-child").first().css('color','#333');
+                
+            }
+            estiloListaDependiente = function(){
+                setTimeout(aplicaEstilo, 900);
+            }
+            estiloListaDependiente();
+            bloqueaSolicitudPromocion();
+            bloqueaStatus();
+            
+        });
+        
+        </script>
+    </apex:outputPanel>    
+    
+    <apex:outputPanel id="JSpanel2">
+        <script>
+        
+        var changeSelectModalidad = function(){
+            j$("[id*='selectModalidad']").on('change', function(){
+                j$("[id*='selectPlantel']").prop('disabled', true);
+            });
+        }
+        var changeSelectPlantel = function(){
+            j$("[id*='selectPlantel']").on('change', function(){
+                console.log('Cambiando Plantel, actualizando nivel');
+                j$("[id*='selectNivel']").prop('disabled', true);
+            });
+        }
+        var changeSelectNivel = function(){
+            j$("[id*='selectNivel']").on('change', function(){
+                console.log('Cambiando Nivel, actualizando Programa');
+                j$("[id*='selectProgramas']").prop('disabled', true);
+            });
+        }
+        var changeSelectProgramas = function(){
+            j$("[id*='selectProgramas']").on('change', function(){
+                console.log('Cambiando Programa');
+                j$("[id*='selectPeriodo']").prop('disabled', true);
+            });
+        }
+        
+        var changeSelectProgramasMovil = function(){
+            j$("[id*='selectProgramasFichaMovil']").on('change', function(){
+                console.log('Cambiando Programa');
+                j$("[id*='selectModalidad']").prop('disabled', true);
+            });
+        }
+        
+        
+        j$(document).ready(function(){
+            j$('#seleccionGpo').dataTable(configura);
+            
+            if('{!candidato.MotivoNoContactado__c}'===''){
+                j$("[id*='motivoNoContactado']").val(null);
+            }
+            if('{!candidato.MotivoNoInteresado__c}'===''){
+                j$("[id*='motivoNoInteresado']").val(null);
+            }
+            if('{!candidato.Sexo__c}'===''){
+                j$("[id*='sexoCandidato']").val(null);
+            }
+            if('{!candidato.EstadoCivil__c}'===''){
+                j$("[id*='estadoCivilCandidato']").val(null);
+            }
+            if('{!candidato.MedioDifusion__c}'===''){
+                j$("[id*='medioPorElCualSeEntero']").val(null);
+            }
+            
+            
+            
+            
+            
+            redirigir = function (){
+                if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+                    if('{!candidato.Id}'===''){
+                        sforce.one.navigateToSObject("00Q/o");
+                    }else{
+                        sforce.one.navigateToSObject("{!candidato.Id}");
+                    }
+                }else{
+                    if('{!candidato.Id}'===''){
+                        var dir="/"+"00Q/o";
+                    }else{
+                        var dir="/"+"{!candidato.Id}";
+                    }
+                    
+                    window.location.href=dir;
+                } 
+            }
+            
+            redirigirSiGuardo = function (){
+                if('{!guardoOk}'==='true'){
+                    if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+                        if('{!candidato.Id}'===''){
+                            sforce.one.navigateToSObject("00Q/o");
+                        }else{
+                            sforce.one.navigateToSObject("{!candidato.Id}");
+                        }
+                    }else{
+                        if('{!candidato.Id}'===''){
+                            var dir="/"+"00Q/o";
+                        }else{
+                            var dir="/"+"{!candidato.Id}";
+                        }
+                        
+                        window.location.href=dir;
+                    } 
+                }
+            }
+            
+            j$("[id*='fechaDeNacimiento']").change(function(){
+                var fechaIniAct = new Date(j$(this).val());
+                
+                var fa = new Date();
+                var fechaActual1 = ( fa.getFullYear() + "-" + ("0" + (fa.getMonth() + 1)).slice(-2) + "-" + ("0" + fa.getDate()).slice(-2)); 
+                var f =new Date('{!fechaActual}');
+                
+                if(fechaIniAct >= f){ 
+                    //alert('La fecha de nacimiento debe ser menor al día actual');
+                    //j$(this).val(null);
+                    console.log(fechaIniAct);
+                }
+            });
+            
+            
+            
+            
+            dialogoPromocion = j$("#modalPromocion").dialog({
+                autoOpen: false,
+                height: 'auto',
+                minWidth: 600,
+                modal: true,
+                buttons: {
+                    Cancelar: function() {
+                        dialogoPromocion.dialog("close");
+                    },
+                    Registrar: function() {
+                        guardaSolicitudPromocion("close");
+                    }
+                },
+                close: function() {
+                },
+                open: function() {
+                    j$('#modalDireccionNuevoMensajeError').attr('style','display:none');
+                }
+            });
+            setStyleSFO();
+        });
+        
+        
+        j$("#modalPromocionBtn").on( "click" , function() {
+            j$('#modalSolicitudPromocion').modal('show');
+            //dialogoPromocion.dialog( "open" );
+        });
+        
+        var validacionFichaPago = function(){
+            if(j$("[id*='tieneFichaMovil']").is(":checked")){
+                j$('#seleccionFichaMovil').css('display','inline');
+            }else{
+                j$('#seleccionFichaMovil').css('display','none');
+                j$("[id*='lookupFichaMovil']").val(null);
+            }
+        }
+        validacionFichaPago();
+        
+        
+        
+        function onstart(contenedor){
+            j$('#'+ contenedor).block({ message: "<div> <span style='color:#333;' class='fa fa-spinner fa-2x fa-pulse fa-fw' aria-hidden='true'></span> </div>" ,
+                                       css: { backgroundColor: 'none', color: '#fff',border: 'none'},
+                                       overlayCSS: { backgroundColor: '#fff'}
+                                      }); 
+        }
+        
+        function onstop(contenedor){
+            j$('#'+ contenedor).unblock(); 
+        } 
+        
+         //RJP
+        function setStyleSFO(){
+        	if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+        		j$('#contenedorPrincipal').removeClass('container');
+        		j$('#marketing').collapse();
+        		//j$('#offer').collapse();
+        		j$('#scholarship').collapse();
+        		j$('#discount').collapse();
+        		//j$('#payment').collapse();
+                //j$('#contenedorPrincipal').addClass('container-fluid');
+            }else{
+                j$('#contenedorPrincipal').removeClass('container-fluid');
+                j$('#contenedorPrincipal').addClass('container');
+            }
+        } 
+        
+    </script>
+    </apex:outputPanel>
+    
+</apex:page>

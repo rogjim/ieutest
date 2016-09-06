@@ -1,0 +1,160 @@
+<apex:page standardController="Descuento__c">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    <script src="/soap/ajax/13.0/connection.js"></script>
+    <script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';} var id='{!Descuento__c.Id}';  </script>
+    <div class="table-responsive col-md-offset-2 col-md-7">
+        <table id="table-descuento" class="table table-striped tableAplicaPara">
+            <thead>
+                <tr>
+                    <th>Periodos</th>
+                    <th>Modalidades</th>
+                    <th>Niveles</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <style>
+    	.tableAplicaPara thead{
+        	font-size:80%;
+        }
+        .tableAplicaPara tbody{
+        	font-size:88%;
+        }
+        .hidden{
+        	display: none!important;
+        }
+    </style>
+    <script type="text/javascript">
+    var elementosTabla={};
+    var todosPeriodos = {};
+    var todosModalidades = {};
+    var todosNiveles = {};
+    /*BCA*/
+    var recuperadosBCA = {};
+    var periodosBCA = [];
+    var modalidadesBCA = [];
+    var nivelesBCA = [];
+    
+    j$ = jQuery.noConflict();
+    j$(document).ready(function() {
+        /*
+        var preriodos ='{!Descuento__c.Periodos__c}';
+        var modalidades ='{!Descuento__c.Modalidades__c}';
+        var niveles = '{!Descuento__c.Niveles__c}';
+        if(preriodos=='' && modalidades=='' && niveles==''){
+        	j$('#table-descuento').addClass('hidden');
+        }*/
+        /*********Periodo inicial y modalidad si seleecionar nivel*/
+        var query = 'SELECT Id, Name FROM Periodo__c WHERE Autorizado__c = true';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {                                      
+                    todosPeriodos[res.records.Id] = res.records.Name;
+                } else if(res.records && res.records.length > 0) {
+                    res.records.forEach(function(a, i){
+                        todosPeriodos[a.Id] = a.Name;
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }        
+        });
+        
+        var query = 'SELECT id, Name, TipoCatalogo__c FROM Catalogo__c WHERE TipoCatalogo__c = \'Modalidad\' OR TipoCatalogo__c = \'Nivel\'';
+        sforce.connection.query(query, {
+            onSuccess : function(res) {
+                if(res.size === '1') {
+                    dataPeriodo = res.records;
+                    todosModalidades[res.records.Id] = res.records.Name;
+                } else if(res.records && res.records.length > 0) {
+                    var dataMsP = res.records;
+                    dataMsP.forEach(function(a, i){
+                        if(a.TipoCatalogo__c == 'Modalidad'){
+                            todosModalidades[a.Id] = a.Name;
+                        }
+                        else if(a.TipoCatalogo__c == 'Nivel'){
+                            todosNiveles[a.Id] = a.Name;
+                        }
+                    });
+                }
+                count++;
+            }, 
+            onFailure : function(res) {
+                console.log(res);
+            }        
+        });
+        
+        /*********************/
+        /*Get Records BCA*/
+        if(!(id=='')){
+            query = 'SELECT Id, Periodo__c, Periodo__r.Name, Modalidad__c, Modalidad__r.Name, Nivel__c, Nivel__r.Name FROM BecaConvenioAsignacion__c WHERE Descuento__c =\''+ id + '\'';            
+            sforce.connection.query(query, {
+                onSuccess : function(res) {
+                    if(res.size === '1') {
+                        periodosBCA[0] = res.records.Periodo__c == null ? '' : res.records.Periodo__c;
+                        modalidadesBCA[0] = res.records.Modalidad__c == null ? '' : res.records.Modalidad__c;
+                        nivelesBCA[0] = res.records.Nivel__c == null ? '' : res.records.Nivel__c;
+                        recuperadosBCA[res.records.Id] = periodosBCA[0]+''+modalidadesBCA[0]+''+nivelesBCA[0];
+                    } else if(res.records && res.records.length > 0) {
+                        res.records.forEach(function(a, i){
+                            periodosBCA[i] = a.Periodo__c == null ? '' : a.Periodo__c;
+                            modalidadesBCA[i] = a.Modalidad__c == null ? '' : a.Modalidad__c;
+                            nivelesBCA[i] = a.Nivel__c == null ? '' : a.Nivel__c;
+                            recuperadosBCA[a.Id] = periodosBCA[i]+''+modalidadesBCA[i]+''+nivelesBCA[i];
+                            i++;
+                        });
+                    }
+                    count++;
+                }, 
+                onFailure : function(res) {
+                    console.log(res);
+                }
+            });
+        }
+        /*********************/
+        
+    });
+    
+    var myVar;
+    var count=0;
+    function myFunction() {
+        myVar = setInterval(loadContry, 1000);
+    }
+    myFunction();
+    function loadContry() {
+        if(count>=2){
+            completaTablaIdExistente();
+            clearInterval(myVar);
+        }
+    }
+    
+    function completaTablaIdExistente() {
+        var keyElemento;
+        var i = 0;
+        if(Object.keys(recuperadosBCA).length>0){
+            for(key in recuperadosBCA){
+                keyElemento = periodosBCA[i]+'|'+modalidadesBCA[i]+'|'+nivelesBCA[i];
+                idtrInicial = recuperadosBCA[key];
+                elementosTabla[keyElemento] = true;
+                var nombreP = periodosBCA[i]=="" ? "Todos" : todosPeriodos[periodosBCA[i]];
+                var nombreM = modalidadesBCA[i]=="" ? "Todos" : todosModalidades[modalidadesBCA[i]];
+                var nombreN = nivelesBCA[i]=="" ? "Todos" : todosNiveles[nivelesBCA[i]];
+                nombreP = nombreP!=undefined ? nombreP : "";
+                nombreM = nombreM!=undefined ? nombreM : "";
+                nombreN = nombreN!=undefined ? nombreN : "";
+                j$('#table-descuento tbody').append(j$('<tr"><td>'+nombreP+'</td><td>'+nombreM+'</td><td>'+nombreN+'</td></tr>')); 
+                i++;
+            }
+        }
+    }	
+    </script>
+</apex:page>

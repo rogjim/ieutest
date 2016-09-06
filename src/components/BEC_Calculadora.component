@@ -1,0 +1,236 @@
+<apex:component >
+    <style>
+    	.clean{
+        	width:50%;
+        	color: #00a300;
+        }
+        .edited{
+        	width:50%;
+        	color: #b91d47;
+        }
+        .input{
+        	width:50%;
+        }
+    </style>
+	<div ng-controller="calculatorCtrl" id="calculatorCtrl" class="">
+        <div class="">
+            <div class="panel panel-default ieu-panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Configuración de la calculadora
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th colspan="{{catalogDiscountLength + 2 }}" style="text-align:center">Descuento de la 1ra inscripción</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th style="text-align:center" ng-repeat="discount in catalogDiscount">{{discount.label}}%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="{{catalogGradeLength}}" style="text-align:center; vertical-align:center; width:20%"> Becas de <br/>colegiatura</td>
+                            </tr>
+                            <tr ng-repeat="grade in catalogGrade">
+                            	<td>{{grade.label}}</td>
+                                <td align="center" ng-repeat="discount in catalogDiscount">
+                                    <input value="{{mapScholarShip[grade.label + discount.label]}}" type="number" min="0" max="10"
+                                           class="{{getColor(mapScholarShip[grade.label + discount.label])}}" ng-blur="validaRepetidos($event)"
+                                           id="{{grade.label + discount.label}}" step="0.1" maxLength="3" oninput="calculatorMaxLength(this)"/> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="text-center form-input" >
+                        <p ng-show="errors!=''" class="bg-danger messages" >{{errors}}</p>
+                        <p ng-show="success!=''" class="bg-success messages" >{{success}}</p>
+                        <p ng-show="warning!=''" class="bg-warning messages" >{{warning}}</p>
+                    </div>
+                    <center>
+                    	<button type="button" class="btn btn-success" ng-click="saveCalculator()" >
+                            <span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw"></span>
+                            <span class="fa fa-save fa-fw"></span>
+                            Guardar
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancelCalculator()">
+                            <span class="fa fa-mail-reply fa-fw"></span>
+                            Cancelar
+                        </button>
+                    </center>
+                </div>
+            </div>
+        </div>
+	</div>
+    
+    <script type="text/javascript">
+    	
+        var app = angular.module('appIEU');
+        app.controller('calculatorCtrl', ['$scope', 'sfService', 'sfDB', function($scope, sfService, sfDB) {
+        	var calculatorGW = new sfService.gateway.calculator();
+            $scope.saving = false;
+            $scope.errors = '';
+            $scope.success = '';
+            $scope.warning = '';
+            $scope.mapScholarShip = {};
+            $scope.mapScholarShipID = {};
+            $scope.getCatalogs = function(){
+                sfDB.getRemoteAction({action: 'describe'}, calculatorGW, function(err, res) {
+                    for(i=0; i<res.length; i++){
+                        if(res[i].name == "CategoriaLetra__c"){
+                            $scope.catalogGrade = res[i].values;
+                            $scope.catalogGradeLength = res[i].values.length +1;
+                        }
+                        if(res[i].name == "DescuentoInscripcion__c"){
+                            $scope.catalogDiscount = res[i].values;
+                            $scope.catalogDiscountLength = res[i].values.length;
+                        }
+                    }
+                    $scope.calculatorFields = res;
+                    $scope.$apply();
+                    $scope.getScholarShip();
+                });
+            }
+            
+            $scope.getScholarShip = function(){
+            	var criteria = {limit: 100};
+                if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+                sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, calculatorGW, function(err, res) {
+                    sfDB.parseFromDB(res, $scope.calculatorFields, function(err, data) {
+                        if(!err) {
+                            for(j=0; j< data.length; j++){
+                                var tittle = data[j].CategoriaLetra__c + data[j].DescuentoInscripcion__c;
+                                var value = data[j].Promedio__c;
+                                if(String(value).length < 3){
+                                	value = value + '.0';
+                                }
+                            	$scope.mapScholarShip[tittle]= value;
+                                $scope.mapScholarShipID[tittle]= data[j].Id;
+                                $scope.$apply();
+                            }
+                        }
+                    });
+                });
+            }
+            $scope.getCatalogs();
+            $scope.getColor = function(value){
+                if(value != undefined || value != ''){
+                    return 'clean';
+                }
+                return 'input';
+            }
+            
+            $scope.saveCalculator = function(){
+                if($scope.warning == ''){
+                    for(i = 0; i< $scope.catalogGradeLength -1; i++){
+                        for(j = 0; j< $scope.catalogDiscountLength; j++){
+                            var idElement = $scope.catalogGrade[i].label + $scope.catalogDiscount[j].label;
+                            var element = $('#'+idElement);
+                            if(element.val()!== ''){
+                                if(element.hasClass('edited')){
+                                    var toStore =  {'CategoriaLetra__c':$scope.catalogGrade[i].label,
+                                                    'DescuentoInscripcion__c': $scope.catalogDiscount[j].label,
+                                                    'Promedio__c': element.val(),
+                                                    'Id': (($scope.mapScholarShipID[idElement] == undefined) ? '' : $scope.mapScholarShipID[idElement])
+                                                    };
+                                    sfDB.getRemoteAction({action: 'upsert'}, new sfService.gateway.calculator(toStore), function(err, res, all) {
+                                        var idMapElement = toStore.CategoriaLetra__c + toStore.DescuentoInscripcion__c;
+                                        $scope.processResult(err, res, 'upsert');
+                                    });
+                                    element.removeClass('edited');
+                                    element.addClass('clean');
+                                }
+                            }else{
+                                if(element.hasClass('edited')){
+                                    if($scope.mapScholarShipID[idElement]!==undefined){
+                                        var toStore = {'element': idElement, 'Id':$scope.mapScholarShipID[idElement]};
+                                        //console.log(toStore);
+                                        sfDB.getRemoteAction({instance: toStore, action: 'del'}, calculatorGW, function(err, res) {
+                                            $scope.mapScholarShipID[toStore.element] = undefined;
+                                            $scope.$apply();
+                                            //console.log($scope.mapScholarShipID);
+                                            $scope.processResult(err, res);
+                                        });
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $scope.getScholarShip();
+                    $scope.errors = '';
+                    $scope.warning = '';
+                    $scope.success ='Se ha actualizado la configuración de la calculadora existosamente.';
+            	}else{
+                    $scope.errors = '';
+                    $scope.success = '';
+                	$scope.errors = 'No se pueden guardar promedios repetidos. Verifique la información y vuelva a intentar.';
+                }
+            }
+            
+            $scope.processResult = function(err, res, action) {
+                if(err){
+                    $scope.errors = err;
+                }
+                $scope.saving = false;
+                $scope.$apply();
+            };
+            
+            $scope.cancelCalculator = function (){
+                $scope.getCatalogs();
+                $scope.errors = '';
+                $scope.warning = '';
+            }
+            
+            $scope.validaRepetidos = function(object){
+                var actualValue = object.target.value;
+                var valueRepeat = 0;
+                $scope.warning = ''; 
+                var matValues = [];
+                for(i = 0; i< $scope.catalogGradeLength -1; i++){
+                    for(j = 0; j< $scope.catalogDiscountLength; j++){
+                        var idElement = $scope.catalogGrade[i].label + $scope.catalogDiscount[j].label;
+                        var element = $('#'+idElement);
+                        var elementVal = element.val();
+                        if(elementVal != undefined && elementVal != ''){
+                        	matValues.push(parseFloat(elementVal));
+                        }
+                    }
+                }
+                //console.log(matValues);
+                for(i = 0; i< matValues.length; i++){
+                    var elementI = matValues[i];
+                    valueRepeat = 0;
+                    for(j = 0; j< matValues.length; j++){
+                        var elementJ = parseFloat(matValues[j]);
+                        if(elementI == elementJ){
+                        	valueRepeat ++;
+                        }
+                        if(valueRepeat > 1){
+                            $scope.errors = '';
+                    		$scope.success = '';
+                        	$scope.warning = "Se ha encontrado un registro de promedio duplicado. Verifique la información."
+                        }
+                    }
+                }
+            }
+        }]);
+    	
+    	function calculatorMaxLength(object){
+            $(object).addClass('edited');
+            $(object).removeClass('input');
+            $(object).removeClass('clean');
+        	if (object.value.length > object.maxLength){
+                object.value = object.value.slice(0, object.maxLength);
+            }
+            if(object.value >10){
+            	object.value = object.value.slice(0, object.value.length - 1);
+            }
+        }
+     </script>
+</apex:component>

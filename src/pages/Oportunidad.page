@@ -1,0 +1,6 @@
+<apex:page tabStyle="Opportunity" >
+    <apex:form >
+    <apex:commandButton value="Pago con Tarjeta" />
+    </apex:form>
+    <apex:enhancedList type="Opportunity" height="500" rowsPerPage="25" />
+</apex:page>

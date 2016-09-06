@@ -1,0 +1,75 @@
+<apex:page standardController="Descuento__c" docType="html-5.0" id="page">
+    <head>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery.bootstrap-duallistbox.min.js')}" />
+    </head>
+    
+    
+    <script src="/soap/ajax/13.0/connection.js"></script>
+    <script type="text/javascript">if(typeof sforce !== 'undefined') {sforce.connection.sessionId = '{!GETSESSIONID()}';}</script>    
+    <div class="bPageTitle">
+        <div class="ptBody">
+            <div class="content">
+                <img src="/s.gif" alt="Descuento" class="pageTitleIcon" title="Descuento"/>
+                <h1 class="pageType marginh2">Nuevo Descuento<span class="titleSeparatingColon">:</span></h1>
+                <h2 class="pageDescription"> Seleccionar tipo de registro Descuento</h2>
+                <div class="blank">&nbsp;</div>
+            </div>
+        </div><div class="ptBreadcrumb"></div>
+    </div>
+    <div class="bDescription">
+        Seleccione un tipo de registro para el nuevo descuento.&nbsp;Para omitir esta página la próxima vez, modifique la configuración del tipo de registro en su página de configuración personal.
+    </div>
+    <apex:form id="form" >
+        <apex:pageBlock title="Seleccionar tipo de registro Descuento" id="block" >
+            <apex:pageBlockSection id="block-section" >
+                <!--apex:inputField id="tipoDescuento1" value="{!Descuento__c.TipoDescuento__c}" required="true"/-->
+                <select class="col-md-offset-7" id="tipoDescuento" name="tipoDescuento">
+                    <!--option value="0">--Seleccionar--</option-->
+                    <option value="descuentoindividual">Descuento individual vigente</option>
+                    <option value="promocion0">Promoción 0</option>
+                    <!--option value="promocionsolicitada">Promoción Solicitada</option-->
+                </select>
+            </apex:pageBlockSection>
+           
+            <apex:pageBlockButtons id="block-button">
+                <input id="nuevo" type="button" class="btn btn-default btn-guardar" value="¿Deseas Continuar?"/>
+                <!--apex:commandButton id="botonNuevo" action="{!URLFOR($Action.Descuento__c.Nuevo_Descuento)}" value="¿Deseas continuar?" styleClass="btn-nuevo"/-->
+                <apex:commandButton id="botonCancelar" action="{!cancel}" value="Cancelar"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <style>
+        .marginh2{
+        	margin-top: 0px;
+        	margin-bottom: -17px;
+        }
+        h2{
+        	font-size: 1.2em;
+        }
+        
+    </style>
+    <script type="text/javascript">
+    j$ = jQuery.noConflict();
+    j$(document).ready(function() { 
+        var tipoDescuento = j$('#tipoDescuento option:selected').val();
+        j$(document).ready(function() { 
+            j$('.btn-guardar').on('click', nuevoD);
+            /*
+            j$('#tipoDescuento').on('change',function(){
+            	j$('#page\\:form').attr('action', url+'&td=');
+            });*/
+        });
+    });
+    var url = '{!URLFOR($Action.Descuento__c.Nuevo_Descuento)}';    
+    function nuevoD(){
+        var tipoDescuento = j$('#tipoDescuento option:selected').val();
+        console.log(tipoDescuento);
+        window.location = url+'&td='+tipoDescuento;
+    }
+    </script>
+</apex:page>

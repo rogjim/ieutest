@@ -1,0 +1,932 @@
+<apex:component >
+    
+    <div ng-controller="becaComercialCtrl" id="becaComercialCtrl" class="" >
+        <div class="ng-cloak">
+            <div class="panel panel-default ieu-panel ">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{title}}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row ">
+                        <div class="row">                            
+                            <div class="col-sm-4 col-sm-offset-4 text-center">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4">Periodo</label>
+                                        <div class="col-sm-8">
+                                            <select ng-change="setSelectedPeriod(periodSelected)" class="form-control" ng-options="o.Name for o in periods" ng-model="periodSelected"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row" style="padding-top:2em;" >
+                        <div class="col-md-8 col-md-offset-1">
+                            <div class="table-responsive">
+                                <table class="table table-condensed table-bordered">
+                                    <thead>
+                                        <tr class="minimo">
+                                            <!--
+                                            <th class="text-center col-md-1" > {{fieldsK.discount.DescuentoInicial__c.label}}</th>
+                                            <th class="text-center col-md-1" > {{fieldsK.discount.DescuentoFinal__c.label}}</th>
+											-->
+                                            <th class="text-center col-md-1" ng-repeat="categoriaLetra in fieldsK.scholarship.CategoriaLetra__c.values ">{{categoriaLetra.label}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <!--
+                                            <td class=""><input ng-keyup="validateInputAux('descuentoInicial')"  type="number" step="0.1" class="form-control" ng-model="inputAux.descuentoInicial" /></td>
+                                            <td class=""><input ng-keyup="validateInputAux('descuentoFinal')" type="number" step="0.1" class="form-control" ng-model="inputAux.descuentoFinal" /></td>
+											-->
+                                            <td ng-repeat="categoriaLetra in fieldsK.scholarship.CategoriaLetra__c.values ">
+                                                <input ng-keyup="validateInputAux(categoriaLetra.label+'__c')"  type="number" step="1" class="form-control col-md-1 letter" ng-model="inputAux[categoriaLetra.label+'__c']" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-xs-2">
+                            <button ng-click="setSelectedValues('selected')" style="width:15em;" class="text-left btn btn-primary">
+                                <span class="fa fa-check-square" style="padding:0 .5em;"></span>
+                                Aplicar a seleccionados
+                            </button>
+                            <button ng-click="setSelectedValues('all')" style="width:15em;margin-top:.5em;" class="text-left btn btn-primary">
+                                <span class="fa fa-plus-square" style="padding:0 .5em;margin-left:-4em;" ></span>
+                                Aplicar a todos
+                            </button>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-sm-3" style="padding:2em;">
+                        <div class="input-group">
+                            <span class="input-group-addon">Buscar</span>
+                            <input type="text" class="form-control" ng-model="searchOff" ng-change="viewPagination(1)" ></input>
+                        </div>
+                    </div>
+                    <div ng-show="offers.length > 0" class="row" style="padding-top:3em;max-width: 100%;" >
+                        <div  class="col-12 col-sm-12 col-lg-12" >
+                            <div class="table-responsive">
+                                <table id="tablaComercial"  class="table table-hover">
+                                    <thead>
+                                        <tr class="minimo">
+                                            <!--
+                                            <th >Nombre</th>
+                                            -->
+                                            <th class="littleColumn">
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{fieldsK.offer.Modalidad__c.label}}">
+                                                    <a ng-click="sortType = 'Modalidad__r'; sortReverse = !sortReverse" >
+                                                        M
+                                                        <span ng-show="sortType == 'Modalidad__r' && !sortReverse" class="fa fa-caret-down"></span>
+                                                        <span ng-show="sortType == 'Modalidad__r' && sortReverse" class="fa fa-caret-up"></span>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th class="littleColumn">
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{fieldsK.offer.Nivel__c.label}}">
+                                                        <a ng-click="sortType = 'Nivel__r'; sortReverse = !sortReverse" >
+                                                        N
+                                                        <span ng-show="sortType == 'Nivel__r' && !sortReverse" class="fa fa-caret-down"></span>
+                                                        <span ng-show="sortType == 'Nivel__r' && sortReverse" class="fa fa-caret-up"></span>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th >
+                                                <div >
+                                                    <a ng-click="sortType = 'Ofer_Plantel__c'; sortReverse = !sortReverse" >
+                                                        {{fieldsK.offer.Plantel__c.label}}
+                                                        <span ng-show="sortType == 'Ofer_Plantel__c' && !sortReverse" class="fa fa-caret-down"></span>
+                                                        <span ng-show="sortType == 'Ofer_Plantel__c' && sortReverse" class="fa fa-caret-up"></span>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th >
+                                                <div >
+                                                    <a ng-click="sortType = 'Ofer_Programa__c'; sortReverse = !sortReverse" >
+                                                    	{{fieldsK.offer.Programa__c.label}}
+                                                        <span ng-show="sortType == 'Ofer_Programa__c' && !sortReverse" class="fa fa-caret-down"></span>
+                                                        <span ng-show="sortType == 'Ofer_Programa__c' && sortReverse" class="fa fa-caret-up"></span>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <!--
+                                            <th >{{fieldsK.offer.NumeroMensualidades__c.label}}</th>
+                                            -->
+                                            <th class="littleColumn">
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{fieldsK.offer.NumeroColegiaturas__c.helpText}}">
+                                                    <a ng-click="sortType = 'NumeroColegiaturas__c'; sortReverse = !sortReverse" >
+                                                    	{{fieldsK.offer.NumeroColegiaturas__c.label}}
+                                                        <span ng-show="sortType == 'NumeroColegiaturas__c' && !sortReverse" class="fa fa-caret-down"></span>
+                                                        <span ng-show="sortType == 'NumeroColegiaturas__c' && sortReverse" class="fa fa-caret-up"></span>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <!--
+                                            <th class="littleColumn">
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{fieldsK.offer.NumeroInscripciones__c.helpText}}">
+                                                    <a ng-click="setFieldSort('Ofer_NumeroInscripciones__c')">
+                                                        <span ng-class="iconSort('Ofer_NumeroInscripciones__c')"></span>
+                                                        {{fieldsK.offer.NumeroInscripciones__c.label}}
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th >
+                                                <div >
+                                                    <a ng-click="setFieldSort('Ofer_Periodicidad__c')">
+                                                        <span ng-class="iconSort('Ofer_Periodicidad__c')"></span>
+                                                        {{fieldsK.offer.Periodicidad__c.label}}
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th style="max-width:8em;" >
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{fieldsK.offer.DuracionPrograma__c.label}}">
+                                                    <a ng-click="setFieldSort('Ofer_DuracionPrograma__c')" >
+                                                        <span ng-class="iconSort('Ofer_DuracionPrograma__c')" />
+                                                        
+                                                        <span ng-bind="fieldsK.offer.DuracionPrograma__c.label" />
+                                                        Duración<br />
+                                                        del programa
+                                                    </a>
+                                                </div>
+                                            </th>
+                            				-->
+                                            <th ><div >
+                                                    {{fieldsK.offer.Conceptos__c.label}}
+                                            </div></th>
+                                            <th >
+                                                <div >
+                                                    {{fieldsK.offer.Grupo__c.label}}
+                                                    
+                                                </div>
+                                            </th>
+                                            
+                                            <!-- CAMPOS EDITABLES-->
+                                            <!--
+                                            <th >{{fieldsK.discount.DescuentoInicial__c.label}}</th>
+                                            <th >{{fieldsK.discount.DescuentoFinal__c.label}}</th>
+                                            -->
+                                            <th  class="text-center size" ng-repeat="categoriaLetra in fieldsK.scholarship.CategoriaLetra__c.values ">{{categoriaLetra.label}}</th>
+                                            <th class="text-center">Aplica</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!---
+										<tr ng-repeat="catalogo in pagination.filtered |filter:searchOff | orderBy:sortField : reverse as filteredItems track by $index | limitTo: pagination.itemsPerPage | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage ">
+												<tr ng-repeat="sc in base.scholarship.filtered|orderBy:base.scholarship.pag.sfi:base.scholarship.pag.rev | filter:base.scholarship.pag.sea | startFrom:(base.scholarship.pag.cpa - 1) * base.scholarship.pag.ipp|limitTo: base.scholarship.pag.ipp">
+												<tr ng-repeat="promo in pagination.filtered | orderBy:sortType:sortReverse | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage ">
+										-->
+                                        <tr ng-repeat="catalogo in pagination.filtered |filter:searchOff  | orderBy:sortType:sortReverse  | startFrom:(pagination.currentPage - 1) * pagination.itemsPerPage | limitTo: pagination.itemsPerPage" >
+                                            
+                                            <!--
+                                            <td>{{catalogo.Ofer_Name}}</td>
+                                            -->
+                                            <td >
+                                                <div uib-tooltip="{{catalogo.Modalidad__r}}" data-toggle="tooltip" data-placement="bottom" >
+                                                	<span ng-bind="catalogo.Modalidad__l"></span>
+                                                </div>
+                                            </td>
+                                            <td >
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{catalogo.Nivel__r}}">
+                                                    <span ng-bind="catalogo.Nivel__l"></span>
+                                                </div>
+                                            </td>
+                                            <td >
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{catalogo.Plantel__r}}">
+                                                    <span ng-bind="catalogo.Plantel__l"></span>
+                                                </div>
+                                            </td>
+                                            <td >
+                                                <div data-toggle="tooltip" data-placement="bottom" uib-tooltip="{{catalogo.Programa__r}}">
+                                                    <span ng-bind="catalogo.Programa__l"></span>
+                                                </div>
+                                            </td>
+                                            <!--
+                                            <td>{{catalogo.Ofer_NumeroMensualidades__c}}</td>
+                                            -->
+                                            <td>{{catalogo.NumeroColegiaturas__c}}</td>
+                                            <!--
+                                            <td>{{catalogo.Ofer_NumeroInscripciones__c}}</td>
+                                            <td>{{catalogo.Ofer_Periodicidad__c}}</td>
+                                            <td>{{catalogo.Ofer_DuracionPrograma__c}}</td>
+-->
+                                            <td style="min-width:14em;max-width:14em;">
+                                            	<ul class="list-unstyled">
+                                                    <li ng-repeat="pay in catalogo.configure.payments">
+                                                        <span ng-bind="pay.Description"/>: $<span ng-bind="pay.Monto__c"/>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td >
+                                                <ul class="list-unstyled">
+                                                    <li ng-repeat="group in catalogo.configure.groups"><span ng-bind="group.Name"/> <span ng-bind=""/></li>
+                                                </ul>
+                                            </td>
+                                            <!--
+                                            <td>
+                                                <input ng-keyup="validateInput($index,'Desc_DescuentoInicial__c')" type="number" step="0.1" class="form-control" ng-model="catalogo['Desc_DescuentoInicial__c']" />
+                                            </td>
+                                            <td>
+                                                <input ng-keyup="validateInput($index,'Desc_DescuentoFinal__c')" type="number" step="0.1" class="form-control" ng-model="catalogo['Desc_DescuentoFinal__c']" />
+                                            </td>
+                                            -->
+                                            <td style="padding: 1em 0;" ng-repeat="categoriaLetra in fieldsK.scholarship.CategoriaLetra__c.values" class="text-center" >
+                                                <input style="min-width:4em; max-width:4em;  padding:.3em;" ng-keyup="validateInput(catalogo['i'],'Beca_'+categoriaLetra.label+'__c')"  step="1" class="form-control sizeInput letter" ng-model="catalogo['Beca_'+categoriaLetra.label+'__c']"/>
+                                            </td>
+                                            <td class="text-center" ><input type="checkbox" ng-model="catalogo.check" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <uib-pagination ng-if="pagination.filtered.length > pagination.itemsPerPage"
+                                            items-per-page="pagination.itemsPerPage" 
+                                            total-items="pagination.totalItems" 
+                                            ng-model="pagination.currentPage" 
+                                            max-size="pagination.maxPages" 
+                                            boundary-links="true" 
+                                            force-ellipses="true" 
+                                            first-text="{{pagination.first}}" 
+                                            previous-text="{{pagination.previous}}" 
+                                            next-text="{{pagination.next}}" 
+                                            last-text="{{pagination.last}}">
+                            </uib-pagination>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center form-input" >
+                    <p ng-show="error!=''" class="bg-danger messages" >{{error}}</p>
+                    <p ng-show="success!=''" class="bg-success messages" >{{success}}</p>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <button  ng-click="save()" class="btn btn-success">
+                                <span ng-if="saving" class="fa fa-spinner fa-pulse fa-fw" ></span>
+                                <span class="fa fa-save fa-fw"></span>
+                                Guardar
+                            </button>
+                            
+                            <a ng-disabled="saving" ng-click="" class="btn btn-default">
+                                <span class="fa fa-mail-reply fa-fw"></span>
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+    <script type="text/javascript">
+
+	var app = angular.module('appIEU');
+    
+    app.controller('becaComercialCtrl', ['$scope', '$timeout', '$filter', '$interval', 'sfService', 'sfDB','sfUtils', function($scope, $timeout, $filter, $interval, sfService, sfDB,sfUtils) {
+        
+        var periodGW = new sfService.gateway.period();
+        var offerGW = new sfService.gateway.offer();
+        var scholarshipGW = new sfService.gateway.scholarship();
+        var catalogGW = new sfService.gateway.catalog();
+        var programGW = new sfService.gateway.program();
+        var campusGW = new sfService.gateway.campus();
+        var discountGW = new sfService.gateway.discount();
+        var recordTypeGW = new sfService.gateway.recordType();
+        var paymentGW = new sfService.gateway.payments();
+        var groupGW = new sfService.gateway.group();
+
+        $scope.periods = [];
+        $scope.periodSelected = {};
+        $scope.currentPeriod  = false;
+        
+        $scope.offerFields = [];
+        $scope.scholarShipFields = [];
+        
+        $scope.recordType={};
+        
+        //Comunes
+        $scope.errors = [];
+        $scope.limit = 100;
+        $scope.offset = 0;
+        $scope.title = 'Configuración';
+        $scope.isEditingC     = false;
+        $scope.isEditingOA = false;
+        
+        $scope.catalogK = {};
+        $scope.programK = {};
+        $scope.campusK = {};
+        $scope.fields = {};
+        $scope.error='';
+        $scope.success='';
+        
+        $scope.sortType     = 'name'; 
+        $scope.inputAux = {}; // for the auxiliar table
+        
+        $scope.instances = {scholarship: [],  recordType: []};
+        $scope.catalogFields = [];
+        $scope.fieldsK = {period: {}, offer: {}, catalog: {}, program: {}, campus: {},  discount: {}, scholarship: {}}; 
+        $scope.fieldsS = {offer: ['Estatus__c', 'Modalidad__c', 'Plantel__c', 'Nivel__c', 'Programa__c', 'NumeroColegiaturas__c', 'NumeroInscripciones__c', 'Periodicidad__c', 'DuracionPrograma__c']};
+        
+        $scope.mapOfferScholarShip = {};
+        $scope.mapScholarShips = {};
+        $scope.sortField='';
+        $scope.searchOff='';
+        $scope.campusCatalog={};
+        
+        $scope.offerSet = [];
+        $scope.offerSetVisible = [];
+        
+        $scope.pagination = {
+            itemsPerPage: 10,  
+            maxPages: 5, 
+            totalItems: 0, 
+            currentPage: 0,
+            totalPages: 0,
+            first: 'Primero',
+            previous: 'Ant',
+            next: 'Sig',
+            last: 'Último',
+            filtered: [],
+            pageSize : [10],
+            sortField: 'name',
+            reverse: true,
+            search: '',
+            visibles: {}
+        };
+        
+        
+        $scope.getRecordType= function(){
+            var criteria = { where:{ Name:{eq: 'Beca Comercial'}}, limit: parseInt($scope.limit)};
+            listInstancesObject(recordTypeGW, criteria, $scope.recordTypeFields, function(err, res) {
+                if(!err) {
+                    $scope.recordType=res[0];
+                }
+            });
+        }
+        
+        /*list periods from DB*/
+        $scope.getPeriods = function() {
+            var criteria = {orderby: [{CreatedDate: 'DESC'}], limit: parseInt($scope.limit)};
+            if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+            
+            sfUtils.retrieve("SELECT Id, Name FROM Periodo__c", function(res) {
+                //console.log('sFUtils Periodos: ');
+                //console.log(res);
+                
+                $scope.periods=res;
+                $scope.setSelectedPeriod();
+                var fieldsAux = {descuentoInicial:NaN, descuentoFinal:NaN};
+                
+                angular.forEach($scope.fieldsK.scholarship.CategoriaLetra__c.values, function(item, index) {
+                    fieldsAux[item.value+'__c'] = NaN ;
+                });
+                
+                $scope.inputAux = fieldsAux;
+                $scope.$apply();
+            });
+        };
+        
+        $scope.setSelectedPeriod = function(period, findId) {
+            $scope.success='';
+            $scope.error='';
+            if(findId) {
+                var res = $filter('filter')($scope.periods, {Id: period.Id});
+                if(res && res.length > 0) {
+                    period = res[0];
+                }
+            }
+            $scope.periodSelected = period || $scope.periods[0];
+            
+            //validate if preserve editing
+            $scope.isEditingC = false;
+            $scope.isEditingOA = false;
+            if($scope.periodSelected !== 'udefined') {
+                $scope.currentPeriod = angular.copy($scope.periodSelected);
+                $scope.title = 'Configuración: ' + $scope.currentPeriod.Name;
+                
+                /*get offers from period*/
+                $scope.getOffertByPeriod($scope.currentPeriod);
+                
+            }
+            
+        };
+        var listInstancesObject = function(gateway, criteria, fields, callback) {
+            sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, gateway, function(err, res) {
+                sfDB.parseFromDB(res, fields, function(err, data) {
+                    callback(err, data)
+                });
+            });
+        };
+        $scope.getOffertByPeriod = function(period) {
+            $scope.fieldsS.payment = [];
+            $scope.modalitys = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Modalidad'});
+            $scope.levels = $filter('filter')($scope.catalog, {TipoCatalogo__c: 'Nivel'});
+            var periodicity = $filter('filter')($scope.offerFields, {name: 'Periodicidad__c'});
+            var duration = $filter('filter')($scope.offerFields, {name: 'DuracionPrograma__c'});
+            
+            if(period && period.hasOwnProperty('Id')){
+                var criteria = {where: {Periodo__c: {eq: period.Id}}, limit: parseInt($scope.limit)};
+                if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+                
+                
+                sfUtils.retrieve('  SELECT Id, Name, NumeroColegiaturas__c, Grupo__c, Programa__c, Programa__r.Name,'
+                                 +' Nivel__c, Nivel__r.Name,Nivel__r.Letra__c, '
+                                 +' Modalidad__c, Modalidad__r.Name, Modalidad__r.Letra__c, '
+                                 +' Programa__r.AbreviaturaPrograma__c, Programa__r.Letra__c, '
+                                 +' Plantel__c, Plantel__r.Name, Plantel__r.Abreviatura__c, '
+                                 +' Beca__c, Beca__r.A__c, Beca__r.B__c, Beca__r.C__c, Beca__r.D__c, Beca__r.E__c, Beca__r.F__c, Beca__r.G__c, Beca__r.H__c '
+                                 +' FROM OfertaEducativa__c '
+                                 +" WHERE Periodo__c='"+$scope.currentPeriod.Id+ "'", function(res) {
+                                     
+                                     $scope.offers = res;
+                                     if($scope.offers.length<1){
+                                         $scope.error='No existen ofertas en el periodo';
+                                     }else{
+                                         $scope.getScholarShipsByPeriodProgram(period,$scope.offers);
+                                     }
+                                     
+                                 });
+            }
+        };
+        
+        $scope.getScholarShipsByPeriodProgram = function(period, offers) {
+            if(period && period.hasOwnProperty('Id')){
+                var idScholarShips=[];
+                
+                $scope.offerSet=[];
+                angular.forEach(offers, function(item, index) {
+                    $scope.getGroupsByOffer(item,index);
+                    $scope.getPaymentsByOffer(item,index);
+                    
+                    
+                    $scope.mapScholarShips[item.Id] = [];
+                    $scope.mapScholarShips[item.Id].Oferta = item;
+                    $scope.mapScholarShips[item.Id].check = false;
+                    
+                    var matchScholarShip={};
+                    matchScholarShip.check=false;
+                    matchScholarShip.i=index;
+                    
+                    matchScholarShip.Modalidad__r=item.Modalidad__r.Name;
+                    matchScholarShip.Modalidad__l=item.Modalidad__r.Letra__c;
+                    
+                    matchScholarShip.Nivel__r=item.Nivel__r.Name;
+                    matchScholarShip.Nivel__l=item.Nivel__r.Letra__c;
+                    
+                    matchScholarShip.Plantel__r=item.Plantel__r.Name;
+                    matchScholarShip.Plantel__l= item.Plantel__r.Abreviatura__c==null?(item.Plantel__r.Name).substring(0, 5):item.Plantel__r.Abreviatura__c;
+                    
+                    matchScholarShip.Programa__r=item.Programa__r.Name;
+                    matchScholarShip.Programa__l= item.Programa__r.AbreviaturaPrograma__c==null?(item.Programa__r.Name).substring(0, 5):item.Programa__r.AbreviaturaPrograma__c;
+                    
+                    matchScholarShip.NumeroColegiaturas__c=parseInt(item.NumeroColegiaturas__c);
+                    for(var property in item) {
+                        if(property==='Beca__c'||
+                           property==='Descuento__c'||
+                           property==='Id'||
+                           property==='Modalidad__c'||
+                           property==='Name'||
+                           property==='Nivel__c'||
+                           //property==='NumeroColegiaturas__c'||
+                           property==='Periodo__c'||
+                           property==='Plantel__c'||
+                           property==='Plantel__c_Abrev'||
+                           property==='Plantel__c__Id'||
+                           property==='Programa__c'||
+                           property==='Programa__c_Abrev'||
+                           property==='Programa__c__Id'
+                          ){
+                            matchScholarShip['Ofer_'+property]=item[property];
+                        }
+                    }
+                    
+                    if(item.Beca__c!=null){ // educational offerings already has scholarship
+                        matchScholarShip.Beca_Id = item.Beca__c;
+                        matchScholarShip.Beca_A__c = parseInt(item.Beca__r.A__c)
+                        matchScholarShip.Beca_B__c = parseInt(item.Beca__r.B__c)
+                        matchScholarShip.Beca_C__c = parseInt(item.Beca__r.C__c)
+                        matchScholarShip.Beca_D__c = parseInt(item.Beca__r.D__c)
+                        matchScholarShip.Beca_E__c = parseInt(item.Beca__r.E__c)
+                        matchScholarShip.Beca_F__c = parseInt(item.Beca__r.F__c)
+                        matchScholarShip.Beca_G__c = parseInt(item.Beca__r.G__c)
+                        matchScholarShip.Beca_H__c = parseInt(item.Beca__r.H__c)
+                    }else{	// still has no scholarship, the fields are created to insert
+                        var fields = {PorcentajeBeca__c:0, EstatusBeca__c :'Activo' };
+                        angular.forEach($scope.fieldsK.scholarship.CategoriaLetra__c.values, function(item2, index) {
+                            fields[item2.value+'__c'] = NaN ;
+                            matchScholarShip['Beca_'+item2.value+'__c']=NaN;
+                        });
+                        $scope.mapScholarShips[item.Id].Beca = fields;
+                    }
+                    
+                    $scope.offerSet.push(matchScholarShip);
+                    //Get payments and group:
+                    $scope.offerSet[index].configure = {};
+                });
+                $scope.$apply();
+                $scope.viewPagination(1);
+                
+                //console.log($scope.offerSet);
+            }
+        };
+        
+        $scope.getDiscountsByPeriodProgram = function(period, offers) {
+            if(period && period.hasOwnProperty('Id')){
+                var idDiscounts=[];
+                angular.forEach(offers, function(item, index) {//fill array Ids and get asociated ScholarShips
+                    if(item.hasOwnProperty('Descuento__c')){
+                        idDiscounts.push(item.Descuento__c);
+                    }
+                });
+                var criteria = {where: {Id:{in: idDiscounts }} , limit: parseInt($scope.limit)};
+                if ($scope.offset > 0) { criteria.offset = $scope.offset; }
+                sfDB.getRemoteAction({criteria: criteria, action: 'retrieve'}, discountGW, function(err, res) {    
+                    sfDB.parseFromDB(res, $scope.discountsFields, function(err, data) {
+                        if(!err) {
+                            $scope.discounts = data;
+                        }
+                    });
+                    
+                    angular.forEach(offers, function(item, index) {
+                        if(item.hasOwnProperty('Descuento__c')){ // discount already has scholarship
+                            angular.forEach($scope.discounts, function(item2, index2) {
+                                if(item2.Id===item.Descuento__c){
+                                    for(var property in item2) {
+                                        $scope.offerSet[index]['Desc_'+property]=item2[property];
+                                    }
+                                    $scope.mapScholarShips[item.Id].Descuento = item2;
+                                }
+                            });
+                        }else{	// still has no discount, the fields are created to insert
+                            var fields = {Estatus__c:'Activo', DescuentoInicial__c:NaN, DescuentoFinal__c:NaN};
+                            $scope.mapScholarShips[item.Id].Descuento = fields;
+                            $scope.offerSet[index]['Desc_DescuentoInicial__c']=NaN;
+                            $scope.offerSet[index]['Desc_DescuentoFinal__c']=NaN;
+                        }
+                    }); //finish retrieve discounts
+                    $scope.$apply();
+                    
+                });
+            }
+        }
+        
+        $scope.save = function() {
+            //get recordType dcholarship
+            becas=[];
+            ofertas=[];
+            $scope.offerSet.forEach( function(item, index) {
+                var beca = new sforce.SObject('Beca__c');
+                var oferta = new sforce.SObject('OfertaEducativa__c');
+                
+                for(var property in item){
+                	var type = property.substring(0,5);
+                    var prop = property.substring(5,property.length);
+                    if(type=='Beca_'){
+                        beca[prop]=item[property];
+                    }
+                    if(type=='Ofer_'){
+                        oferta[prop]=item[property];
+                    }
+                }
+                //set correct value is the input is null
+                angular.forEach($scope.fieldsK.scholarship.CategoriaLetra__c.values, function(item2, index) {
+                    beca[item2.value+'__c'] = beca[item2.value+'__c'] ? beca[item2.value+'__c'] : NaN;
+                });
+                item.NumeroColegiaturas__c=parseFloat(item.NumeroColegiaturas__c);
+                
+                beca.RecordTypeId=$scope.recordType.Id;
+                beca.OfertaEducativa__c=oferta.Id;
+                //beca.RecordType.Id=$scope.recordType.Id;
+                // Fields that do not support overwriting, are deleted
+                delete oferta['CreatedDate'];
+                delete oferta['searchTo'];
+                delete oferta['Name'];
+                delete oferta['Programa__c__Id'];
+                delete oferta['Programa__c_Abrev'];
+                delete oferta['Plantel__c__Id'];
+                delete oferta['Plantel__c_Abrev'];
+                delete oferta['Plantel__c'];
+                delete oferta['Programa__c'];
+                delete beca['Name'];
+                delete beca['CreatedDate'];
+                delete beca['FechaFirma__c'];
+                
+                becas.push(beca);
+                ofertas.push(oferta);
+            });
+            
+            var longitud=ofertas.length>200?200:ofertas.length;
+            var noArreglos = longitud<200?1:parseInt(1+(longitud/200));
+            
+            var longitudIni=0;
+            var longitudFin = longitud;
+            var i=1;
+            
+            var becasSize = [];
+            var ofertasSize =[];
+            
+            while (i<=noArreglos) {      
+                becasSize	=becas.slice(longitudIni, longitudFin);
+                ofertasSize	=ofertas.slice(longitudIni, longitudFin);
+				
+                sfUtils.upsert(becasSize, function(res) {
+                    //console.log(res);
+                    
+                    if(res.faultcode) {
+                        $scope.errors= "Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : '');
+                    }else{
+                        for(i=0;i<ofertasSize.length;i++){
+                            ofertasSize[i].Beca__c=becasSize[i].id=res[i].id;
+                        }
+                        
+                        sfUtils.upsert(ofertasSize, function(res) {
+                            if(res.faultcode) {
+                                $scope.errors= "Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : '');
+                                $scope.$apply();
+                            }else{
+                                $scope.success='Se actualizaron las becas exitosamente';
+                                $scope.$apply();
+                            }
+                            //console.log(becasSize);
+                            //console.log(ofertasSize);
+                        });
+                    }
+                });
+                
+                i++;
+				if(noArreglos>1){
+                    longitudIni=longitudFin;
+                    longitudFin=ofertas.length>(200*i)?(200*i):ofertas.length;
+                }
+            }
+            
+            
+            
+            /*
+            sfUtils.upsert(becasSize, function(res) {
+                console.log(res);
+                
+                if(res.faultcode) {
+                    $scope.errors= "Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : '');
+                }else{
+                    for(i=0;i<ofertasSize.length;i++){
+                        ofertasSize[i].Beca__c=becasSize[i].id=res[i].id;
+                    }
+                    
+                    sfUtils.upsert(ofertasSize, function(res) {
+                        if(res.faultcode) {
+                            $scope.errors= "Ocurrió un error al procesar su petición, " + (res.faultstring ? res.faultstring : '');
+                            $scope.$apply();
+                        }else{
+                            $scope.success='Se actualizaron las becas exitosamente';
+                            $scope.$apply();
+                        }
+                        console.log(becasSize);
+                        console.log(ofertasSize);
+                    });
+                }
+            });
+            */
+            
+            //becasSize	=becas.slice(i, i + 190);
+            //ofertasSize	=ofertas.slice(i, i + 190);
+            
+            
+            //$scope.$apply();
+            
+        }
+        
+        
+        /*UTILS*/
+        $scope.getPaymentsByOffer = function(offer,index) {
+            if(offer) {
+                sfUtils.retrieve( " SELECT Id, Name,Activo__c, Cantidad__c, ConceptoPago__c, ConceptoFijo__c, Monto__c, OfertaEducativa__c  "
+                                 +" FROM OfertaConceptoPagos__c "
+                                 +" WHERE OfertaEducativa__c='"+offer.Id+"' AND Activo__c = true", function(res) {
+                                     $scope.offerSet[index].configure.payments = res;
+                                     angular.forEach($scope.offerSet[index].configure.payments, function(value, key){
+                                         value.Description = $scope.parseFromCatalog(value.ConceptoPago__c, $scope.catalogK);
+                                     });
+                                     $scope.$apply();
+                                 });
+            }
+        };
+        $scope.getGroupsByOffer = function(offer, index) {
+            if(offer) {
+                
+                sfUtils.retrieve( " SELECT Id, Name, Activo__c, Grupo__c, Nomenclatura__c  "
+                                 +" FROM Grupo__c  "
+                                 +" WHERE OfertaEducativa__c='"+offer.Id+"' ", function(res) {
+                                     $scope.offerSet[index].configure.groups = res;
+                                     $scope.$apply();
+                                 });
+            }
+        };
+        $scope.arrayKeyToObj = function(fields, objName) {
+            if(!$scope.fieldsK[objName]){
+            	$scope.fieldsK[objName]={};
+            }
+            angular.forEach(fields, function(item, index) {
+                $scope.fieldsK[objName][item.name] = item;
+                $scope.fieldsK[objName][item.name]['objParent'] = objName;
+            });
+        };
+        $scope.processResult = function(err, res, action) {
+            if(err) {
+                $scope.errors = err;
+            } else {}
+            $scope.saving = false;
+            $scope.$apply();
+        };
+        
+        $scope.addIndexToFind = function(data, fields, catalog) {
+            angular.forEach(data, function(instance) {
+                if(!instance.hasOwnProperty('searchTo')) {
+                    instance.searchTo = {};
+                }
+                angular.forEach(fields, function(field) {
+                    instance.searchTo[field] = $scope.parseFromCatalog(instance[field], catalog);
+                });
+            });
+        };
+        
+        $scope.parseFromCatalog = function(key, catalog) {
+            if(key && catalog && typeof catalog === 'object' && catalog.hasOwnProperty(key)) {
+                return catalog[key];
+            } else {
+                return '';
+            }
+        };
+        
+        //get catalogs from payments, modality and level
+        $scope.getCatalogs = function() {
+            $scope.catalogs = [
+                {n: 'catalog', c: catalogGW}
+            ];
+            angular.forEach($scope.catalogs, function(cat, index) {
+                sfDB.getRemoteAction({criteria: {limit: parseInt($scope.limit)}, action: 'retrieve'}, cat.c, function(err, res) {
+                    sfDB.parseFromDB(res, $scope[cat.n+'Fields'], function(err, data) {
+                        $scope[cat.n] = data;
+                        angular.forEach($scope[cat.n], function(item, index) {
+                            if(item.TipoCatalogo__c=='Concepto Pagos'){
+                                $scope[cat.n+'K'][item.Id] = item.Name;
+                            }else{
+                                $scope[cat.n+'K'][item.Id] = item; 
+                            }
+                            
+                        });
+                    });
+                });
+            });
+        };
+        
+        
+        //functions to sort
+        $scope.setFieldSort = function(sortField) {
+            $scope.sortField = sortField;
+            $scope.reverse = !$scope.reverse;
+        }
+        var isSortedBy = function (fieldName) {return $scope.sortField === fieldName; }; 
+        var isSortedAscending = function (fieldName) {return isSortedBy(fieldName) && !$scope.reverse; }; 
+        var isSortedDescending = function (fieldName) {return isSortedBy(fieldName) && $scope.reverse; }; 
+        $scope.iconSort = function (fieldName) {return {'fa fa-sort': !isSortedBy(fieldName), 'fa fa-sort-amount-asc fa-fw': isSortedAscending(fieldName), 'fa fa-sort-amount-desc fa-fw': isSortedDescending(fieldName)}; }; 
+        
+        //Validate values valids from input
+        $scope.validateInputAux = function(inputForm){
+            $scope.success='';
+            if(!isNaN(parseInt($scope.inputAux[inputForm]))){
+                if($scope.inputAux[inputForm]>100){
+                    $scope.inputAux[inputForm]=100;
+                }else if($scope.inputAux[inputForm]<1 ||$scope.inputAux[inputForm]==null||$scope.inputAux[inputForm]==NaN){
+                    $scope.inputAux[inputForm]=NaN;
+                }else{
+                    $scope.inputAux[inputForm]=parseInt($scope.inputAux[inputForm]);
+                }
+            }else{
+                $scope.inputAux[inputForm]=NaN;
+            }
+        }
+        $scope.validateInput = function(index,field){
+            $scope.success='';
+            if(!isNaN(parseInt($scope.offerSet[index][field] ))){
+                $scope.offerSet[index][field]=parseInt($scope.offerSet[index][field]);
+                if($scope.offerSet[index][field]>100){
+                    $scope.offerSet[index][field]=100;
+                }else if($scope.offerSet[index][field]<1 || $scope.offerSet[index][field]==null|| $scope.offerSet[index][field]==NaN ){
+                    $scope.offerSet[index][field]=NaN;
+                }
+            }else{
+                $scope.offerSet[index][field]=NaN;
+            }
+        }
+        
+        //Set selected values from input aux, only rows visible are considered
+        $scope.setSelectedValues = function(type) {
+            $scope.offerSetVisible = $filter('filter')($scope.offerSet,$scope.searchOff);
+            
+            $scope.offerSetVisible.forEach( function(item, index) {
+                if(type==='all'){
+                    $scope.offerSet[item.i]['Desc_DescuentoInicial__c'] = $scope.inputAux.descuentoInicial;
+                    $scope.offerSet[item.i]['Desc_DescuentoFinal__c'] = $scope.inputAux.descuentoFinal;
+                    angular.forEach($scope.fieldsK.scholarship.CategoriaLetra__c.values, function(item2, index) {
+                        $scope.offerSet[item.i]['Beca_'+item2.value+'__c'] = $scope.inputAux[item2.value+'__c'];
+                    });
+                }else{
+                    if($scope.offerSet[item.i].check){
+                        $scope.offerSet[item.i]['Desc_DescuentoInicial__c'] = $scope.inputAux.descuentoInicial;
+                        $scope.offerSet[item.i]['Desc_DescuentoFinal__c'] = $scope.inputAux.descuentoFinal;
+                        angular.forEach($scope.fieldsK.scholarship.CategoriaLetra__c.values, function(item2, index) {
+                            $scope.offerSet[item.i]['Beca_'+item2.value+'__c'] = $scope.inputAux[item2.value+'__c'];
+                        }); 
+                    }
+                }
+            });
+        };
+        
+        /*BEGIN*/
+        sfDB.getRemoteAction({action: 'describe'}, periodGW, function(err, res) {
+            if(!err) {$scope.periodFields = res; $scope.getPeriods();$scope.arrayKeyToObj(res, 'period');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, scholarshipGW, function(err, res) {
+            if(!err) {$scope.scholarShipFields = res; $scope.arrayKeyToObj(res, 'scholarship');}
+        });
+        
+        sfDB.getRemoteAction({action: 'describe'}, offerGW, function(err, res) {
+            if(!err) {$scope.offerFields = res; $scope.arrayKeyToObj(res, 'offer');}
+        });
+        
+        sfDB.getRemoteAction({action: 'describe'}, catalogGW, function(err, res) {
+            if(!err) {$scope.catalogFields = res; $scope.arrayKeyToObj(res, 'catalog');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, programGW, function(err, res) {
+            if(!err) {$scope.programFields = res; $scope.arrayKeyToObj(res, 'program');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, campusGW, function(err, res) {
+            if(!err) {$scope.campusFields = res; $scope.arrayKeyToObj(res, 'campus');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, discountGW, function(err, res) {
+            if(!err) {$scope.discountsFields = res; $scope.arrayKeyToObj(res, 'discount');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, paymentGW, function(err, res) {
+            if(!err) {$scope.paymentsFields = res;$scope.arrayKeyToObj(res, 'payment');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, groupGW, function(err, res) {
+            if(!err) {$scope.groupFields = res;$scope.arrayKeyToObj(res, 'group');}
+        });
+        sfDB.getRemoteAction({action: 'describe'}, recordTypeGW, function(err, res) {
+            if(!err) {$scope.recordTypeFields = res;$scope.arrayKeyToObj(res, 'recordType'); $scope.getRecordType();}
+        });
+        $scope.getCatalogs();
+        
+        
+        $scope.$watch('[pagination.search, pagination.itemsPerPage]', function (value) {
+            $scope.viewPagination(1);
+        }, true);
+        $scope.viewPagination = function(page) {
+            $scope.offerSetVisible = $filter('filter')($scope.offerSet,$scope.searchOff);
+            
+            if($scope.offerSetVisible && $scope.offerSetVisible.length > 0) {
+                $scope.pagination.filtered = $scope.offerSetVisible;
+                $scope.pagination.totalItems  = $scope.pagination.filtered.length;
+                $scope.pagination.totalPages  = Math.ceil($scope.pagination.totalItems / $scope.pagination.itemsPerPage);
+                $scope.pagination.currentPage = page;
+            }
+            
+        };
+    }]);
+    
+    </script>
+    
+    <style type="text/css">
+        .ieu-panel>.panel-heading{background-color: #2a94d6;border-color: #2585c1; color: white;}
+        .ieu-th-btns{max-width: 50px;white-space: normal;}
+        .ieu-modal-danger>.modal-header{color: #ffffff; background-color: #cf5c60; border-color: #c9484d;}
+        .form-control:focus{background-color: #F3EFEF;}
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {display: none !important;}
+        .form-input {color:#333; margin-top:1.5em;}
+       	.messages{padding:1em;}
+        /*.minimo>th{max-width: 7em;}*/
+        .minimo>th.littleColumn{max-width: 3em;}
+        .size{min-width: 2em;}
+        .sizeInput{-webkit-appearance: none;-moz-appearance: none;appearance: none;margin: 0;-webkit-writing-mode:none;}
+        .tab-content{min-width: 600px; }
+        .ieu-href{cursor: pointer}
+        @media (min-width: 320px) {.tab-content {width: 320px; } }
+        @media (min-width: 480px) {.tab-content {width: 480px; } }
+        @media (min-width: 600px) {.tab-content {width: 600px; } }
+        @media (min-width: 800px) {.tab-content {width: 800px; } }
+        @media (min-width: 1300px) {.tab-content {width: 1300px; } } 
+        @media (min-width: 1600px) {.tab-content {width: 1600px; } } 
+        @media (min-width: 1900px) {.tab-content {width: 1900px; } }
+        
+        
+    </style>
+    
+    
+</apex:component>

@@ -1,0 +1,13 @@
+<apex:page standardController="Opportunity" extensions="FichaPagoOpportunityCtrl" action="{!createPayToken}">
+    <apex:form rendered="{!existApproval}">
+    	<apex:pageBlock >
+            <center>
+                <br/>
+                <apex:outputLabel > Se encuentran solicitudes de beca/descuento pendientes de aprobación,<br/> no se puede generar una ficha de pago hasta que sean autorizadas o rechazadas.</apex:outputLabel>
+                <br/>
+                <br/>
+                <apex:commandButton action="{!exit}" value="Regresar" id="Back" immediate="true"/>
+            </center>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
