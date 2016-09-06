@@ -87,11 +87,17 @@
                 alert(evt.target.error);
             }
         }
+<<<<<<< HEAD
 		//ROGJIM 1
 		//ROGJIM 1
 		//ROGJIM 1
 		//ROGJIM 1
 		//ROGJIM 1
+=======
+		//Holi :D Soy Salvador :3 Jejee
+		//Holi :D Soy Salvador :3 Jejee
+		//Holi :D Soy Salvador :3 Jejee
+>>>>>>> branch 'master' of https://github.com/rogjim/ieutest.git
 </script>
 
     <title>Upload Files using XMLHttpRequest - Minimal</title>
