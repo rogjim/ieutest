@@ -155,6 +155,14 @@
         <filterScope>Everything</filterScope>
         <label>Todos</label>
     </listViews>
+    <listViews>
+        <fullName>Todos</fullName>
+        <columns>NAME</columns>
+        <columns>Metodo__c</columns>
+        <columns>Estatus__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>Todos</label>
+    </listViews>
     <nameField>
         <label>Nombre de Log integración</label>
         <type>Text</type>
